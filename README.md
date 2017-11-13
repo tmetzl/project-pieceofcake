@@ -1,8 +1,8 @@
 # project
 
 ## Team Name
-* Name1 LastName1
-* Name2 LastName2
+* Tim Metzler
+* Sogol Haghighat
 
 ## Howto run
 Just install gradle and run:
