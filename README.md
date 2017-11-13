@@ -1,6 +1,6 @@
 # project
 
-## Team Name
+## PieceOfCake
 * Tim Metzler
 * Sogol Haghighat
 
