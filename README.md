@@ -1,8 +1,9 @@
 # project
 
 ## PieceOfCake
-* Tim Metzler @http://github.com/tmetzl
-* Sogol Haghighat @http://github.com/SogolHaghighat
+* travis status: passed
+* Tim Metzler @[tmetzl](http://github.com/tmetzl)
+* Sogol Haghighat @[SogolHaghighat](http://github.com/SogolHaghighat)
 
 ## Howto run
 Just install gradle and run:
