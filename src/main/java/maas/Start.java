@@ -7,7 +7,7 @@ public class Start {
     public static void main(String[] args) {
     	List<String> agents = new Vector<>();
     	agents.add("tester:maas.BookBuyerAgent");
-    	agents.add("person:maas.BuyerAgent");
+    	agents.add("person:maas.CustomerAgent");
     	agents.add("baker:maas.OrderAgent");
 
     	List<String> cmd = new Vector<>();
