@@ -1,8 +1,8 @@
 # project
 
 ## PieceOfCake
-* Tim Metzler
-* Sogol Haghighat
+* Tim Metzler @http://github.com/tmetzl
+* Sogol Haghighat @http://github.com/SogolHaghighat
 
 ## Howto run
 Just install gradle and run:
