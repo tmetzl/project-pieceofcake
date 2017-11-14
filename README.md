@@ -1,7 +1,7 @@
 # project
 
 ## PieceOfCake
-* travis status: passed
+[![Build Status](https://travis-ci.org/HBRS-MAAS/project-pieceofcake.svg?branch=master)](https://travis-ci.org/HBRS-MAAS/project-pieceofcake)
 * Tim Metzler @[tmetzl](http://github.com/tmetzl)
 * Sogol Haghighat @[SogolHaghighat](http://github.com/SogolHaghighat)
 
