@@ -1,6 +1,6 @@
 package maas;
 
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
 import jade.content.lang.Codec;
@@ -22,37 +22,31 @@ public class CustomerAgent extends Agent {
 	private int locationX;
 	private int locationY;
 	private List<Order> orders;
+	
+	public CustomerAgent(String guiId, String type, int locationX, int locationY, List<Order> orders) {
+		this.guiId = guiId;
+		this.type = type;
+		this.locationX = locationX;
+		this.locationY = locationY;
+		
+		Collections.sort(orders, new OrderDateComparator());
+		this.orders = orders;
+		
+	}
 
 	protected void setup() {
 
-		// Get the start-up arguments
-		Object[] args = getArguments();
-		if (args != null && args.length > 3) {
-			// First argument is the guiId
-			this.guiId = (String) args[0];
-			// Second argument is the type
-			this.type = (String) args[1];
-			// Third and fourth argument are the location
-			this.locationX = Integer.parseInt((String) args[2]);
-			this.locationY = Integer.parseInt((String) args[3]);
-			// Remaining arguments are the orders in JSON Format
-			this.orders = new LinkedList<Order>();
-			for (int i = 4; i < args.length; i++) {
-				this.orders.add(new Order((String) args[i]));
-			}
-			System.out.println("Created the customer " + getAID().getLocalName() + " of type " + this.type + " at location ("
-					+ this.locationX + ", " + this.locationY + ")");
-		} else {
-			System.err.println("CustomerAgent: Not enough arguments provided");
-		}
 		// Printout a welcome message
-		System.out.println("Hello! Buyer-agent " + getAID().getName() + " is ready.");
+		System.out.println("Created the customer " + getAID().getLocalName() + " of type " + this.type + " at location ("
+				+ this.locationX + ", " + this.locationY + ")");
+
+
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			// e.printStackTrace();
 		}
-		addBehaviour(new PlaceOrder());
+		addBehaviour(new PlaceOrder(orders));
 		// addBehaviour(new GetResponseService());
 		// addBehaviour(new shutdown());
 
@@ -90,6 +84,11 @@ public class CustomerAgent extends Agent {
 
 		// Indicates at what step of the process we are
 		private int step = 0;
+		private List<Order> orders;
+		
+		public PlaceOrder(List<Order> orders) {
+			this.orders = orders;
+		}
 
 		public void action() {
 			if (step == 0) {
@@ -98,7 +97,9 @@ public class CustomerAgent extends Agent {
 				msg.addReceiver(new AID("baker", AID.ISLOCALNAME));
 				msg.setLanguage("English");
 				msg.setOntology("Bakery-order-ontology");
-				msg.setContent("2 Cheese Cakes");
+				
+				String content = orders.get(0).toJSONString();
+				msg.setContent(content);
 				send(msg);
 				System.out.println("order successfully placed");
 				// Go to the next step
