@@ -133,6 +133,21 @@
       "products": {
         "bagel": 5
       }
+    },
+    {
+      "guid": "order-003",
+      "customer_id": "Aaaaaaaaa",
+      "order_date": {
+        "day": 1,
+        "hour": 18
+      },
+      "delivery_date": {
+        "day": 5,
+        "hour": 12
+      },
+      "products": {
+        "bagel": 5
+      }
     }
   ],
   "street_network": []
