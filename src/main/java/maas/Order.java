@@ -2,6 +2,7 @@ package maas;
 
 public class Order {
 	
+	private String guiId;
 	private String customerId;
 	private int orderDate;
 	private int dueDate;
@@ -10,6 +11,10 @@ public class Order {
 	
 	public Order(String jsonOrder) {
 		// TODO: Fill the fields with the jsonOrder
+	}
+	
+	public String getGuiId() {
+		return guiId;
 	}
 
 	public String getCustomerId() {
