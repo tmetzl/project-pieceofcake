@@ -1,4 +1,4 @@
-package maas;
+package maas.agents;
 
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
@@ -22,7 +22,7 @@ public class BookBuyerAgent extends Agent {
  		} catch (InterruptedException e) {
  			//e.printStackTrace();
  		}
-		addBehaviour(new shutdown());
+		//addBehaviour(new shutdown());
 
 	}
 	protected void takeDown() {

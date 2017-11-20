@@ -1,0 +1,72 @@
+{
+    "bakeries": [
+        {
+            "id": "olaf",
+            "kneading-machines": 2,
+            "ovens": 1,
+            "oven-heating-time-factor": 1,
+            "oven-cooling-time-factor": 1
+
+        }
+    ],
+    "products": [
+        {
+            "id": "bread",
+            "production-price": 10,
+            "sales-price": 15,
+            "baking-temp": 230,
+            "baking-time": 15,
+            "dough-prep-time": 15,
+            "resting-time": 15,
+            "item-prep-time": 15,
+            "number-fitting-in-oven-slot": 15,
+            "boxing-temp": 60,
+            "cooling-time-factor": 1,
+            "items-fitting-in-box": 20
+        },
+        {
+            "id": "bagle",
+            "production-price": 10,
+            "sales-price": 15,
+            "baking-temp": 230,
+            "baking-time": 15,
+            "dough-prep-time": 15,
+            "resting-time": 15,
+            "item-prep-time": 15,
+            "number-fitting-in-oven-slot": 15,
+            "boxing-temp": 60,
+            "cooling-time-factor": 1,
+            "items-fitting-in-box": 20
+        }
+    ],
+    "orders": [
+        {
+            "customer-id": "henry",
+            "order-date": {
+                "day": 1,
+                "hour": 12
+            },
+            "delivery-date": {
+                "day": 3,
+                "hour": 12
+            },
+            "products": {
+                "bread": 5
+            }
+        },
+        {
+            "customer-id": "karl-gustav",
+            "order-date": {
+                "day": 2,
+                "hour": 12
+            },
+            "delivery-date": {
+                "day": 4,
+                "hour": 12
+            },
+            "products": {
+                "bagle": 5
+            }
+        }
+    ]
+}
