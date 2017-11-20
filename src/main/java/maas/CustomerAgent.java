@@ -1,5 +1,6 @@
 package maas;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import jade.content.lang.Codec;
@@ -15,10 +16,35 @@ import jade.lang.acl.ACLMessage;
 
 @SuppressWarnings("serial")
 public class CustomerAgent extends Agent {
-	
+
+	private String guiId;
+	private String type;
+	private int locationX;
+	private int locationY;
 	private List<Order> orders;
 
 	protected void setup() {
+
+		// Get the start-up arguments
+		Object[] args = getArguments();
+		if (args != null && args.length > 3) {
+			// First argument is the guiId
+			this.guiId = (String) args[0];
+			// Second argument is the type
+			this.type = (String) args[1];
+			// Third and fourth argument are the location
+			this.locationX = Integer.parseInt((String) args[2]);
+			this.locationY = Integer.parseInt((String) args[3]);
+			// Remaining arguments are the orders in JSON Format
+			this.orders = new LinkedList<Order>();
+			for (int i = 4; i < args.length; i++) {
+				this.orders.add(new Order((String) args[i]));
+			}
+			System.out.println("Created the customer " + getAID().getLocalName() + " of type " + this.type + " at location ("
+					+ this.locationX + ", " + this.locationY + ")");
+		} else {
+			System.err.println("CustomerAgent: Not enough arguments provided");
+		}
 		// Printout a welcome message
 		System.out.println("Hello! Buyer-agent " + getAID().getName() + " is ready.");
 		try {
@@ -28,7 +54,7 @@ public class CustomerAgent extends Agent {
 		}
 		addBehaviour(new PlaceOrder());
 		// addBehaviour(new GetResponseService());
-		//addBehaviour(new shutdown());
+		// addBehaviour(new shutdown());
 
 	}
 

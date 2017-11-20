@@ -13,7 +13,7 @@ public class Start {
 	
 	public void run() {
 		agents.add("tester:maas.BookBuyerAgent");
-    	agents.add("person:maas.CustomerAgent");
+    	agents.add("CitadelCafe:maas.CustomerAgent(customer-002,canteen,1,5)");
     	agents.add("baker:maas.OrderAgent");
 
     	List<String> cmd = new Vector<>();
