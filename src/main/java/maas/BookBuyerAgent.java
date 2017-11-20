@@ -22,7 +22,7 @@ public class BookBuyerAgent extends Agent {
  		} catch (InterruptedException e) {
  			//e.printStackTrace();
  		}
-		addBehaviour(new shutdown());
+		//addBehaviour(new shutdown());
 
 	}
 	protected void takeDown() {

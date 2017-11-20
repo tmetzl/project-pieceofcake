@@ -1,5 +1,7 @@
 package maas;
 
+import java.util.List;
+
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.basic.Action;
@@ -13,6 +15,8 @@ import jade.lang.acl.ACLMessage;
 
 @SuppressWarnings("serial")
 public class CustomerAgent extends Agent {
+	
+	private List<Order> orders;
 
 	protected void setup() {
 		// Printout a welcome message
@@ -24,7 +28,7 @@ public class CustomerAgent extends Agent {
 		}
 		addBehaviour(new PlaceOrder());
 		// addBehaviour(new GetResponseService());
-		addBehaviour(new shutdown());
+		//addBehaviour(new shutdown());
 
 	}
 

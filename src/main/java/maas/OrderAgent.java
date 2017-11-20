@@ -22,7 +22,7 @@ public class OrderAgent extends Agent {
 			// e.printStackTrace();
 		}
 		addBehaviour(new OrderService());
-		addBehaviour(new shutdown());
+		//addBehaviour(new shutdown());
 
 	}
 
