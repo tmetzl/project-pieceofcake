@@ -86,7 +86,7 @@
   "customers": [
     {
       "guid": "customer-001",
-      "name": "Hot Pie Inn",
+      "name": "Winterfell",
       "type": "hotel",
       "location": {
         "x": 2,
