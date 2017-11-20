@@ -1,6 +1,8 @@
-package maas;
+package maas.utils;
 
 import java.util.Comparator;
+
+import maas.objects.Order;
 
 public class OrderGuiIdComprator implements Comparator<Order>{
 

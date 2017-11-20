@@ -1,4 +1,4 @@
-package maas;
+package maas.main;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -17,6 +17,9 @@ import jade.util.ExtendedProperties;
 import jade.util.leap.Properties;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.StaleProxyException;
+import maas.agents.CustomerAgent;
+import maas.agents.OrderAgent;
+import maas.objects.Order;
 
 public class Start {
 

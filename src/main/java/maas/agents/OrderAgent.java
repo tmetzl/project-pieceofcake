@@ -1,11 +1,18 @@
-package maas;
+package maas.agents;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.lang.acl.ACLMessage;
+import maas.objects.Order;
 
 @SuppressWarnings("serial")
 public class OrderAgent extends Agent {
+	
+	private List<Order> orders = new LinkedList<Order>();
+	
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hello! Baker-agent " + getAID().getName() + " is ready.");
@@ -31,7 +38,9 @@ public class OrderAgent extends Agent {
 			ACLMessage msg = myAgent.receive();
 			if (msg != null) {
 				String order = msg.getContent();
-				System.out.println("So you want " + order);
+				Order orderObject = new Order(order);
+				orders.add(orderObject);
+				System.out.println("So you want " + orderObject);
 				ACLMessage reply = msg.createReply();
 				reply.setPerformative(ACLMessage.PROPOSE);
 				reply.setContent("5 euros");

@@ -1,4 +1,4 @@
-package maas;
+package maas.objects;
 
 import org.json.JSONObject;
 

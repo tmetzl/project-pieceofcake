@@ -1,4 +1,4 @@
-package maas;
+package maas.main;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import org.json.*;
+
+import maas.objects.Order;
+import maas.objects.Product;
 
 public class JSONExample {
 
@@ -40,7 +43,7 @@ public class JSONExample {
 			for (int i = 0; i < customers.length(); i++) {
 				// Convert bakery to JSONObject
 				JSONObject customer = customers.getJSONObject(i);
-				//System.out.println(customer);
+				System.out.println(customer);
 			}
 			// Convert the orders into a JSONArray
 			JSONArray orders = scenario.getJSONArray("orders");

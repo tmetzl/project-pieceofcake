@@ -1,4 +1,4 @@
-package maas;
+package maas.agents;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +13,8 @@ import jade.domain.FIPANames;
 import jade.domain.JADEAgentManagement.JADEManagementOntology;
 import jade.domain.JADEAgentManagement.ShutdownPlatform;
 import jade.lang.acl.ACLMessage;
+import maas.objects.Order;
+import maas.utils.OrderDateComparator;
 
 @SuppressWarnings("serial")
 public class CustomerAgent extends Agent {
