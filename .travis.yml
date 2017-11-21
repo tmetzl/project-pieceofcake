@@ -1,6 +1,17 @@
 language: java
+sudo: false
+install: true
+
+addons:
+  sonarcloud:
+    organization: "tmetzl"
+    token:
+      secure: "9e0a680009e16085213596fe395104d580962322"
 jdk:
     - openjdk7
+
+script:
+    - ./gradlew sonarqube
 group: stable
 dist: trusty
 os: linux

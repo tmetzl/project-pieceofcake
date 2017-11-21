@@ -13,6 +13,7 @@ import jade.domain.FIPANames;
 import jade.domain.JADEAgentManagement.JADEManagementOntology;
 import jade.domain.JADEAgentManagement.ShutdownPlatform;
 import jade.lang.acl.ACLMessage;
+import jade.util.Logger;
 import maas.objects.Order;
 import maas.utils.OrderDateComparator;
 
@@ -36,6 +37,7 @@ public class CustomerAgent extends Agent {
 		
 	}
 
+	@Override
 	protected void setup() {
 
 		// Printout a welcome message
@@ -46,39 +48,16 @@ public class CustomerAgent extends Agent {
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
-			// e.printStackTrace();
+			Logger logger = Logger.getJADELogger(this.getClass().getName());
+			logger.log(Logger.WARNING, e.getMessage(), e);	
+			Thread.currentThread().interrupt();
 		}
 		addBehaviour(new PlaceOrder(orders));
-		// addBehaviour(new GetResponseService());
-		// addBehaviour(new shutdown());
-
 	}
 
+	@Override
 	protected void takeDown() {
 		System.out.println(getAID().getLocalName() + ": Terminating.");
-	}
-
-	// Taken from
-	// http://www.rickyvanrijn.nl/2017/08/29/how-to-shutdown-jade-agent-platform-programmatically/
-	private class shutdown extends OneShotBehaviour {
-
-		public void action() {
-			ACLMessage shutdownMessage = new ACLMessage(ACLMessage.REQUEST);
-			Codec codec = new SLCodec();
-			myAgent.getContentManager().registerLanguage(codec);
-			myAgent.getContentManager().registerOntology(JADEManagementOntology.getInstance());
-			shutdownMessage.addReceiver(myAgent.getAMS());
-			shutdownMessage.setLanguage(FIPANames.ContentLanguage.FIPA_SL);
-			shutdownMessage.setOntology(JADEManagementOntology.getInstance().getName());
-			try {
-				myAgent.getContentManager().fillContent(shutdownMessage,
-						new Action(myAgent.getAID(), new ShutdownPlatform()));
-				myAgent.send(shutdownMessage);
-			} catch (Exception e) {
-				// LOGGER.error(e);
-			}
-
-		}
 	}
 
 	// Behavior for placing orders
