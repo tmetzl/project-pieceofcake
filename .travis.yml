@@ -6,7 +6,8 @@ addons:
   sonarcloud:
     organization: "tmetzl"
     token:
-      secure: "9e0a680009e16085213596fe395104d580962322"
+      secure: "YuCv7521o06SehXBT4C18waAbxKjlwS0MM/OUUNWTmLMYN7NAuqATCvhaaabUUBYlZglpLGhLw0zxLxa+P1kQA66w9uMgKrv8sx2UQa+cckhleI9vV7FyL6I3OR31sepUQg0cLQXqTI+RjEVAud2WFjVkhZGlQ9BXQq/sxS6mX4+VJuaS+6Bv8qflT9POGlzHc4G3oohIXT/dqKT0n+qptxGZ6gG1uEiQSfRh4iHwtt/8Szxy7aFX1l+QqW5aK/PmDxATsSAIMq3xGRZfOczOKv6woSyAPObUsLlA070gPjcxMyG543ffL9pCHXRPfRoFa+of70v2SnpEP1Q1A33WLHwy32QaOv9P2X+fRtBEOnRb6oHiJJdYx1GSmxCPQuEUO2snx/ZxjgXjhD0Bi+XbPhX2HYuBqhIpDk2ebS13gRVduyU9GYqsNu5u/8NYnln0iLLoP8/4NXLhwwpHIG6VV7wARXapC5cyN5lshvWQobpS8WTo+EnhTy+ZxovyYa4USdH0BJL8/vAT4bs1FqZcOuTC57U/L4TTKhSsTf8Sr9mU9Ws65Skgjxx7V3jkc8xDFFNj358xNj+CSK5OClEg/bbs5CEN/MmlweXTzb7cPOu+36HkGSLIbg9UlpQNDJimeqI+qCff2JZ7+3tGF6x0TBnh2g2rAPua9Z0QgxjEKw="
+
 jdk:
     - openjdk7
 
