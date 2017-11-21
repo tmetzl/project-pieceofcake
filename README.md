@@ -2,6 +2,7 @@
 
 ## PieceOfCake
 [![Build Status](https://travis-ci.org/HBRS-MAAS/project-pieceofcake.svg?branch=master)](https://travis-ci.org/HBRS-MAAS/project-pieceofcake)
+[![Quality Gate](https://sonarcloud.io/api/badges/gate?key=project-pieceofcake)](https://sonarcloud.io/dashboard?id=project-pieceofcake)
 * Tim Metzler @[tmetzl](http://github.com/tmetzl)
 * Sogol Haghighat @[SogolHaghighat](http://github.com/SogolHaghighat)
 
