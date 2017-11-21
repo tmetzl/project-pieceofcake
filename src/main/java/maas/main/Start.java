@@ -20,7 +20,9 @@ import jade.wrapper.AgentContainer;
 import jade.wrapper.StaleProxyException;
 import maas.agents.CustomerAgent;
 import maas.agents.OrderAgent;
+import maas.objects.Bakery;
 import maas.objects.Order;
+import maas.objects.Product;
 
 public class Start {
 
@@ -37,7 +39,7 @@ public class Start {
 		Profile profile = new ProfileImpl(properties);
 
 		container = runtime.createMainContainer(profile);
-		container.acceptNewAgent("baker", new OrderAgent()).start();
+		
 
 		loadScenario(scenario);
 	}
@@ -98,6 +100,14 @@ public class Start {
 					createCustomer(customer, customerOrders);
 				}
 			}
+			
+			// Step 3: Process bakeries
+			JSONArray bakeries = scenario.getJSONArray("bakeries");
+			
+			for (int i=0;i<bakeries.length();i++) {
+				JSONObject bakery = bakeries.getJSONObject(i);
+				createBakery(bakery);
+			}
 
 		} catch (FileNotFoundException e) {
 			Logger logger = Logger.getJADELogger(this.getClass().getName());
@@ -119,6 +129,25 @@ public class Start {
 
 		container.acceptNewAgent(name, agent).start();
 
+	}
+	
+	public void createBakery(JSONObject jsonBakery) throws StaleProxyException {
+		String name = jsonBakery.getString("name");
+		String guiId = jsonBakery.getString("guid");
+		JSONObject location = jsonBakery.getJSONObject("location");
+		int locationX = location.getInt("x");
+		int locationY = location.getInt("y");
+		
+		Bakery bakery = new Bakery(guiId, name, locationX, locationY);
+		
+		JSONArray products = jsonBakery.getJSONArray("products");
+		for (int i=0;i<products.length();i++) {
+			JSONObject jsonProduct = products.getJSONObject(i);
+			Product product = new Product(jsonProduct.toString());
+			bakery.addProduct(product);
+		}
+		
+		container.acceptNewAgent(name, new OrderAgent(bakery)).start();
 	}
 
 	public static void main(String[] args) throws StaleProxyException {
