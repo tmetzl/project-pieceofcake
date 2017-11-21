@@ -75,7 +75,7 @@ public class CustomerAgent extends Agent {
 			if (step == 0) {
 				// Step 0, place the order
 				ACLMessage msg = new ACLMessage(ACLMessage.CFP);
-				msg.addReceiver(new AID("baker", AID.ISLOCALNAME));
+				msg.addReceiver(new AID("Kingslanding Bakery", AID.ISLOCALNAME));
 				msg.setLanguage("English");
 				msg.setOntology("Bakery-order-ontology");
 				
