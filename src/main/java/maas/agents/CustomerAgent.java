@@ -3,15 +3,9 @@ package maas.agents;
 import java.util.Collections;
 import java.util.List;
 
-import jade.content.lang.Codec;
-import jade.content.lang.sl.SLCodec;
-import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.*;
-import jade.domain.FIPANames;
-import jade.domain.JADEAgentManagement.JADEManagementOntology;
-import jade.domain.JADEAgentManagement.ShutdownPlatform;
 import jade.lang.acl.ACLMessage;
 import jade.util.Logger;
 import maas.objects.Order;
