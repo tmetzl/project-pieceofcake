@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 import org.json.*;
 
+import jade.util.Logger;
 import maas.objects.Order;
 import maas.objects.Product;
 
@@ -14,8 +15,9 @@ public class JSONExample {
 
 	public static void main(String[] args) {
 		System.out.println("Hello");
+		Scanner in = null;
 		try {
-			Scanner in = new Scanner(new FileReader("config/sample-scenario.json"));
+			in = new Scanner(new FileReader("config/sample-scenario.json"));
 			String text = "";
 			while (in.hasNext())
 				text = text + in.nextLine();
@@ -58,12 +60,13 @@ public class JSONExample {
 			}
 			
 			System.out.println(listOfOrders);
-			in.close();
+			
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("File not found!");
+			Logger logger = Logger.getJADELogger("JSONExample");
+			logger.log(Logger.WARNING, e.getMessage(), e);	
+		} finally {
+			in.close();
 		}
 	}
 }

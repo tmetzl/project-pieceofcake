@@ -6,6 +6,7 @@ import java.util.List;
 import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.lang.acl.ACLMessage;
+import jade.util.Logger;
 import maas.objects.Order;
 
 @SuppressWarnings("serial")
@@ -13,6 +14,7 @@ public class OrderAgent extends Agent {
 	
 	private List<Order> orders = new LinkedList<Order>();
 	
+	@Override
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hello! Baker-agent " + getAID().getName() + " is ready.");
@@ -20,13 +22,14 @@ public class OrderAgent extends Agent {
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
-			// e.printStackTrace();
+			Logger logger = Logger.getJADELogger(this.getClass().getName());
+			logger.log(Logger.WARNING, e.getMessage(), e);	
+			Thread.currentThread().interrupt();
 		}
 		addBehaviour(new OrderService());
-		//addBehaviour(new shutdown());
-
 	}
 
+	@Override
 	protected void takeDown() {
 		System.out.println(getAID().getLocalName() + ": Terminating.");
 	}

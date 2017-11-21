@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.util.ExtendedProperties;
+import jade.util.Logger;
 import jade.util.leap.Properties;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.StaleProxyException;
@@ -99,8 +100,9 @@ public class Start {
 			}
 
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+			Logger logger = Logger.getJADELogger(this.getClass().getName());
+			logger.log(Logger.WARNING, e.getMessage(), e);	
+		} 
 
 	}
 
