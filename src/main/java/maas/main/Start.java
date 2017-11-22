@@ -56,8 +56,16 @@ public class Start {
 
 			// Parse scenario as JSONObject
 			JSONObject scenario = new JSONObject(text);
+			
+			// Step 1: Process bakeries
+			JSONArray bakeries = scenario.getJSONArray("bakeries");
+			
+			for (int i=0;i<bakeries.length();i++) {
+				JSONObject bakery = bakeries.getJSONObject(i);
+				createBakery(bakery);
+			}
 
-			// Step 1: Process the Orders
+			// Step 2: Process the Orders
 			JSONArray orders = scenario.getJSONArray("orders");
 
 			// Create a map with the customers as keys and list of orders as
@@ -84,7 +92,7 @@ public class Start {
 				}
 			}
 
-			// Step 2: Process the customers
+			// Step 3: Process the customers
 			JSONArray customers = scenario.getJSONArray("customers");
 
 			for (int i = 0; i < customers.length(); i++) {
@@ -101,13 +109,7 @@ public class Start {
 				}
 			}
 			
-			// Step 3: Process bakeries
-			JSONArray bakeries = scenario.getJSONArray("bakeries");
-			
-			for (int i=0;i<bakeries.length();i++) {
-				JSONObject bakery = bakeries.getJSONObject(i);
-				createBakery(bakery);
-			}
+
 
 		} catch (FileNotFoundException e) {
 			Logger logger = Logger.getJADELogger(this.getClass().getName());
