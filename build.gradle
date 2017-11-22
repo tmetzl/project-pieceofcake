@@ -7,7 +7,7 @@ apply plugin: 'eclipse'
 apply plugin: 'application'
 
 
-mainClassName = 'maas.Start'
+mainClassName = 'maas.main.Start'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
