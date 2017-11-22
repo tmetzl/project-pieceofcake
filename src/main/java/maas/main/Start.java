@@ -90,7 +90,7 @@ public class Start {
 			for (int i = 0; i < customers.length(); i++) {
 				// Extract one customer and its Id
 				JSONObject customer = customers.getJSONObject(i);
-				String customerId = customer.getString("name");
+				String customerId = customer.getString("guid");
 
 				// Make sure the customer has orders
 				if (customerOrderMap.containsKey(customerId)) {
@@ -120,7 +120,7 @@ public class Start {
 		// Get the parameters
 		String name = customer.getString("name");
 		String guiId = customer.getString("guid");
-		String type = customer.getString("type");
+		int type = customer.getInt("type");
 		JSONObject location = customer.getJSONObject("location");
 		int locationX = location.getInt("x");
 		int locationY = location.getInt("y");
@@ -151,6 +151,6 @@ public class Start {
 	}
 
 	public static void main(String[] args) throws StaleProxyException {
-		new Start("sample-scenario");
+		new Start("random-scenario");
 	}
 }
