@@ -16,15 +16,15 @@ import maas.objects.Order;
 
 @SuppressWarnings("serial")
 public class OrderAgent extends Agent {
-	
+
 	private List<Order> orders = new LinkedList<Order>();
 	private Bakery myBakery;
 	private Logger logger;
-	
+
 	public OrderAgent(Bakery bakery) {
 		this.myBakery = bakery;
 	}
-	
+
 	@Override
 	protected void setup() {
 		// Create our logger
@@ -36,7 +36,7 @@ public class OrderAgent extends Agent {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			Logger logger = Logger.getJADELogger(this.getClass().getName());
-			logger.log(Logger.WARNING, e.getMessage(), e);	
+			logger.log(Logger.WARNING, e.getMessage(), e);
 			Thread.currentThread().interrupt();
 		}
 		// Register the bakery service in the yellow pages
@@ -49,7 +49,7 @@ public class OrderAgent extends Agent {
 		try {
 			DFService.register(this, dfd);
 		} catch (FIPAException fe) {
-			logger.log(Logger.WARNING, fe.getMessage(), fe);	
+			logger.log(Logger.WARNING, fe.getMessage(), fe);
 		}
 		addBehaviour(new OrderService());
 	}
@@ -71,24 +71,36 @@ public class OrderAgent extends Agent {
 
 			ACLMessage msg = myAgent.receive();
 			if (msg != null) {
-				String jsonOrder = msg.getContent();
-				Order order = new Order(jsonOrder);
-				
-				// Get the price of the order
-				Integer price = myBakery.getPrice(order);
-				ACLMessage reply = msg.createReply();
-				if (price != null) {
-					reply.setPerformative(ACLMessage.PROPOSE);
-					reply.setContent(String.valueOf(price));
-				} else {
-					reply.setPerformative(ACLMessage.REFUSE);
-					reply.setContent("not-available");
-				}
-				//orders.add(order);
-				//System.out.println("So you want " + order);
-				
 
-				myAgent.send(reply);
+				if (msg.getPerformative() == ACLMessage.CFP) {
+					// Customer wants an offer
+
+					String jsonOrder = msg.getContent();
+					Order order = new Order(jsonOrder);
+
+					// Get the price of the order
+					Integer price = myBakery.getPrice(order);
+					ACLMessage reply = msg.createReply();
+					if (price != null) {
+						reply.setPerformative(ACLMessage.PROPOSE);
+						reply.setContent(String.valueOf(price));
+					} else {
+						reply.setPerformative(ACLMessage.REFUSE);
+						reply.setContent("not-available");
+					}
+					// orders.add(order);
+					// System.out.println("So you want " + order);
+
+					myAgent.send(reply);
+				} else if (msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
+					// Customer accepted an offer
+
+					String jsonOrder = msg.getContent();
+					Order order = new Order(jsonOrder);
+					// Add to active orders
+					orders.add(order);
+					System.out.println(myAgent.getLocalName() + ": Customer " + msg.getSender().getLocalName() + " ordered:\n" + order + ".");
+				}
 			} else {
 				block();
 
