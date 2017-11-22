@@ -39,7 +39,7 @@ public class Bakery {
 		return null;
 	}
 	
-	public int getPrice(Order order) {
+	public Integer getPrice(Order order) {
 		int price = 0;
 		
 		String[] productIds = order.getProductIds();
@@ -48,7 +48,7 @@ public class Bakery {
 		for (int i=0;i<productIds.length;i++) {
 			Product product = getProductByName(productIds[i]);
 			if (product == null) {
-				return -1;
+				return null;
 			}
 			price += productAmount[i]*product.getSalesPrice();
 		}
