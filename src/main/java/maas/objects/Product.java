@@ -20,7 +20,7 @@ public class Product {
 	public Product(String jsonProduct) {
 		// Parse the jsonProduct
 		JSONObject product = new JSONObject(jsonProduct);
-		this.id = product.getString("id");
+		this.id = product.getString("guid");
 		this.doughPrepTime = product.getInt("dough_prep_time");
 		this.doughRestingTime = product.getInt("resting_time");
 		this.itemPrepTime = product.getInt("item_prep_time");
