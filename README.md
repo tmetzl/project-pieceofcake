@@ -1,4 +1,4 @@
-# project
+# MAAS Project - Team Name 
 
 ## PieceOfCake
 [![Build Status](https://travis-ci.org/HBRS-MAAS/project-pieceofcake.svg?branch=master)](https://travis-ci.org/HBRS-MAAS/project-pieceofcake)
