@@ -15,12 +15,12 @@ import maas.utils.OrderDateComparator;
 public class CustomerAgent extends Agent {
 
 	private String guiId;
-	private String type;
+	private int type;
 	private int locationX;
 	private int locationY;
 	private List<Order> orders;
 	
-	public CustomerAgent(String guiId, String type, int locationX, int locationY, List<Order> orders) {
+	public CustomerAgent(String guiId, int type, int locationX, int locationY, List<Order> orders) {
 		this.guiId = guiId;
 		this.type = type;
 		this.locationX = locationX;
