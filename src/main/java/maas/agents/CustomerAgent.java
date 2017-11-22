@@ -108,7 +108,7 @@ public class CustomerAgent extends Agent {
 				msg.setContent(content);
 				myAgent.send(msg);
 
-				System.out.println("order successfully placed");
+				// System.out.println("order successfully placed");
 				// Go to the next step
 				step = 1;
 
@@ -132,7 +132,7 @@ public class CustomerAgent extends Agent {
 					numOfReplies++;
 					if (numOfReplies >= bakeries.length) {
 						// All replies received, terminate behavior
-						System.out.println("All replies received.");
+						// System.out.println("All replies received.");
 						step = 2;
 					}
 				} else {
@@ -140,10 +140,19 @@ public class CustomerAgent extends Agent {
 				}
 			} else if (step == 2) {
 				if (bestSeller != null) {
-					System.out.println(
-							"The best offer of EUR " + bestPrice + " comes from " + bestSeller.getLocalName() + ".");
+					System.out.println(myAgent.getLocalName() + ": The best offer of EUR " + bestPrice + " comes from "
+							+ bestSeller.getLocalName() + ".");
+					ACLMessage msg = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
+					// Add all known bakeries as receivers
+					msg.addReceiver(bestSeller);
+					msg.setLanguage("English");
+					msg.setOntology("Bakery-order-ontology");
+					msg.setReplyWith("offer-confirm-" + System.currentTimeMillis());
+					String content = orders.get(0).toJSONString();
+					msg.setContent(content);
+					myAgent.send(msg);
 				} else {
-					System.out.println("No offers received or products not available.");
+					System.out.println(myAgent.getLocalName() + ": No offers received or products not available.");
 				}
 				step = 3;
 			}
