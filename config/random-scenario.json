@@ -539,9 +539,6 @@
       "guid": "order-001",
       "products": {
         "Brezel": 6,
-        "Donut": 6,
-        "Cookie": 1,
-        "Multigrain Bread": 4,
         "Bread": 6
       },
       "customer_id": "customer-001",
