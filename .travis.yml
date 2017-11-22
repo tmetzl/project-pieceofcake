@@ -11,7 +11,12 @@ addons:
 jdk:
     - openjdk8
 
+<<<<<<< HEAD
 
+=======
+script:
+    - sonar-scanner
+>>>>>>> cc1d6969e204e36e044fe0a377f7e07f693ad899
 group: stable
 dist: trusty
 os: linux
