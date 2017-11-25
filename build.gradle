@@ -5,6 +5,7 @@ plugins {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'application'
+apply plugin: 'jacoco'
 
 
 mainClassName = 'maas.main.Start'
@@ -28,7 +29,7 @@ dependencies {
     compile group: 'com.tilab.jade', name: 'jade', version: '4.5.+'
     compile group: 'org.json', name: 'json', version: '20171018'
     testCompile 'junit:junit:4.12'
-    compile 'junit:junit:4.12'
+    //compile 'junit:junit:4.12'
     //testCompile 'org.mockito:mockito-core:1.10.+'
 }
 
