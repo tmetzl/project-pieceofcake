@@ -23,7 +23,9 @@ repositories {
     }
 }
 
-   
+jacoco {
+    toolVersion = "0.7.9"
+}   
 
 dependencies {
     compile group: 'com.tilab.jade', name: 'jade', version: '4.5.+'
