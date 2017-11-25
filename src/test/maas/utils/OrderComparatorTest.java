@@ -1,4 +1,4 @@
-package maas.test;
+package maas.utils;
 
 import static org.junit.Assert.assertTrue;
 

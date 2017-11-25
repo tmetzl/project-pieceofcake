@@ -1,4 +1,4 @@
-package maas.test;
+package maas.objects;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

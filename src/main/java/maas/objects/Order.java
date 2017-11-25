@@ -66,12 +66,13 @@ public class Order {
 		s = s + "\nOrderDate (in hours): " + getOrderDate();
 		s = s + "\nDueDate (in hours): " + getDueDate();
 		s = s + "\nProducts: ";
+		StringBuilder bld = new StringBuilder();
 		for (int i = 0; i < this.productIds.length - 1; i++) {
-			s = s + "(" + this.productIds[i] + ", " + this.productAmounts[i] + "), ";
+			bld.append("(" + this.productIds[i] + ", " + this.productAmounts[i] + "), ");
 		}
-		s = s + "(" + this.productIds[this.productIds.length - 1] + ", "
-				+ this.productAmounts[this.productIds.length - 1] + ")";
-		return s;
+		bld.append("(" + this.productIds[this.productIds.length - 1] + ", "
+				+ this.productAmounts[this.productIds.length - 1] + ")");
+		return bld.toString();
 	}
 	
 	/**
@@ -90,11 +91,6 @@ public class Order {
 				return true;
 		}
 		return false;
-	}
-	
-	@Override
-	public int hashCode() {
-		return this.toJSONString().hashCode();
 	}
 
 }
