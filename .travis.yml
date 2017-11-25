@@ -8,7 +8,8 @@ addons:
     token:
       secure: "tFhH4geCqcOvgZ4p3/lB56VMk6uYyKC5ypbQwTDX7rC9peHeCB13ja5M+Nv/uZSWmOOWy0KGmDlOSsTY9988bvvBn8aDNJ2xxEjQyBDoKpJq1l+mWXihaFEmvE8ZpOZgKD77Z9yA09SH20dNtOPwjheG05exaHMizKSMq5jqk1MVVEVtUthTqD4pOVcsP5qopCUdgt7Hafae0LjJemfaxv0rvedFFqjUJhGZvqQ+eGqza1VLBLNUs8drb9SZxRlc9ZzDdNxLeLpAdoWirK3MGr1xPqb6lc8xr4IskeUZdo8xL/2CNM+1V5OJRWbtXLGLLIIoeHMwWVryGWJFaMGc8h5hy0Hz5OWJVPmxUG94gfqCXWKvaHU81m0Uh1zTvAZV7J6gVCF1oySyc+iXIN3jcCACtEwZh7Uym2dy+mXNSsJhX1uLESqz3FuNj2wM7j8NdzJtDTlw9ktfzK4k3eGkLnCrITzH27UOQ0oaW+uhNzwiAQvZ9TGk7xKVHGsItN6Yc3szNZ/AW/fkLmmBZCnyW85BFUrUfs4PQ4raTQKA8jwy0/CFUXRzufH5oJAOjiYcrUa+vk+2AtF4Wk50WDI3K/9mu0VcdPkMiAUGDo6yRclFKe8Vtl7G+Nc688qu68mgBd0DMCsQXzERWaee6JbBpZBfQcqzkWsD/SzA9A4tMjg="
     branches:
-      - SonarCloud-Feature
+      - master
+      - Development
 
 jdk:
     - openjdk8
