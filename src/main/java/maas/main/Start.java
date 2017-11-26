@@ -119,7 +119,8 @@ public class Start {
 		} catch (FileNotFoundException e) {
 			logger.log(Logger.WARNING, e.getMessage(), e);	
 		} finally {
-			in.close();
+			if (in != null)
+				in.close();
 		}
 
 	}
