@@ -17,9 +17,6 @@ jdk:
 
 script:
     - ./gradlew sonarqube
-cache:
-    directories:
-        - '$HOME/.m2/repository'
 
 group: stable
 dist: trusty
