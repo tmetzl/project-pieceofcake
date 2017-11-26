@@ -10,7 +10,7 @@ addons:
     branches:
       - master
       - Development
-      - ReduceComplexity-Feature
+      - SonarCloudGitHub-Feature
 
 jdk:
     - openjdk8
