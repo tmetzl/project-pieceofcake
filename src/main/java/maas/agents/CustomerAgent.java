@@ -23,7 +23,6 @@ public class CustomerAgent extends Agent {
 	private int locationX;
 	private int locationY;
 	private transient List<Order> orders;
-	private AID[] bakeries;
 	private Logger logger;
 
 	public CustomerAgent(String guiId, int type, int locationX, int locationY, List<Order> orders) {
@@ -60,37 +59,45 @@ public class CustomerAgent extends Agent {
 		System.out.println(getAID().getLocalName() + ": Terminating.");
 	}
 
-	// Behavior for placing orders
-	private class PlaceOrder extends Behaviour {
+	private class PlaceOrder extends SequentialBehaviour {
 
-		// Indicates at what step of the process we are
-		private int step = 0;
 		private int numOfReplies = 0;
 		private int bestPrice = 0;
 		private AID bestSeller;
+		private AID[] bakeries;
 
-		public void updateBakeries() {
-			DFAgentDescription template = new DFAgentDescription();
-			ServiceDescription sd = new ServiceDescription();
-			sd.setType("bakery");
-			template.addServices(sd);
-			try {
-				DFAgentDescription[] result = DFService.search(myAgent, template);
-				bakeries = new AID[result.length];
-				for (int i = 0; i < result.length; i++) {
-					bakeries[i] = result[i].getName();
-				}
-			} catch (FIPAException fe) {
-				logger.log(Logger.WARNING, fe.getMessage(), fe);
-			}
+		public PlaceOrder() {
+			this.addSubBehaviour(new UpdateBakeries());
+			this.addSubBehaviour(new RequestOffers());
+			this.addSubBehaviour(new ReceiveOffers());
+			this.addSubBehaviour(new OrderFromBestSeller());
 		}
 
-		public void action() {
-			if (step == 0) {
-				// Step 0, place the order
-				// First update the list of bakeries
-				updateBakeries();
+		private class UpdateBakeries extends OneShotBehaviour {
 
+			@Override
+			public void action() {
+				DFAgentDescription template = new DFAgentDescription();
+				ServiceDescription sd = new ServiceDescription();
+				sd.setType("bakery");
+				template.addServices(sd);
+				try {
+					DFAgentDescription[] result = DFService.search(myAgent, template);
+					bakeries = new AID[result.length];
+					for (int i = 0; i < result.length; i++) {
+						bakeries[i] = result[i].getName();
+					}
+				} catch (FIPAException fe) {
+					logger.log(Logger.WARNING, fe.getMessage(), fe);
+				}
+			}
+
+		}
+
+		private class RequestOffers extends OneShotBehaviour {
+
+			@Override
+			public void action() {
 				ACLMessage msg = new ACLMessage(ACLMessage.CFP);
 				// Add all known bakeries as receivers
 				for (int i = 0; i < bakeries.length; i++) {
@@ -102,12 +109,16 @@ public class CustomerAgent extends Agent {
 				String content = orders.get(0).toJSONString();
 				msg.setContent(content);
 				myAgent.send(msg);
+			}
 
-				// Go to the next step
-				step = 1;
+		}
 
-			} else if (step == 1) {
-				// Step 1, wait for replies
+		private class ReceiveOffers extends Behaviour {
+
+			private boolean allOffersReceived = false;
+
+			@Override
+			public void action() {
 				ACLMessage answer = myAgent.receive();
 				if (answer != null) {
 
@@ -125,13 +136,24 @@ public class CustomerAgent extends Agent {
 					numOfReplies++;
 					if (numOfReplies >= bakeries.length) {
 						// All replies received, terminate behavior
-						// System.out.println("All replies received.");
-						step = 2;
+						allOffersReceived = true;
 					}
 				} else {
 					block();
 				}
-			} else if (step == 2) {
+			}
+
+			@Override
+			public boolean done() {
+				return allOffersReceived;
+			}
+
+		}
+
+		private class OrderFromBestSeller extends OneShotBehaviour {
+
+			@Override
+			public void action() {
 				if (bestSeller != null) {
 					System.out.println(myAgent.getLocalName() + ": The best offer of EUR " + bestPrice + " comes from "
 							+ bestSeller.getLocalName() + ".");
@@ -147,12 +169,9 @@ public class CustomerAgent extends Agent {
 				} else {
 					System.out.println(myAgent.getLocalName() + ": No offers received or products not available.");
 				}
-				step = 3;
 			}
-		}
 
-		public boolean done() {
-			return step == 3;
 		}
 	}
+
 }
