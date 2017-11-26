@@ -10,7 +10,6 @@ addons:
     branches:
       - master
       - Development
-      - JUnitTest-Feature
 
 jdk:
     - openjdk8
