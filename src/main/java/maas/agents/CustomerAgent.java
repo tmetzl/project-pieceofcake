@@ -6,6 +6,10 @@ import java.util.List;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.*;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.util.Logger;
 import maas.objects.Order;
@@ -15,35 +19,37 @@ import maas.utils.OrderDateComparator;
 public class CustomerAgent extends Agent {
 
 	private String guiId;
-	private String type;
+	private int type;
 	private int locationX;
 	private int locationY;
 	private List<Order> orders;
-	
-	public CustomerAgent(String guiId, String type, int locationX, int locationY, List<Order> orders) {
+	private AID[] bakeries;
+	private Logger logger;
+
+	public CustomerAgent(String guiId, int type, int locationX, int locationY, List<Order> orders) {
 		this.guiId = guiId;
 		this.type = type;
 		this.locationX = locationX;
 		this.locationY = locationY;
-		
+
 		Collections.sort(orders, new OrderDateComparator());
 		this.orders = orders;
-		
+
 	}
 
 	@Override
 	protected void setup() {
+		// Create our logger
+		logger = Logger.getJADELogger(this.getClass().getName());
 
 		// Printout a welcome message
-		System.out.println("Created the customer " + getAID().getLocalName() + " of type " + this.type + " at location ("
-				+ this.locationX + ", " + this.locationY + ")");
-
+		System.out.println("Created the customer " + getAID().getLocalName() + " of type " + this.type
+				+ " at location (" + this.locationX + ", " + this.locationY + ")");
 
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
-			Logger logger = Logger.getJADELogger(this.getClass().getName());
-			logger.log(Logger.WARNING, e.getMessage(), e);	
+			logger.log(Logger.WARNING, e.getMessage(), e);
 			Thread.currentThread().interrupt();
 		}
 		addBehaviour(new PlaceOrder(orders));
@@ -59,44 +65,101 @@ public class CustomerAgent extends Agent {
 
 		// Indicates at what step of the process we are
 		private int step = 0;
+		private int numOfReplies = 0;
+		private int bestPrice = 0;
+		private AID bestSeller;
 		private List<Order> orders;
-		
+
 		public PlaceOrder(List<Order> orders) {
 			this.orders = orders;
+		}
+
+		public void updateBakeries() {
+			DFAgentDescription template = new DFAgentDescription();
+			ServiceDescription sd = new ServiceDescription();
+			sd.setType("bakery");
+			template.addServices(sd);
+			try {
+				DFAgentDescription[] result = DFService.search(myAgent, template);
+				bakeries = new AID[result.length];
+				for (int i = 0; i < result.length; i++) {
+					bakeries[i] = result[i].getName();
+				}
+			} catch (FIPAException fe) {
+				logger.log(Logger.WARNING, fe.getMessage(), fe);
+			}
 		}
 
 		public void action() {
 			if (step == 0) {
 				// Step 0, place the order
+				// First update the list of bakeries
+				updateBakeries();
+
 				ACLMessage msg = new ACLMessage(ACLMessage.CFP);
-				msg.addReceiver(new AID("Kingslanding Bakery", AID.ISLOCALNAME));
+				// Add all known bakeries as receivers
+				for (int i = 0; i < bakeries.length; i++) {
+					msg.addReceiver(bakeries[i]);
+				}
 				msg.setLanguage("English");
 				msg.setOntology("Bakery-order-ontology");
-				
+				msg.setReplyWith("offer-request-" + System.currentTimeMillis());
 				String content = orders.get(0).toJSONString();
 				msg.setContent(content);
-				send(msg);
-				System.out.println("order successfully placed");
+				myAgent.send(msg);
+
+				// System.out.println("order successfully placed");
 				// Go to the next step
 				step = 1;
 
 			} else if (step == 1) {
-				// Step 1, wait for reply
+				// Step 1, wait for replies
 				ACLMessage answer = myAgent.receive();
 				if (answer != null) {
-					System.out.println("Checking for msg");
+
+					// System.out.println("Checking for msg");
 					String answerContent = answer.getContent();
-					System.out.println(answerContent);
-					// Reply received, terminate behavior
-					step = 2;
+
+					if (answer.getPerformative() == ACLMessage.PROPOSE) {
+						System.out.println("Price: " + answerContent);
+						int price = Integer.parseInt(answerContent);
+
+						if (bestSeller == null || price < bestPrice) {
+							bestPrice = price;
+							bestSeller = answer.getSender();
+						}
+					}
+					numOfReplies++;
+					if (numOfReplies >= bakeries.length) {
+						// All replies received, terminate behavior
+						// System.out.println("All replies received.");
+						step = 2;
+					}
+				} else {
+					block();
 				}
-			} else {
-				block();
+			} else if (step == 2) {
+				if (bestSeller != null) {
+					System.out.println(myAgent.getLocalName() + ": The best offer of EUR " + bestPrice + " comes from "
+							+ bestSeller.getLocalName() + ".");
+					ACLMessage msg = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
+					// Add all known bakeries as receivers
+					msg.addReceiver(bestSeller);
+					msg.setLanguage("English");
+					msg.setOntology("Bakery-order-ontology");
+					msg.setReplyWith("offer-confirm-" + System.currentTimeMillis());
+					String content = orders.get(0).toJSONString();
+					msg.setContent(content);
+					myAgent.send(msg);
+				} else {
+					System.out.println(myAgent.getLocalName() + ": No offers received or products not available.");
+				}
+				step = 3;
 			}
 		}
 
 		public boolean done() {
-			return step == 2;
+			return step == 3;
 		}
 	}
 }
