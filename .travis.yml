@@ -10,6 +10,7 @@ addons:
     branches:
       - master
       - Development
+      - ReduceComplexity-Feature
 
 jdk:
     - openjdk8
