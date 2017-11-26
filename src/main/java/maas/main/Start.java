@@ -27,8 +27,11 @@ import maas.objects.Product;
 public class Start {
 
 	private AgentContainer container;
+	private Logger logger;
 
 	public Start(String scenario) throws StaleProxyException {
+		// Create logger
+		logger = Logger.getJADELogger(this.getClass().getName());
 		jade.core.Runtime runtime = jade.core.Runtime.instance();
 		runtime.setCloseVM(true);
 
@@ -114,7 +117,6 @@ public class Start {
 
 
 		} catch (FileNotFoundException e) {
-			Logger logger = Logger.getJADELogger(this.getClass().getName());
 			logger.log(Logger.WARNING, e.getMessage(), e);	
 		} 
 
