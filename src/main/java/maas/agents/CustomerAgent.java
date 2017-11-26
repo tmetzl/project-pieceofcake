@@ -22,7 +22,7 @@ public class CustomerAgent extends Agent {
 	private int type;
 	private int locationX;
 	private int locationY;
-	private List<Order> orders;
+	private transient List<Order> orders;
 	private AID[] bakeries;
 	private Logger logger;
 
@@ -52,7 +52,7 @@ public class CustomerAgent extends Agent {
 			logger.log(Logger.WARNING, e.getMessage(), e);
 			Thread.currentThread().interrupt();
 		}
-		addBehaviour(new PlaceOrder(orders));
+		addBehaviour(new PlaceOrder());
 	}
 
 	@Override
@@ -68,11 +68,6 @@ public class CustomerAgent extends Agent {
 		private int numOfReplies = 0;
 		private int bestPrice = 0;
 		private AID bestSeller;
-		private List<Order> orders;
-
-		public PlaceOrder(List<Order> orders) {
-			this.orders = orders;
-		}
 
 		public void updateBakeries() {
 			DFAgentDescription template = new DFAgentDescription();
@@ -108,7 +103,6 @@ public class CustomerAgent extends Agent {
 				msg.setContent(content);
 				myAgent.send(msg);
 
-				// System.out.println("order successfully placed");
 				// Go to the next step
 				step = 1;
 
@@ -117,7 +111,6 @@ public class CustomerAgent extends Agent {
 				ACLMessage answer = myAgent.receive();
 				if (answer != null) {
 
-					// System.out.println("Checking for msg");
 					String answerContent = answer.getContent();
 
 					if (answer.getPerformative() == ACLMessage.PROPOSE) {

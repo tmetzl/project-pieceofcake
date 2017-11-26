@@ -62,11 +62,12 @@ public class Order {
 	 */
 	@Override
 	public String toString() {
-		String s = "Order " + getGuiId() + " from customer " + getCustomerId();
-		s = s + "\nOrderDate (in hours): " + getOrderDate();
-		s = s + "\nDueDate (in hours): " + getDueDate();
-		s = s + "\nProducts: ";
 		StringBuilder bld = new StringBuilder();
+		bld.append("Order " + getGuiId() + " from customer " + getCustomerId());
+		bld.append("\nOrderDate (in hours): " + getOrderDate());
+		bld.append("\nDueDate (in hours): " + getDueDate());
+		bld.append("\nProducts: ");
+		
 		for (int i = 0; i < this.productIds.length - 1; i++) {
 			bld.append("(" + this.productIds[i] + ", " + this.productAmounts[i] + "), ");
 		}

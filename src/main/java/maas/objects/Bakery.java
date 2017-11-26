@@ -25,9 +25,9 @@ public class Bakery {
 		this.locationX = locationX;
 		this.locationY = locationY;
 
-		this.orders = new LinkedList<Order>();
-		this.ordersInProcess = new LinkedList<Order>();
-		this.cookBook = new HashMap<String, Product>();
+		this.orders = new LinkedList<>();
+		this.ordersInProcess = new LinkedList<>();
+		this.cookBook = new HashMap<>();
 
 		System.out.println("Bakery " + name + " at location (" + locationX + ", " + locationY + ")");
 	}
@@ -64,11 +64,10 @@ public class Bakery {
 	public void addProduct(Product product) {
 		String productId = product.getId();
 		this.cookBook.put(productId, product);
-		//System.out.println("Added product to cookbook:\n" + product.toString());
 	}
 
 	public Order getOrder() {
-		if (this.orders.size() > 0) {
+		if (!this.orders.isEmpty()) {
 			Order order = this.orders.get(0);
 			this.ordersInProcess.add(order);
 			this.orders.remove(0);

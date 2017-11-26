@@ -17,8 +17,8 @@ import maas.objects.Order;
 @SuppressWarnings("serial")
 public class OrderAgent extends Agent {
 
-	private List<Order> orders = new LinkedList<Order>();
-	private Bakery myBakery;
+	private transient List<Order> orders = new LinkedList<>();
+	private transient Bakery myBakery;
 	private Logger logger;
 
 	public OrderAgent(Bakery bakery) {
@@ -35,7 +35,6 @@ public class OrderAgent extends Agent {
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
-			Logger logger = Logger.getJADELogger(this.getClass().getName());
 			logger.log(Logger.WARNING, e.getMessage(), e);
 			Thread.currentThread().interrupt();
 		}
