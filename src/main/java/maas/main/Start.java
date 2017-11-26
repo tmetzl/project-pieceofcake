@@ -49,10 +49,12 @@ public class Start {
 		Scanner in;
 		try {
 			in = new Scanner(new FileReader("config/" + filename + ".json"));
-			String text = "";
+			
+			StringBuilder bld = new StringBuilder();
 			while (in.hasNext())
-				text = text + in.nextLine();
+			    bld.append(in.nextLine());
 			in.close();
+			String text = bld.toString();
 
 			// Parse scenario as JSONObject
 			JSONObject scenario = new JSONObject(text);
@@ -70,7 +72,7 @@ public class Start {
 
 			// Create a map with the customers as keys and list of orders as
 			// values
-			Map<String, List<Order>> customerOrderMap = new HashMap<String, List<Order>>();
+			Map<String, List<Order>> customerOrderMap = new HashMap<>();
 			for (int i = 0; i < orders.length(); i++) {
 				// Convert each order to a JSONObject
 				JSONObject order = orders.getJSONObject(i);
@@ -86,7 +88,7 @@ public class Start {
 				} else {
 					// Else create a new list with this order and put it into
 					// the map
-					List<Order> customerOrders = new LinkedList<Order>();
+					List<Order> customerOrders = new LinkedList<>();
 					customerOrders.add(orderObject);
 					customerOrderMap.put(customerId, customerOrders);
 				}
