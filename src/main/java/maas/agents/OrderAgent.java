@@ -87,8 +87,6 @@ public class OrderAgent extends Agent {
 						reply.setPerformative(ACLMessage.REFUSE);
 						reply.setContent("not-available");
 					}
-					// orders.add(order);
-					// System.out.println("So you want " + order);
 
 					myAgent.send(reply);
 				} else if (msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
