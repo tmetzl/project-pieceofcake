@@ -49,14 +49,14 @@ public class Start {
 
 	public void loadScenario(String filename) throws StaleProxyException {
 
-		Scanner in;
+		Scanner in = null;
 		try {
 			in = new Scanner(new FileReader("config/" + filename + ".json"));
 			
 			StringBuilder bld = new StringBuilder();
 			while (in.hasNext())
 			    bld.append(in.nextLine());
-			in.close();
+			
 			String text = bld.toString();
 
 			// Parse scenario as JSONObject
@@ -118,7 +118,9 @@ public class Start {
 
 		} catch (FileNotFoundException e) {
 			logger.log(Logger.WARNING, e.getMessage(), e);	
-		} 
+		} finally {
+			in.close();
+		}
 
 	}
 
