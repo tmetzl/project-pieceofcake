@@ -19,7 +19,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="28.0" width="100.0" x="847.0" y="333.0"/>
+          <y:Geometry height="28.0" width="100.0" x="423.5" y="322.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="47.65283203125" x="26.173583984375" y="3.0">Agent<y:LabelModel>
@@ -41,7 +41,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="173.0" width="184.0" x="615.0" y="580.75"/>
+          <y:Geometry height="173.0" width="184.0" x="452.5" y="0.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="118.10546875" x="32.947265625" y="3.0">CustomerAgent<y:LabelModel>
@@ -71,7 +71,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="28.0" width="158.0" x="1208.25" y="333.0"/>
+          <y:Geometry height="28.0" width="158.0" x="617.25" y="659.5"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="78.2802734375" x="39.85986328125" y="3.0">Behaviour<y:LabelModel>
@@ -93,7 +93,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="159.0" width="189.0" x="1192.75" y="558.25"/>
+          <y:Geometry height="159.0" width="189.0" x="554.5" y="256.5"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="85.275390625" x="51.8623046875" y="3.0">PlaceOrder<y:LabelModel>
@@ -122,7 +122,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="116.0" width="158.0" x="818.0" y="637.75"/>
+          <y:Geometry height="116.0" width="158.0" x="264.5" y="28.5"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="89.64892578125" x="34.175537109375" y="3.0">OrderAgent<y:LabelModel>
@@ -148,7 +148,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="28.0" width="207.0" x="1444.0" y="333.0"/>
+          <y:Geometry height="28.0" width="207.0" x="773.5" y="322.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="120.619140625" x="43.1904296875" y="3.0">CyclicBehaviour<y:LabelModel>
@@ -170,7 +170,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="64.0" width="151.0" x="1472.0" y="417.0"/>
+          <y:Geometry height="64.0" width="151.0" x="801.5" y="54.5"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="100.0400390625" x="25.47998046875" y="3.0">OrderService<y:LabelModel>
@@ -192,7 +192,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="232.0" width="352.0" x="996.25" y="899.7499999999998"/>
+          <y:Geometry height="232.0" width="352.0" x="40.5" y="220.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="55.02880859375" x="148.485595703125" y="3.0">Bakery<y:LabelModel>
@@ -224,7 +224,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="279.0" width="227.0" x="585.0" y="922.25"/>
+          <y:Geometry height="279.0" width="227.0" x="322.875" y="534.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="45.99609375" x="90.501953125" y="3.0">Order<y:LabelModel>
@@ -261,7 +261,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="402.9999999999999" width="217.0" x="1466.0000000000002" y="899.7499999999998"/>
+          <y:Geometry height="402.9999999999999" width="217.0" x="20.0" y="472.00000000000006"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="61.35107421875" x="77.824462890625" y="3.0">Product<y:LabelModel>
@@ -305,13 +305,7 @@
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="708.3886250000003" y="470.6625312499998"/>
-            <y:Point x="759.6386250000003" y="470.6625312499998"/>
-            <y:Point x="759.6386250000003" y="470.6625312499998"/>
-            <y:Point x="759.6386250000003" y="470.6625312499998"/>
-            <y:Point x="897.0" y="470.6625312499998"/>
-          </y:Path>
+          <y:Path sx="-46.0" sy="86.5" tx="25.0" ty="-14.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="white_delta"/>
           <y:BendStyle smoothed="false"/>
@@ -322,7 +316,7 @@
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-10.111374999999725" sy="-67.0874687500002" tx="-8.75" ty="0.0"/>
+          <y:Path sx="47.25" sy="79.5" tx="0.0" ty="-14.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="white_delta"/>
           <y:BendStyle smoothed="false"/>
@@ -333,7 +327,10 @@
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:Path sx="52.66666666666667" sy="58.0" tx="-25.0" ty="-14.0">
+            <y:Point x="396.1666666666667" y="188.5"/>
+            <y:Point x="448.5" y="188.5"/>
+          </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="white_delta"/>
           <y:BendStyle smoothed="false"/>
@@ -344,7 +341,7 @@
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:Path sx="0.0" sy="32.0" tx="0.0" ty="-14.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="white_delta"/>
           <y:BendStyle smoothed="false"/>
@@ -356,7 +353,7 @@
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-103.62699999999995" sy="-85.49999999999977" tx="0.0" ty="0.0"/>
+          <y:Path sx="0.0" sy="-201.49999999999994" tx="-88.0" ty="116.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="white_diamond" target="none"/>
           <y:BendStyle smoothed="false"/>
@@ -368,7 +365,12 @@
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="-8.5" ty="-60.3374687500002"/>
+          <y:Path sx="28.375" sy="-139.5" tx="46.0" ty="86.5">
+            <y:Point x="464.75" y="365.5"/>
+            <y:Point x="539.0" y="365.5"/>
+            <y:Point x="539.0" y="188.5"/>
+            <y:Point x="590.5" y="188.5"/>
+          </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="white_diamond" target="none"/>
           <y:BendStyle smoothed="false"/>
@@ -380,10 +382,9 @@
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="698.5" y="806.9125312499998"/>
-            <y:Point x="698.5" y="806.9125312499998"/>
-            <y:Point x="1287.25" y="806.9125312499998"/>
+          <y:Path sx="85.125" sy="-139.5" tx="-47.25" ty="79.5">
+            <y:Point x="521.5" y="431.0"/>
+            <y:Point x="601.75" y="431.0"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="white_diamond" target="none"/>
@@ -396,8 +397,9 @@
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="1172.25" y="695.75"/>
+          <y:Path sx="0.0" sy="-116.0" tx="-52.666666666666686" ty="58.0">
+            <y:Point x="216.5" y="160.0"/>
+            <y:Point x="290.8333333333333" y="160.0"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="white_diamond" target="none"/>
@@ -410,10 +412,9 @@
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="115.0" ty="-105.08746874999997">
-            <y:Point x="698.5" y="911.9125312499998"/>
-            <y:Point x="698.5" y="806.9125312499998"/>
-            <y:Point x="1287.25" y="806.9125312499998"/>
+          <y:Path sx="-85.125" sy="-139.5" tx="88.0" ty="116.0">
+            <y:Point x="351.25" y="467.5"/>
+            <y:Point x="304.5" y="467.5"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="white_diamond" target="none"/>
@@ -426,11 +427,9 @@
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="698.5" y="806.9125312499998"/>
-            <y:Point x="720.8886250000003" y="806.9125312499998"/>
-            <y:Point x="885.8886250000003" y="806.9125312499998"/>
-            <y:Point x="885.8886250000003" y="759.4125312499998"/>
+          <y:Path sx="-28.375" sy="-139.5" tx="0.0" ty="58.0">
+            <y:Point x="408.0" y="204.5"/>
+            <y:Point x="343.5" y="204.5"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="white_diamond" target="none"/>
