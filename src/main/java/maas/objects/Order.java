@@ -82,15 +82,6 @@ public class Order {
 	public String toJSONString() {
 		return this.jsonOrder.toString();
 	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof Order) {
-			Order order2 = (Order) o;
-			if (this.toJSONString().equals(order2.toJSONString()))
-				return true;
-		}
-		return false;
-	}
+
 
 }
