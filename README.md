@@ -24,7 +24,7 @@ Execute the gradle.bat
 It will automatically get the dependencies and start JADE with the configured agents.
 In case you want to clean you workspace run
 
-    gradlew.bat eclipse
+    gradlew.bat clean
     
 ### Linux
 Execute the Gradle Wrapper
