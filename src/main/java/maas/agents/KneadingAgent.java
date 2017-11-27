@@ -3,17 +3,18 @@ package maas.agents;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
 
+@SuppressWarnings("serial")
 public class KneadingAgent extends Agent {
 
 	@Override
 	protected void setup() {
-		// TODO: use the behaviour
-
+		// Printout a welcome message
+		System.out.println("Hello! Kneading-Machine " + getAID().getName() + " is ready.");
+		addBehaviour(new ProcessKneadingRequest());
 	}
 
 	@Override
@@ -31,7 +32,13 @@ public class KneadingAgent extends Agent {
 			this.addSubBehaviour(new ReceiveKneadingRequest());
 			this.addSubBehaviour(new Knead(kneadingTime));
 			this.addSubBehaviour(new RespondToKneadingRequest());
+		}
 
+		@Override
+		public int onEnd() {
+			reset();
+			myAgent.addBehaviour(this);
+			return super.onEnd();
 		}
 
 		private class ReceiveKneadingRequest extends Behaviour {
@@ -42,7 +49,7 @@ public class KneadingAgent extends Agent {
 			public void action() {
 				ACLMessage msg = myAgent.receive();
 				if (msg != null && msg.getPerformative() == ACLMessage.REQUEST) {
-					request = msg.getContent();					
+					request = msg.getContent();
 					kneadingScheduler = msg.getSender();
 					// TODO: extract kneading time
 					requestReceived = true;
@@ -94,7 +101,7 @@ public class KneadingAgent extends Agent {
 			}
 
 		}
-		
+
 		private class RespondToKneadingRequest extends OneShotBehaviour {
 
 			@Override
@@ -105,9 +112,9 @@ public class KneadingAgent extends Agent {
 				reply.setLanguage("English");
 				reply.setOntology("Bakery-order-ontology");
 				myAgent.send(reply);
-				
+
 			}
-			
+
 		}
 
 	}
