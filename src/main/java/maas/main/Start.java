@@ -27,8 +27,11 @@ import maas.objects.Product;
 public class Start {
 
 	private AgentContainer container;
+	private Logger logger;
 
 	public Start(String scenario) throws StaleProxyException {
+		// Create logger
+		logger = Logger.getJADELogger(this.getClass().getName());
 		jade.core.Runtime runtime = jade.core.Runtime.instance();
 		runtime.setCloseVM(true);
 
@@ -39,30 +42,37 @@ public class Start {
 		Profile profile = new ProfileImpl(properties);
 
 		container = runtime.createMainContainer(profile);
-		
 
 		loadScenario(scenario);
 	}
 
 	public void loadScenario(String filename) throws StaleProxyException {
 
-		Scanner in;
-		try {
-			in = new Scanner(new FileReader("config/" + filename + ".json"));
-			String text = "";
+		try (Scanner in = new Scanner(new FileReader("config/" + filename + ".json"))) {
+
+			StringBuilder bld = new StringBuilder();
 			while (in.hasNext())
-				text = text + in.nextLine();
-			in.close();
+				bld.append(in.nextLine());
+
+			String text = bld.toString();
 
 			// Parse scenario as JSONObject
 			JSONObject scenario = new JSONObject(text);
 
-			// Step 1: Process the Orders
+			// Step 1: Process bakeries
+			JSONArray bakeries = scenario.getJSONArray("bakeries");
+
+			for (int i = 0; i < bakeries.length(); i++) {
+				JSONObject bakery = bakeries.getJSONObject(i);
+				createBakery(bakery);
+			}
+
+			// Step 2: Process the Orders
 			JSONArray orders = scenario.getJSONArray("orders");
 
 			// Create a map with the customers as keys and list of orders as
 			// values
-			Map<String, List<Order>> customerOrderMap = new HashMap<String, List<Order>>();
+			Map<String, List<Order>> customerOrderMap = new HashMap<>();
 			for (int i = 0; i < orders.length(); i++) {
 				// Convert each order to a JSONObject
 				JSONObject order = orders.getJSONObject(i);
@@ -78,13 +88,13 @@ public class Start {
 				} else {
 					// Else create a new list with this order and put it into
 					// the map
-					List<Order> customerOrders = new LinkedList<Order>();
+					List<Order> customerOrders = new LinkedList<>();
 					customerOrders.add(orderObject);
 					customerOrderMap.put(customerId, customerOrders);
 				}
 			}
 
-			// Step 2: Process the customers
+			// Step 3: Process the customers
 			JSONArray customers = scenario.getJSONArray("customers");
 
 			for (int i = 0; i < customers.length(); i++) {
@@ -100,19 +110,10 @@ public class Start {
 					createCustomer(customer, customerOrders);
 				}
 			}
-			
-			// Step 3: Process bakeries
-			JSONArray bakeries = scenario.getJSONArray("bakeries");
-			
-			for (int i=0;i<bakeries.length();i++) {
-				JSONObject bakery = bakeries.getJSONObject(i);
-				createBakery(bakery);
-			}
 
 		} catch (FileNotFoundException e) {
-			Logger logger = Logger.getJADELogger(this.getClass().getName());
-			logger.log(Logger.WARNING, e.getMessage(), e);	
-		} 
+			logger.log(Logger.WARNING, e.getMessage(), e);
+		}
 
 	}
 
@@ -130,23 +131,23 @@ public class Start {
 		container.acceptNewAgent(name, agent).start();
 
 	}
-	
+
 	public void createBakery(JSONObject jsonBakery) throws StaleProxyException {
 		String name = jsonBakery.getString("name");
 		String guiId = jsonBakery.getString("guid");
 		JSONObject location = jsonBakery.getJSONObject("location");
 		int locationX = location.getInt("x");
 		int locationY = location.getInt("y");
-		
+
 		Bakery bakery = new Bakery(guiId, name, locationX, locationY);
-		
+
 		JSONArray products = jsonBakery.getJSONArray("products");
-		for (int i=0;i<products.length();i++) {
+		for (int i = 0; i < products.length(); i++) {
 			JSONObject jsonProduct = products.getJSONObject(i);
 			Product product = new Product(jsonProduct.toString());
 			bakery.addProduct(product);
 		}
-		
+
 		container.acceptNewAgent(name, new OrderAgent(bakery)).start();
 	}
 

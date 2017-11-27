@@ -62,16 +62,18 @@ public class Order {
 	 */
 	@Override
 	public String toString() {
-		String s = "Order " + getGuiId() + " from customer " + getCustomerId();
-		s = s + "\nOrderDate (in hours): " + getOrderDate();
-		s = s + "\nDueDate (in hours): " + getDueDate();
-		s = s + "\nProducts: ";
+		StringBuilder bld = new StringBuilder();
+		bld.append("Order " + getGuiId() + " from customer " + getCustomerId());
+		bld.append("\nOrderDate (in hours): " + getOrderDate());
+		bld.append("\nDueDate (in hours): " + getDueDate());
+		bld.append("\nProducts: ");
+		
 		for (int i = 0; i < this.productIds.length - 1; i++) {
-			s = s + "(" + this.productIds[i] + ", " + this.productAmounts[i] + "), ";
+			bld.append("(" + this.productIds[i] + ", " + this.productAmounts[i] + "), ");
 		}
-		s = s + "(" + this.productIds[this.productIds.length - 1] + ", "
-				+ this.productAmounts[this.productIds.length - 1] + ")";
-		return s;
+		bld.append("(" + this.productIds[this.productIds.length - 1] + ", "
+				+ this.productAmounts[this.productIds.length - 1] + ")");
+		return bld.toString();
 	}
 	
 	/**
@@ -81,20 +83,6 @@ public class Order {
 	public String toJSONString() {
 		return this.jsonOrder.toString();
 	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof Order) {
-			Order order2 = (Order) o;
-			if (this.toJSONString().equals(order2.toJSONString()))
-				return true;
-		}
-		return false;
-	}
-	
-	@Override
-	public int hashCode() {
-		return this.toJSONString().hashCode();
-	}
+
 
 }

@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 import maas.objects.Order;
 
-public class OrderGuiIdComprator implements Comparator<Order>{
+public class OrderGuiIdComparator implements Comparator<Order>{
 
 	@Override
 	public int compare(Order order1, Order order2) {
