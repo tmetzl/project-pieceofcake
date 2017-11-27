@@ -6,6 +6,11 @@
 * Tim Metzler @[tmetzl](http://github.com/tmetzl)
 * Sogol Haghighat @[SogolHaghighat](http://github.com/SogolHaghighat)
 
+## Dependencies
+* JADE 4.5.+
+* JUnit 4.12
+* JSON 20171018
+
 ## Howto run
 Just install gradle and run:
 
