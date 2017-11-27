@@ -3,6 +3,7 @@ package maas.agents;
 import jade.core.AID;
 import jade.core.Agent;
 
+@SuppressWarnings("serial")
 public class KneadingSchedulerAgent extends Agent {
 	
 	private AID[] kneadingAgents;
