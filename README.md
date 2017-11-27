@@ -14,19 +14,38 @@
 * JSON 20171018
 
 ## Howto run
-Just install gradle and run:
 
-    gradle run
+### Windows
+
+Execute the gradle.bat
+
+    gradlew.bat run
+    
+It will automatically get the dependencies and start JADE with the configured agents.
+In case you want to clean you workspace run
+
+    gradlew.bat eclipse
+    
+### Linux
+Execute the Gradle Wrapper
+
+    ./gradlew run
 
 It will automatically get the dependencies and start JADE with the configured agents.
 In case you want to clean you workspace run
 
-    gradle clean
+    ./gradlew clean
 
 ## Eclipse
 To use this project with eclipse run
 
-    gradle eclipse
+### Windows
+
+    gradle.bat eclipse
+    
+### Linux
+
+    ./gradlew eclipse
 
 This command will create the necessary eclipse files.
 Afterwards you can import the project folder.
