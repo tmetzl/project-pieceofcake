@@ -12,7 +12,7 @@ addons:
     branches:
       - master
       - Development
-      - Kneading-Feature
+      - Time-Feature
 
 jdk:
     - openjdk8
