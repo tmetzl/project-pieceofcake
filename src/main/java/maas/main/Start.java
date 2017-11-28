@@ -20,6 +20,8 @@ import jade.wrapper.AgentContainer;
 import jade.wrapper.StaleProxyException;
 import maas.agents.CustomerAgent;
 import maas.agents.OrderAgent;
+import maas.agents.StartUpAgent;
+import maas.agents.TimerAgent;
 import maas.objects.Bakery;
 import maas.objects.Order;
 import maas.objects.Product;
@@ -37,13 +39,17 @@ public class Start {
 
 		Properties properties = new ExtendedProperties();
 		properties.put(Profile.MAIN, true);
-		properties.put(Profile.GUI, false);
+		properties.put(Profile.GUI, true);
 
 		Profile profile = new ProfileImpl(properties);
 
 		container = runtime.createMainContainer(profile);
+		
+		container.acceptNewAgent("Timer", TimerAgent.getInstance()).start();
 
 		loadScenario(scenario);
+		
+		container.acceptNewAgent("StartUp", new StartUpAgent()).start();
 	}
 
 	public void loadScenario(String filename) throws StaleProxyException {
