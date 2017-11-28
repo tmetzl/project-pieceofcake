@@ -4,19 +4,20 @@ import java.util.Collections;
 import java.util.List;
 
 import jade.core.AID;
-import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
+import maas.config.Protocols;
 import maas.objects.Order;
 import maas.utils.OrderDateComparator;
 
 @SuppressWarnings("serial")
-public class CustomerAgent extends Agent {
+public class CustomerAgent extends SynchronizedAgent {
 
 	private String guiId;
 	private int type;
@@ -38,20 +39,20 @@ public class CustomerAgent extends Agent {
 
 	@Override
 	protected void setup() {
-		// Create our logger
-		logger = Logger.getJADELogger(this.getClass().getName());
+		super.setup();
 
 		// Printout a welcome message
 		System.out.println("Created the customer " + getAID().getLocalName() + " of type " + this.type
 				+ " at location (" + this.locationX + ", " + this.locationY + ")");
 
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			logger.log(Logger.WARNING, e.getMessage(), e);
-			Thread.currentThread().interrupt();
-		}
-		addBehaviour(new PlaceOrder());
+		SequentialBehaviour seq = new SequentialBehaviour();
+		
+		seq.addSubBehaviour(new SynchronizeClock());
+		seq.addSubBehaviour(new WaitForStart());
+		seq.addSubBehaviour(new PlaceOrder());
+
+		addBehaviour(seq);
+
 	}
 
 	@Override
@@ -67,16 +68,24 @@ public class CustomerAgent extends Agent {
 		private AID[] bakeries;
 
 		public PlaceOrder() {
+			this.addSubBehaviour(new SynchronizeClock());
 			this.addSubBehaviour(new UpdateBakeries());
 			this.addSubBehaviour(new RequestOffers());
 			this.addSubBehaviour(new ReceiveOffers());
 			this.addSubBehaviour(new OrderFromBestSeller());
 		}
+		
+//		public int onEnd() {
+//			reset();
+//			myAgent.addBehaviour(this);
+//			return super.onEnd();
+//		}
 
 		private class UpdateBakeries extends OneShotBehaviour {
 
 			@Override
 			public void action() {
+				System.out.println("Updated Bakeries");
 				DFAgentDescription template = new DFAgentDescription();
 				ServiceDescription sd = new ServiceDescription();
 				sd.setType("bakery");
@@ -105,6 +114,7 @@ public class CustomerAgent extends Agent {
 				}
 				msg.setLanguage("English");
 				msg.setOntology("Bakery-order-ontology");
+				msg.setProtocol(Protocols.ORDER);
 				msg.setReplyWith("offer-request-" + System.currentTimeMillis());
 				String content = orders.get(0).toJSONString();
 				msg.setContent(content);
@@ -119,18 +129,19 @@ public class CustomerAgent extends Agent {
 
 			@Override
 			public void action() {
-				ACLMessage answer = myAgent.receive();
-				if (answer != null) {
+				MessageTemplate msgTemplate = MessageTemplate.MatchProtocol(Protocols.ORDER);
+				ACLMessage offer = myAgent.receive(msgTemplate);
+				if (offer != null) {
 
-					String answerContent = answer.getContent();
+					String answerContent = offer.getContent();
 
-					if (answer.getPerformative() == ACLMessage.PROPOSE) {
-						System.out.println("Price: " + answerContent);
+					if (offer.getPerformative() == ACLMessage.PROPOSE) {
+						//System.out.println("Price: " + answerContent);
 						int price = Integer.parseInt(answerContent);
 
 						if (bestSeller == null || price < bestPrice) {
 							bestPrice = price;
-							bestSeller = answer.getSender();
+							bestSeller = offer.getSender();
 						}
 					}
 					numOfReplies++;
@@ -162,6 +173,7 @@ public class CustomerAgent extends Agent {
 					msg.addReceiver(bestSeller);
 					msg.setLanguage("English");
 					msg.setOntology("Bakery-order-ontology");
+					msg.setProtocol(Protocols.ORDER);
 					msg.setReplyWith("offer-confirm-" + System.currentTimeMillis());
 					String content = orders.get(0).toJSONString();
 					msg.setContent(content);
