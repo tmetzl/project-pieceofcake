@@ -14,12 +14,12 @@ public class Order implements Serializable {
 	private int dueDate;
 	private String[] productIds;
 	private int[] productAmounts;
-	private JSONObject jsonOrder;
+	private String jsonOrder;
 
 	public Order(String jsonOrder) {
 		// Parse the jsonOrder
 		JSONObject order = new JSONObject(jsonOrder);
-		this.jsonOrder = order;
+		this.jsonOrder = jsonOrder;
 		this.guiId = order.getString("guid");
 		this.customerId = order.getString("customer_id");
 		JSONObject orderDateJSON = order.getJSONObject("order_date");
@@ -85,7 +85,7 @@ public class Order implements Serializable {
 	 * @return
 	 */
 	public String toJSONString() {
-		return this.jsonOrder.toString();
+		return this.jsonOrder;
 	}
 
 
