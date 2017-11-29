@@ -54,7 +54,7 @@ public class Start {
 
 	public void loadScenario(String filename) throws StaleProxyException {
 
-		try (Scanner in = new Scanner(new FileReader("config/" + filename + ".json"))) {
+		try (Scanner in = new Scanner(new FileReader("src/main/config/" + filename + ".json"))) {
 
 			StringBuilder bld = new StringBuilder();
 			while (in.hasNext())
