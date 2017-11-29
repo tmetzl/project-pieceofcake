@@ -17,8 +17,9 @@ import maas.config.Protocols;
 import maas.objects.Order;
 import maas.utils.OrderDateComparator;
 
-@SuppressWarnings("serial")
 public class CustomerAgent extends SynchronizedAgent {
+
+	private static final long serialVersionUID = -7440684252102998234L;
 
 	private String guiId;
 	private int type;
@@ -46,8 +47,8 @@ public class CustomerAgent extends SynchronizedAgent {
 		super.setup();
 
 		// Printout a welcome message
-		System.out.println("Created the customer " + getAID().getLocalName() + " of type " + this.type
-				+ " at location (" + this.locationX + ", " + this.locationY + ")");
+		System.out.println("Created the customer " + getAID().getLocalName() + " of type " + this.type + " with guid "
+				+ guiId + " at location (" + this.locationX + ", " + this.locationY + ")");
 
 		SequentialBehaviour seq = new SequentialBehaviour();
 
@@ -65,6 +66,8 @@ public class CustomerAgent extends SynchronizedAgent {
 	}
 
 	private class PlaceOrder extends SequentialBehaviour {
+
+		private static final long serialVersionUID = -7046069112173445913L;
 
 		private int numOfReplies = 0;
 		private double bestPrice = 0;
@@ -92,6 +95,8 @@ public class CustomerAgent extends SynchronizedAgent {
 
 		private class DelayUntilNextOrder extends Behaviour {
 
+			private static final long serialVersionUID = -2913887133905014293L;
+
 			private boolean waitingFinished = false;
 
 			@Override
@@ -116,6 +121,8 @@ public class CustomerAgent extends SynchronizedAgent {
 
 		private class UpdateBakeries extends OneShotBehaviour {
 
+			private static final long serialVersionUID = 8365966822569563888L;
+
 			@Override
 			public void action() {
 				DFAgentDescription template = new DFAgentDescription();
@@ -137,13 +144,14 @@ public class CustomerAgent extends SynchronizedAgent {
 
 		private class RequestOffers extends OneShotBehaviour {
 
+			private static final long serialVersionUID = 1828563460495980614L;
+
 			@Override
 			public void action() {
 				long time = getScenarioTime();
-				
-				String output = String.format("\nDay %d Hour %d\n", time/24, time%24);
-				System.out.println(output + myAgent.getAID().getLocalName()
-						+ ": Requesting offers for " + order);
+
+				String output = String.format("\nDay %d Hour %d\n", time / 24, time % 24);
+				System.out.println(output + myAgent.getAID().getLocalName() + ": Requesting offers for " + order);
 				ACLMessage msg = new ACLMessage(ACLMessage.CFP);
 				// Add all known bakeries as receivers
 				for (int i = 0; i < bakeries.length; i++) {
@@ -161,6 +169,8 @@ public class CustomerAgent extends SynchronizedAgent {
 		}
 
 		private class ReceiveOffers extends Behaviour {
+
+			private static final long serialVersionUID = 1435087248061140988L;
 
 			private boolean allOffersReceived = false;
 
@@ -200,13 +210,15 @@ public class CustomerAgent extends SynchronizedAgent {
 
 		private class OrderFromBestSeller extends OneShotBehaviour {
 
+			private static final long serialVersionUID = 4933205434400567122L;
+
 			@Override
 			public void action() {
 				if (bestSeller != null) {
 					String output = String.format("%s: The best offer of EUR %.2f comes from %s.",
 							getAID().getLocalName(), bestPrice, bestSeller.getLocalName());
 					System.out.println(output);
-					
+
 					ACLMessage msg = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
 					// Add all known bakeries as receivers
 					msg.addReceiver(bestSeller);
