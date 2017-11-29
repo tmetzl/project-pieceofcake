@@ -59,15 +59,15 @@ public class SynchronizedAgent extends Agent {
 		} catch (FIPAException fe) {
 			logger.log(Logger.WARNING, fe.getMessage(), fe);
 		}
-		System.out.println(getAID().getLocalName() + ": Terminating.");
+		logger.log(Logger.INFO, getAID().getLocalName() + ": Terminating.");
 	}
 
 	protected long getSynchronizedTime() {
 		return System.currentTimeMillis() + timeOffset;
 	}
-	
+
 	protected long getScenarioTime() {
-		return (getSynchronizedTime() - startUpTime)/1000l;
+		return (getSynchronizedTime() - startUpTime) / 1000l;
 	}
 
 	class SynchronizeClock extends SequentialBehaviour {
@@ -159,32 +159,31 @@ public class SynchronizedAgent extends Agent {
 		}
 
 	}
-	
+
 	class WaitForStart extends SequentialBehaviour {
-		
+
 		public WaitForStart() {
 			this.addSubBehaviour(new ReceiveStartingTime());
 			this.addSubBehaviour(new DelayUntilStart());
 		}
-		
+
 		class ReceiveStartingTime extends Behaviour {
 
 			private boolean startingTimeReceived = false;
 
 			@Override
 			public void action() {
-				
-					MessageTemplate startUpMessageTemplate = MessageTemplate.MatchProtocol(Protocols.STARTUP);
-					ACLMessage msg = myAgent.receive(startUpMessageTemplate);
-					if (msg != null) {
-						startUpTime = Long.parseLong(msg.getContent());
-						long remainingTime = startUpTime - getSynchronizedTime();
-						System.out.println(myAgent.getLocalName() + ": Starting in " + remainingTime);
-						startingTimeReceived = true;
-					} else {
-						block();
-					}
 
+				MessageTemplate startUpMessageTemplate = MessageTemplate.MatchProtocol(Protocols.STARTUP);
+				ACLMessage msg = myAgent.receive(startUpMessageTemplate);
+				if (msg != null) {
+					startUpTime = Long.parseLong(msg.getContent());
+					long remainingTime = startUpTime - getSynchronizedTime();
+					logger.log(Logger.INFO, myAgent.getLocalName() + ": Starting in " + remainingTime +" ms.");
+					startingTimeReceived = true;
+				} else {
+					block();
+				}
 
 			}
 
@@ -194,7 +193,7 @@ public class SynchronizedAgent extends Agent {
 			}
 
 		}
-		
+
 		private class DelayUntilStart extends Behaviour {
 
 			private boolean waitingFinished = false;
@@ -203,9 +202,9 @@ public class SynchronizedAgent extends Agent {
 			public void action() {
 				long currentTime = getSynchronizedTime();
 				long remainingTime = startUpTime - currentTime;
-				
+
 				if (currentTime >= startUpTime) {
-					System.out.println("Start");
+					logger.log(Logger.INFO, "Started.");
 					waitingFinished = true;
 				} else {
 					block(remainingTime);
@@ -220,7 +219,5 @@ public class SynchronizedAgent extends Agent {
 
 		}
 	}
-
-	
 
 }

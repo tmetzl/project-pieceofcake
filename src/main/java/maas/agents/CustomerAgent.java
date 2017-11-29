@@ -47,8 +47,9 @@ public class CustomerAgent extends SynchronizedAgent {
 		super.setup();
 
 		// Printout a welcome message
-		System.out.println("Created the customer " + getAID().getLocalName() + " of type " + this.type + " with guid "
-				+ guiId + " at location (" + this.locationX + ", " + this.locationY + ")");
+		String welcomeMessage = String.format("Customer %s of type %d at location (%d,%d) is ready!",
+				getAID().getLocalName(), type, locationX, locationY);
+		logger.log(Logger.INFO, welcomeMessage);
 
 		SequentialBehaviour seq = new SequentialBehaviour();
 
@@ -58,11 +59,6 @@ public class CustomerAgent extends SynchronizedAgent {
 
 		addBehaviour(seq);
 
-	}
-
-	@Override
-	protected void takeDown() {
-		System.out.println(getAID().getLocalName() + ": Terminating.");
 	}
 
 	private class PlaceOrder extends SequentialBehaviour {
@@ -152,7 +148,8 @@ public class CustomerAgent extends SynchronizedAgent {
 				long time = getScenarioTime();
 
 				String output = String.format("%nDay %d Hour %d%n", time / 24, time % 24);
-				System.out.println(output + myAgent.getAID().getLocalName() + ": Requesting offers for " + order);
+				logger.log(Logger.INFO, output + myAgent.getAID().getLocalName() + ": Requesting offers for " + order);
+
 				ACLMessage msg = new ACLMessage(ACLMessage.CFP);
 				// Add all known bakeries as receivers
 				for (int i = 0; i < bakeries.length; i++) {
@@ -217,7 +214,7 @@ public class CustomerAgent extends SynchronizedAgent {
 				if (bestSeller != null) {
 					String output = String.format("%s: The best offer of EUR %.2f comes from %s.",
 							getAID().getLocalName(), bestPrice, bestSeller.getLocalName());
-					System.out.println(output);
+					logger.log(Logger.INFO, output);
 
 					ACLMessage msg = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
 					// Add all known bakeries as receivers
@@ -232,7 +229,7 @@ public class CustomerAgent extends SynchronizedAgent {
 					placedOrders.add(order);
 
 				} else {
-					System.out.println(myAgent.getLocalName() + ": No offers received or products not available.");
+					logger.log(Logger.INFO, myAgent.getLocalName() + ": No offers received or products not available.");
 					failedOrders.add(order);
 				}
 			}

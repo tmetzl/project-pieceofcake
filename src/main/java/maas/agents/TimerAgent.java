@@ -39,7 +39,9 @@ public class TimerAgent extends Agent {
 		logger = Logger.getJADELogger(this.getClass().getName());
 
 		// Printout a welcome message
-		System.out.println("Hello! Timer-agent " + getAID().getName() + " is ready.");
+		String welcomeMessage = String.format("Timer agent %s is ready!", getAID().getLocalName());
+		logger.log(Logger.INFO, welcomeMessage);
+
 		
 		// Register the bakery service in the yellow pages
 		DFAgentDescription dfd = new DFAgentDescription();
@@ -66,7 +68,7 @@ public class TimerAgent extends Agent {
 		} catch (FIPAException fe) {
 			logger.log(Logger.WARNING, fe.getMessage(), fe);
 		}
-		System.out.println(getAID().getLocalName() + ": Terminating.");
+		logger.log(Logger.INFO, getAID().getLocalName() + ": Terminating.");
 	}
 	
 	private class HandleTimeRequest extends CyclicBehaviour {

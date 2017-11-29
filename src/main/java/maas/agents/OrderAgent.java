@@ -28,7 +28,8 @@ public class OrderAgent extends SynchronizedAgent {
 	protected void setup() {
 		super.setup();
 		// Printout a welcome message
-		System.out.println("Hello! Baker-agent " + getAID().getName() + " is ready.");
+		String welcomeMessage = String.format("Bakery %s is ready!", getAID().getLocalName());
+		logger.log(Logger.INFO, welcomeMessage);
 
 		try {
 			Thread.sleep(1000);
@@ -56,7 +57,7 @@ public class OrderAgent extends SynchronizedAgent {
 		} catch (FIPAException fe) {
 			logger.log(Logger.WARNING, fe.getMessage(), fe);
 		}
-		System.out.println(getAID().getLocalName() + ": Terminating.");
+		logger.log(Logger.INFO, getAID().getLocalName() + ": Terminating.");
 	}
 
 	// Cyclic order receiving behavior

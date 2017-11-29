@@ -28,8 +28,6 @@ public class Bakery {
 		this.orders = new LinkedList<>();
 		this.ordersInProcess = new LinkedList<>();
 		this.cookBook = new HashMap<>();
-
-		System.out.println("Bakery " + name + " at location (" + locationX + ", " + locationY + ")");
 	}
 
 	public Product getProductByName(String productName) {

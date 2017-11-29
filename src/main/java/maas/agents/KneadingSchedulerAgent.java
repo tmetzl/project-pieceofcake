@@ -2,6 +2,7 @@ package maas.agents;
 
 import jade.core.AID;
 import jade.core.behaviours.SequentialBehaviour;
+import jade.util.Logger;
 
 @SuppressWarnings("serial")
 public class KneadingSchedulerAgent extends SynchronizedAgent {
@@ -12,10 +13,11 @@ public class KneadingSchedulerAgent extends SynchronizedAgent {
 	protected void setup() {
 		super.setup();
 		// Printout a welcome message
-		System.out.println("Hello! Kneading-Scheduler " + getAID().getName() + " is ready.");
-		
+		String welcomeMessage = String.format("Kneading-Scheduler %s is ready!", getAID().getLocalName());
+		logger.log(Logger.INFO, welcomeMessage);
+
 		SequentialBehaviour seq = new SequentialBehaviour();
-		
+
 		seq.addSubBehaviour(new SynchronizeClock());
 		seq.addSubBehaviour(new WaitForStart());
 
@@ -24,7 +26,7 @@ public class KneadingSchedulerAgent extends SynchronizedAgent {
 
 	@Override
 	protected void takeDown() {
-		System.out.println(getAID().getLocalName() + ": Terminating.");
+		logger.log(Logger.INFO, getAID().getLocalName() + ": Terminating.");
 	}
 
 }

@@ -22,7 +22,8 @@ public class StartUpAgent extends Agent {
 		logger = Logger.getJADELogger(this.getClass().getName());
 
 		// Printout a welcome message
-		System.out.println("Hello! StartUp-agent " + getAID().getName() + " is ready.");
+		String welcomeMessage = String.format("StartUp agent %s is ready!", getAID().getLocalName());
+		logger.log(Logger.INFO, welcomeMessage);
 
 		try {
 			Thread.sleep(20000);
@@ -59,7 +60,6 @@ public class StartUpAgent extends Agent {
 					for (int i = 0; i < result.length; i++) {
 						agents[i] = result[i].getName();
 					}
-					System.out.println("Found " + agents.length + " synchronized agents.");
 				} catch (FIPAException fe) {
 					logger.log(Logger.WARNING, fe.getMessage(), fe);
 				}
