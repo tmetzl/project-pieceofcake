@@ -75,7 +75,6 @@ public class TimerAgent extends Agent {
 		public void action() {
 			ACLMessage msg = myAgent.receive();
 			if (msg != null) {
-				//System.out.println("ReceivedRequest from "+msg.getSender());
 				ACLMessage reply = msg.createReply();
 				reply.setPerformative(ACLMessage.INFORM);
 				reply.setProtocol(Protocols.TIME);
