@@ -85,6 +85,7 @@ public class CustomerAgent extends SynchronizedAgent {
 			this.addSubBehaviour(new OrderFromBestSeller());
 		}
 
+		@Override
 		public int onEnd() {
 			orders.remove(0);
 			if (!orders.isEmpty()) {
@@ -150,7 +151,7 @@ public class CustomerAgent extends SynchronizedAgent {
 			public void action() {
 				long time = getScenarioTime();
 
-				String output = String.format("\nDay %d Hour %d\n", time / 24, time % 24);
+				String output = String.format("%nDay %d Hour %d%n", time / 24, time % 24);
 				System.out.println(output + myAgent.getAID().getLocalName() + ": Requesting offers for " + order);
 				ACLMessage msg = new ACLMessage(ACLMessage.CFP);
 				// Add all known bakeries as receivers
@@ -183,7 +184,6 @@ public class CustomerAgent extends SynchronizedAgent {
 					String answerContent = offer.getContent();
 
 					if (offer.getPerformative() == ACLMessage.PROPOSE) {
-						// System.out.println("Price: " + answerContent);
 						double price = Double.parseDouble(answerContent);
 
 						if (bestSeller == null || price < bestPrice) {

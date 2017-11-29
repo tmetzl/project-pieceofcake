@@ -90,7 +90,6 @@ public class OrderAgent extends SynchronizedAgent {
 					Order order = new Order(jsonOrder);
 					// Add to active orders
 					orders.add(order);
-					//System.out.println(myAgent.getLocalName() + ": Customer " + msg.getSender().getLocalName() + " ordered:\n" + order + ".");
 				}
 			} else {
 				block();
