@@ -39,8 +39,8 @@ public class Bakery {
 		return null;
 	}
 	
-	public Integer getPrice(Order order) {
-		int price = 0;
+	public Double getPrice(Order order) {
+		double price = 0;
 		
 		String[] productIds = order.getProductIds();
 		int[] productAmount = order.getProductAmounts();
