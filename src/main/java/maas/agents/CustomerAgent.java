@@ -1,6 +1,7 @@
 package maas.agents;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import jade.core.AID;
@@ -24,7 +25,8 @@ public class CustomerAgent extends SynchronizedAgent {
 	private int locationX;
 	private int locationY;
 	private transient List<Order> orders;
-	private Logger logger;
+	private transient List<Order> placedOrders;
+	private transient List<Order> failedOrders;
 
 	public CustomerAgent(String guiId, int type, int locationX, int locationY, List<Order> orders) {
 		this.guiId = guiId;
@@ -34,6 +36,8 @@ public class CustomerAgent extends SynchronizedAgent {
 
 		Collections.sort(orders, new OrderDateComparator());
 		this.orders = orders;
+		this.placedOrders = new LinkedList<>();
+		this.failedOrders = new LinkedList<>();
 
 	}
 
@@ -46,10 +50,10 @@ public class CustomerAgent extends SynchronizedAgent {
 				+ " at location (" + this.locationX + ", " + this.locationY + ")");
 
 		SequentialBehaviour seq = new SequentialBehaviour();
-		
+
 		seq.addSubBehaviour(new SynchronizeClock());
 		seq.addSubBehaviour(new WaitForStart());
-		seq.addSubBehaviour(new PlaceOrder());
+		seq.addSubBehaviour(new PlaceOrder(orders.get(0)));
 
 		addBehaviour(seq);
 
@@ -63,29 +67,57 @@ public class CustomerAgent extends SynchronizedAgent {
 	private class PlaceOrder extends SequentialBehaviour {
 
 		private int numOfReplies = 0;
-		private int bestPrice = 0;
+		private double bestPrice = 0;
 		private AID bestSeller;
 		private AID[] bakeries;
+		private Order order;
 
-		public PlaceOrder() {
+		public PlaceOrder(Order order) {
+			this.order = order;
 			this.addSubBehaviour(new SynchronizeClock());
+			this.addSubBehaviour(new DelayUntilNextOrder());
 			this.addSubBehaviour(new UpdateBakeries());
 			this.addSubBehaviour(new RequestOffers());
 			this.addSubBehaviour(new ReceiveOffers());
 			this.addSubBehaviour(new OrderFromBestSeller());
 		}
-		
-//		public int onEnd() {
-//			reset();
-//			myAgent.addBehaviour(this);
-//			return super.onEnd();
-//		}
+
+		public int onEnd() {
+			orders.remove(0);
+			if (!orders.isEmpty()) {
+				myAgent.addBehaviour(new PlaceOrder(orders.get(0)));
+			}
+			return 0;
+		}
+
+		private class DelayUntilNextOrder extends Behaviour {
+
+			private boolean waitingFinished = false;
+
+			@Override
+			public void action() {
+				long currentTime = getScenarioTime();
+				long remainingTime = order.getOrderDate() - currentTime;
+
+				if (currentTime >= order.getOrderDate()) {
+					waitingFinished = true;
+				} else {
+					block(remainingTime * 1000l);
+				}
+
+			}
+
+			@Override
+			public boolean done() {
+				return waitingFinished;
+			}
+
+		}
 
 		private class UpdateBakeries extends OneShotBehaviour {
 
 			@Override
 			public void action() {
-				System.out.println("Updated Bakeries");
 				DFAgentDescription template = new DFAgentDescription();
 				ServiceDescription sd = new ServiceDescription();
 				sd.setType("bakery");
@@ -107,6 +139,11 @@ public class CustomerAgent extends SynchronizedAgent {
 
 			@Override
 			public void action() {
+				long time = getScenarioTime();
+				
+				String output = String.format("\nDay %d Hour %d\n", time/24, time%24);
+				System.out.println(output + myAgent.getAID().getLocalName()
+						+ ": Requesting offers for " + order);
 				ACLMessage msg = new ACLMessage(ACLMessage.CFP);
 				// Add all known bakeries as receivers
 				for (int i = 0; i < bakeries.length; i++) {
@@ -116,7 +153,7 @@ public class CustomerAgent extends SynchronizedAgent {
 				msg.setOntology("Bakery-order-ontology");
 				msg.setProtocol(Protocols.ORDER);
 				msg.setReplyWith("offer-request-" + System.currentTimeMillis());
-				String content = orders.get(0).toJSONString();
+				String content = order.toJSONString();
 				msg.setContent(content);
 				myAgent.send(msg);
 			}
@@ -136,8 +173,8 @@ public class CustomerAgent extends SynchronizedAgent {
 					String answerContent = offer.getContent();
 
 					if (offer.getPerformative() == ACLMessage.PROPOSE) {
-						//System.out.println("Price: " + answerContent);
-						int price = Integer.parseInt(answerContent);
+						// System.out.println("Price: " + answerContent);
+						double price = Double.parseDouble(answerContent);
 
 						if (bestSeller == null || price < bestPrice) {
 							bestPrice = price;
@@ -166,8 +203,10 @@ public class CustomerAgent extends SynchronizedAgent {
 			@Override
 			public void action() {
 				if (bestSeller != null) {
-					System.out.println(myAgent.getLocalName() + ": The best offer of EUR " + bestPrice + " comes from "
-							+ bestSeller.getLocalName() + ".");
+					String output = String.format("%s: The best offer of EUR %.2f comes from %s.",
+							getAID().getLocalName(), bestPrice, bestSeller.getLocalName());
+					System.out.println(output);
+					
 					ACLMessage msg = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
 					// Add all known bakeries as receivers
 					msg.addReceiver(bestSeller);
@@ -175,11 +214,14 @@ public class CustomerAgent extends SynchronizedAgent {
 					msg.setOntology("Bakery-order-ontology");
 					msg.setProtocol(Protocols.ORDER);
 					msg.setReplyWith("offer-confirm-" + System.currentTimeMillis());
-					String content = orders.get(0).toJSONString();
+					String content = order.toJSONString();
 					msg.setContent(content);
 					myAgent.send(msg);
+					placedOrders.add(order);
+
 				} else {
 					System.out.println(myAgent.getLocalName() + ": No offers received or products not available.");
+					failedOrders.add(order);
 				}
 			}
 
