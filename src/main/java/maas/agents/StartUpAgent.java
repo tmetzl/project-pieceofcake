@@ -79,7 +79,7 @@ public class StartUpAgent extends Agent {
 			@Override
 			public void action() {
 				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-				// Add all known bakeries as receivers
+				// Add all known agents as receivers
 				for (int i = 0; i < agents.length; i++) {
 					msg.addReceiver(agents[i]);
 				}
@@ -88,7 +88,6 @@ public class StartUpAgent extends Agent {
 				long startUpTime = System.currentTimeMillis() + startUpDelay;
 				msg.setContent(String.valueOf(startUpTime));
 				myAgent.send(msg);
-				//System.out.println("Scheduled start at: " + startUpTime);
 			}
 
 		}
