@@ -35,6 +35,17 @@ public class StartUpAgent extends Agent {
 		addBehaviour(new StartUp());
 
 	}
+	
+	@Override
+	protected void takeDown() {
+		// Remove from the yellow pages
+		try {
+			DFService.deregister(this);
+		} catch (FIPAException fe) {
+			logger.log(Logger.WARNING, fe.getMessage(), fe);
+		}
+		logger.log(Logger.INFO, getAID().getLocalName() + ": Terminating.");
+	}
 
 	private class StartUp extends SequentialBehaviour {
 

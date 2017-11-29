@@ -179,7 +179,8 @@ public class SynchronizedAgent extends Agent {
 				if (msg != null) {
 					startUpTime = Long.parseLong(msg.getContent());
 					long remainingTime = startUpTime - getSynchronizedTime();
-					logger.log(Logger.INFO, myAgent.getLocalName() + ": Starting in " + remainingTime +" ms.");
+					String output = String.format("Starting in %d ms.", remainingTime);
+					logger.log(Logger.INFO, output);
 					startingTimeReceived = true;
 				} else {
 					block();

@@ -147,8 +147,8 @@ public class CustomerAgent extends SynchronizedAgent {
 			public void action() {
 				long time = getScenarioTime();
 
-				String output = String.format("%nDay %d Hour %d%n", time / 24, time % 24);
-				logger.log(Logger.INFO, output + myAgent.getAID().getLocalName() + ": Requesting offers for " + order);
+				String output = String.format("%nDay %d Hour %d%n%s", time / 24, time % 24, order);
+				logger.log(Logger.INFO, output);
 
 				ACLMessage msg = new ACLMessage(ACLMessage.CFP);
 				// Add all known bakeries as receivers
