@@ -31,10 +31,6 @@ public class SynchronizedAgent extends Agent {
 		sd.setName("synchronized-agent");
 		sd.addProtocols(Protocols.STARTUP);
 		registerService(sd);
-
-		//addBehaviour(new SynchronizeClock());
-		//addBehaviour(new WaitForStart());
-
 	}
 
 	protected void registerService(ServiceDescription sd) {
@@ -68,6 +64,10 @@ public class SynchronizedAgent extends Agent {
 
 	protected long getSynchronizedTime() {
 		return System.currentTimeMillis() + timeOffset;
+	}
+	
+	protected long getScenarioTime() {
+		return (getSynchronizedTime() - startUpTime)/1000l;
 	}
 
 	class SynchronizeClock extends SequentialBehaviour {
@@ -143,10 +143,8 @@ public class SynchronizedAgent extends Agent {
 					long timerAgentTime = Long.parseLong(msg.getContent());
 					// Calculate the round trip time RTT
 					long roundTripTime = receiveTime - sendTime;
-					// System.out.println("RTT: " + roundTripTime);
 					long expectedTime = timerAgentTime + roundTripTime / 2l;
 					timeOffset = expectedTime - receiveTime;
-					//System.out.println("Offset is now " + timeOffset);
 					replyReceived = true;
 				} else {
 					block();
@@ -166,7 +164,6 @@ public class SynchronizedAgent extends Agent {
 		
 		public WaitForStart() {
 			this.addSubBehaviour(new ReceiveStartingTime());
-			//startUpTime = System.currentTimeMillis() + 10000;
 			this.addSubBehaviour(new DelayUntilStart());
 		}
 		
@@ -206,7 +203,7 @@ public class SynchronizedAgent extends Agent {
 			public void action() {
 				long currentTime = getSynchronizedTime();
 				long remainingTime = startUpTime - currentTime;
-				//System.out.println(currentTime+" "+startUpTime);
+				
 				if (currentTime >= startUpTime) {
 					System.out.println("Start");
 					waitingFinished = true;
@@ -218,9 +215,6 @@ public class SynchronizedAgent extends Agent {
 
 			@Override
 			public boolean done() {
-				if (waitingFinished) {
-					System.out.println("Start completed");
-				}
 				return waitingFinished;
 			}
 
