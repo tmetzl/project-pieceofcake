@@ -19,7 +19,6 @@ public class OrderAgent extends SynchronizedAgent {
 
 	private transient List<Order> orders = new LinkedList<>();
 	private transient Bakery myBakery;
-	//private Logger logger;
 
 	public OrderAgent(Bakery bakery) {
 		this.myBakery = bakery;
@@ -73,7 +72,7 @@ public class OrderAgent extends SynchronizedAgent {
 					Order order = new Order(jsonOrder);
 
 					// Get the price of the order
-					Integer price = myBakery.getPrice(order);
+					Double price = myBakery.getPrice(order);
 					ACLMessage reply = msg.createReply();
 					if (price != null) {
 						reply.setPerformative(ACLMessage.PROPOSE);
