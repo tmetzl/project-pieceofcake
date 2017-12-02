@@ -25,9 +25,9 @@ public class CustomerAgent extends SynchronizedAgent {
 	private int type;
 	private int locationX;
 	private int locationY;
-	private transient List<Order> orders;
-	private transient List<Order> placedOrders;
-	private transient List<Order> failedOrders;
+	private List<Order> orders;
+	private List<Order> placedOrders;
+	private List<Order> failedOrders;
 
 	public CustomerAgent(String guiId, int type, int locationX, int locationY, List<Order> orders) {
 		this.guiId = guiId;

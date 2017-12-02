@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.SequentialBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -44,8 +45,10 @@ public class OrderAgent extends SynchronizedAgent {
 		sd.setName("Bakery-ordering");		
 		registerService(sd);
 		
-		addBehaviour(new SynchronizeClock());
-		addBehaviour(new WaitForStart());
+		SequentialBehaviour seq = new SequentialBehaviour();
+		seq.addSubBehaviour(new SynchronizeClock());
+		seq.addSubBehaviour(new WaitForStart());
+		addBehaviour(seq);
 		addBehaviour(new OrderService());
 	}
 

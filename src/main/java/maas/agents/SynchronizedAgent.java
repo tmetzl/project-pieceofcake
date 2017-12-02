@@ -121,6 +121,7 @@ public class SynchronizedAgent extends Agent {
 				timeRequest.addReceiver(timerAgent);
 				timeRequest.setLanguage("English");
 				timeRequest.setOntology("Bakery-order-ontology");
+				timeRequest.setProtocol(Protocols.TIME);
 				sendTime = System.currentTimeMillis();
 				timeRequest.setContent(String.valueOf(sendTime));
 				myAgent.send(timeRequest);

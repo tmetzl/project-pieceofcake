@@ -7,6 +7,7 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
 import maas.config.Protocols;
 
@@ -43,7 +44,7 @@ public class TimerAgent extends Agent {
 		logger.log(Logger.INFO, welcomeMessage);
 
 		
-		// Register the bakery service in the yellow pages
+		// Register the timer agent service in the yellow pages
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
 		ServiceDescription sd = new ServiceDescription();
@@ -75,7 +76,8 @@ public class TimerAgent extends Agent {
 
 		@Override
 		public void action() {
-			ACLMessage msg = myAgent.receive();
+			MessageTemplate template = MessageTemplate.MatchProtocol(Protocols.TIME);
+			ACLMessage msg = myAgent.receive(template);
 			if (msg != null) {
 				ACLMessage reply = msg.createReply();
 				reply.setPerformative(ACLMessage.INFORM);
