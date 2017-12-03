@@ -13,6 +13,7 @@ addons:
       - master
       - Development
       - Kneading-Feature
+      - KneadingScheduler-Feature
 
 jdk:
     - openjdk8
