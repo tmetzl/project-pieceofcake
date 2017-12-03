@@ -51,7 +51,8 @@ public class KneadingAgent extends Agent {
 				if (msg != null && msg.getPerformative() == ACLMessage.REQUEST) {
 					request = msg.getContent();
 					kneadingScheduler = msg.getSender();
-					// TODO: extract kneading time
+					// TODO: extract kneading time - maybe a better way???
+					kneadingTime = Long.parseLong(request);
 					requestReceived = true;
 
 				} else {
