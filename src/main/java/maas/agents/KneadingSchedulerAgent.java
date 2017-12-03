@@ -1,5 +1,6 @@
 package maas.agents;
 
+import java.util.Arrays;
 import java.util.List;
 
 import jade.core.AID;
@@ -17,15 +18,23 @@ import maas.objects.Product;
 public class KneadingSchedulerAgent extends Agent {
 
 	private AID[] kneadingAgents;
-	private transient Bakery myBakery;
-	private Logger logger;
-	private List<Order> todaysOrders;
+	private String[] listOfDough;
+	private Bakery myBakery;
+	boolean[] kneadingMachineFree;
+	int myFreeMachine;
+
+	public KneadingSchedulerAgent(AID[] kneadingAgents) {
+		this.kneadingAgents = kneadingAgents;
+		this.kneadingMachineFree = new boolean[kneadingAgents.length];
+		Arrays.fill(kneadingMachineFree, true);
+
+	}
 
 	@Override
 	protected void setup() {
 		// Printout a welcome message
-		System.out.println("Hello! Kneading-Scheduler " + getAID().getName() + " is ready.");
-		addBehaviour(new ProcessDoughPreparation());
+		System.out.println("Hello! KneadingSchedulerAgen " + getAID().getName() + " is ready.");
+		// addBehaviour(new ProcessKneadingRequest());
 	}
 
 	@Override
@@ -33,147 +42,55 @@ public class KneadingSchedulerAgent extends Agent {
 		System.out.println(getAID().getLocalName() + ": Terminating.");
 	}
 
-	private class ProcessDoughPreparation extends SequentialBehaviour {
-
-		private Product product;
+	private class RequestKneading extends SequentialBehaviour {
+		
 		private String request;
-		private long kneadingTime;
-		private long restingTime;
-		private long prepTime;
-		private String productId;
-
-		public ProcessDoughPreparation() {
-
-			this.addSubBehaviour(new getRequestInfoToPrepare());
-			this.addSubBehaviour(new SendKneadingRequest());
-			this.addSubBehaviour(new ReceiveKneadedDough());
-			this.addSubBehaviour(new Rest(restingTime));
-			this.addSubBehaviour(new Prepare(prepTime));
-
+		
+		public RequestKneading() {
+			this.addSubBehaviour(new FindNextFreeKneadingMachine());
+			this.addSubBehaviour(new SendDoughToKnead());
+			
 		}
 
-		private class getRequestInfoToPrepare extends OneShotBehaviour {
+		private class FindNextFreeKneadingMachine extends Behaviour {
+
+			boolean freeMachineFound = false;
 
 			@Override
 			public void action() {
-				productId = product.getId();
-				kneadingTime = product.getDoughPrepTime();
-				restingTime = product.getDoughRestingTime();
-				prepTime = product.getItemPrepTime();
-				// maybe a better way????
-				request = String.valueOf(kneadingTime);
+
+				for (int i = 0; i < kneadingMachineFree.length; i++) {
+					boolean isFree = kneadingMachineFree[i];
+					if (isFree) {
+						myFreeMachine = i;
+						freeMachineFound = true;
+						break;
+					}
+				}
+
+			}
+
+			@Override
+			public boolean done() {
+				return freeMachineFound;
 			}
 
 		}
+		
+		private class SendDoughToKnead extends OneShotBehaviour {
 
-		private class SendKneadingRequest extends OneShotBehaviour {
-
+		
 			@Override
 			public void action() {
-				ACLMessage kneadingRequest = new ACLMessage(ACLMessage.INFORM);
-				// allow for more than one machine???
-				kneadingRequest.addReceiver(kneadingAgents[0]);
+				ACLMessage kneadingRequest = new ACLMessage(ACLMessage.REQUEST);
+				kneadingRequest.addReceiver(kneadingAgents[myFreeMachine]);
 				kneadingRequest.setContent(request);
 				kneadingRequest.setLanguage("English");
 				kneadingRequest.setOntology("Bakery-order-ontology");
 				myAgent.send(kneadingRequest);
 
 			}
-
-		}
-
-		private class ReceiveKneadedDough extends Behaviour {
-
-			private boolean doughReceived = false;
-
-			@Override
-			public void action() {
-				ACLMessage msg = myAgent.receive();
-				if (msg != null && msg.getPerformative() == ACLMessage.INFORM) {
-					doughReceived = true;
-
-				} else {
-					block();
-				}
-
-			}
-
-			@Override
-			public boolean done() {
-				return doughReceived;
-			}
-
-		}
-
-		private class Rest extends Behaviour {
-
-			private long startingTime;
-			private long restingTime;
-			private boolean restingFinished = false;
-
-			// dont know if this is needed???
-			public Rest(long restingTime) {
-				this.restingTime = restingTime;
-			}
-
-			@Override
-			public void onStart() {
-				this.startingTime = System.currentTimeMillis();
-
-			}
-
-			@Override
-			public void action() {
-				long currentTime = System.currentTimeMillis();
-				long remainingTime = restingTime - (currentTime - startingTime);
-				if (remainingTime >= 0) {
-					restingFinished = true;
-				} else {
-					block(remainingTime);
-				}
-
-			}
-
-			@Override
-			public boolean done() {
-				return restingFinished;
-			}
-
-		}
-
-		private class Prepare extends Behaviour {
-
-			private long startingTime;
-			private long prepTime;
-			private boolean prepFinished = false;
-
-			public Prepare(long prepTime) {
-				this.prepTime = prepTime;
-			}
-
-			@Override
-			public void onStart() {
-				this.startingTime = System.currentTimeMillis();
-
-			}
-
-			@Override
-			public void action() {
-				long currentTime = System.currentTimeMillis();
-				long remainingTime = prepTime - (currentTime - startingTime);
-				if (remainingTime >= 0) {
-					prepFinished = true;
-				} else {
-					block(remainingTime);
-				}
-
-			}
-
-			@Override
-			public boolean done() {
-				return prepFinished;
-			}
-
+			
 		}
 
 	}
