@@ -18,22 +18,34 @@ import maas.objects.Product;
 public class KneadingSchedulerAgent extends Agent {
 
 	private AID[] kneadingAgents;
-	private String[] listOfDough;
+	private List<String> listOfDough;
 	private Bakery myBakery;
 	boolean[] kneadingMachineFree;
 	int myFreeMachine;
 
-	public KneadingSchedulerAgent(AID[] kneadingAgents) {
-		this.kneadingAgents = kneadingAgents;
+	public KneadingSchedulerAgent(String[] kneadingAgentNames, List<String> listOfDough, Bakery myBakery) {
+		this.myBakery = myBakery;
+		this.kneadingAgents = new AID[kneadingAgentNames.length];
+		for (int i=0;i<kneadingAgentNames.length;i++) {
+			this.kneadingAgents[i] = new AID(kneadingAgentNames[i],AID.ISLOCALNAME);
+		}
 		this.kneadingMachineFree = new boolean[kneadingAgents.length];
 		Arrays.fill(kneadingMachineFree, true);
+		this.listOfDough = listOfDough;
 
+	}
+
+	public String getJSONMessage(Bakery myBakery, String dough) {
+		Product product = myBakery.getProductByName(dough);
+		long kneadingTime = product.getDoughPrepTime();
+		String jsonMessage = String.format("{\"%s\":%d}", dough, kneadingTime);
+		return jsonMessage;
 	}
 
 	@Override
 	protected void setup() {
 		// Printout a welcome message
-		System.out.println("Hello! KneadingSchedulerAgen " + getAID().getName() + " is ready.");
+		System.out.println("Hello! KneadingSchedulerAgent " + getAID().getName() + " is ready.");
 		// addBehaviour(new ProcessKneadingRequest());
 	}
 
@@ -43,13 +55,14 @@ public class KneadingSchedulerAgent extends Agent {
 	}
 
 	private class RequestKneading extends SequentialBehaviour {
-		
+
 		private String request;
-		
+
 		public RequestKneading() {
+
 			this.addSubBehaviour(new FindNextFreeKneadingMachine());
 			this.addSubBehaviour(new SendDoughToKnead());
-			
+
 		}
 
 		private class FindNextFreeKneadingMachine extends Behaviour {
@@ -67,6 +80,9 @@ public class KneadingSchedulerAgent extends Agent {
 						break;
 					}
 				}
+				if (!freeMachineFound){
+					block(500);
+				}
 
 			}
 
@@ -76,22 +92,39 @@ public class KneadingSchedulerAgent extends Agent {
 			}
 
 		}
-		
+
 		private class SendDoughToKnead extends OneShotBehaviour {
 
-		
 			@Override
 			public void action() {
 				ACLMessage kneadingRequest = new ACLMessage(ACLMessage.REQUEST);
 				kneadingRequest.addReceiver(kneadingAgents[myFreeMachine]);
+				request = getJSONMessage(myBakery, listOfDough.get(0));
 				kneadingRequest.setContent(request);
 				kneadingRequest.setLanguage("English");
 				kneadingRequest.setOntology("Bakery-order-ontology");
 				myAgent.send(kneadingRequest);
+				listOfDough.remove(0);
 
 			}
+
+		}
+
+	}
+	
+	private class ReceiveKneadedDough extends Behaviour {
+
+		@Override
+		public void action() {
+			// TODO Auto-generated method stub
 			
 		}
 
+		@Override
+		public boolean done() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		
 	}
 }
