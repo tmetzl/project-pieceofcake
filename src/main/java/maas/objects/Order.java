@@ -1,21 +1,25 @@
 package maas.objects;
 
+import java.io.Serializable;
+
 import org.json.JSONObject;
 
-public class Order {
+public class Order implements Serializable {
 
+	private static final long serialVersionUID = -2137246400449003684L;
+	
 	private String guiId;
 	private String customerId;
 	private int orderDate;
 	private int dueDate;
 	private String[] productIds;
 	private int[] productAmounts;
-	private JSONObject jsonOrder;
+	private String jsonOrder;
 
 	public Order(String jsonOrder) {
 		// Parse the jsonOrder
 		JSONObject order = new JSONObject(jsonOrder);
-		this.jsonOrder = order;
+		this.jsonOrder = jsonOrder;
 		this.guiId = order.getString("guid");
 		this.customerId = order.getString("customer_id");
 		JSONObject orderDateJSON = order.getJSONObject("order_date");
@@ -81,7 +85,7 @@ public class Order {
 	 * @return
 	 */
 	public String toJSONString() {
-		return this.jsonOrder.toString();
+		return this.jsonOrder;
 	}
 
 

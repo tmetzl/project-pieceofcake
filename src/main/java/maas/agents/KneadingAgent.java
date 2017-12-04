@@ -6,20 +6,25 @@ import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.util.Logger;
 
 @SuppressWarnings("serial")
 public class KneadingAgent extends Agent {
+	
+	private Logger logger;
 
 	@Override
 	protected void setup() {
+		logger = Logger.getJADELogger(this.getClass().getName());
 		// Printout a welcome message
-		System.out.println("Hello! Kneading-Machine " + getAID().getName() + " is ready.");
+		String welcomeMessage = String.format("Kneading machine %s is ready!", getAID().getLocalName());
+		logger.log(Logger.INFO, welcomeMessage);
 		addBehaviour(new ProcessKneadingRequest());
 	}
 
 	@Override
 	protected void takeDown() {
-		System.out.println(getAID().getLocalName() + ": Terminating.");
+		logger.log(Logger.INFO, getAID().getLocalName() + ": Terminating.");
 	}
 
 	private class ProcessKneadingRequest extends SequentialBehaviour {

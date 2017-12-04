@@ -27,6 +27,7 @@ public class OrderTest {
 		assertEquals(2, productAmounts.length);
 		assertEquals(7, productAmounts[0]);
 		assertEquals(16, productAmounts[1]);
+		assertEquals(jsonOrder, order.toJSONString());
 
 	}
 

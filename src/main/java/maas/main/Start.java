@@ -20,6 +20,8 @@ import jade.wrapper.AgentContainer;
 import jade.wrapper.StaleProxyException;
 import maas.agents.CustomerAgent;
 import maas.agents.OrderAgent;
+import maas.agents.StartUpAgent;
+import maas.agents.TimerAgent;
 import maas.objects.Bakery;
 import maas.objects.Order;
 import maas.objects.Product;
@@ -44,10 +46,15 @@ public class Start {
 
 		container = runtime.createMainContainer(profile);
 		
+
 		customers = new LinkedList<>();
 		
 		try {
+			container.acceptNewAgent("Timer", TimerAgent.getInstance()).start();
+			
 			loadScenario(scenario);
+			
+			container.acceptNewAgent("StartUp", new StartUpAgent()).start();
 		} catch (StaleProxyException e) {
 			logger.log(Logger.WARNING, e.getMessage(), e);
 		}		
