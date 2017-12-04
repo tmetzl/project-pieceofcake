@@ -8,11 +8,11 @@ import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+import maas.config.Protocols;
 
 @SuppressWarnings("serial")
 public class KneadingAgent extends Agent {
-
-	private long timeFactor = 1000l;
 
 	public long getKneadingTime(String message) {
 		JSONObject obj = new JSONObject(message);
@@ -58,11 +58,12 @@ public class KneadingAgent extends Agent {
 
 			@Override
 			public void action() {
-				ACLMessage msg = myAgent.receive();
+				MessageTemplate msgTemplate = MessageTemplate.MatchProtocol(Protocols.KNEAD);
+				ACLMessage msg = myAgent.receive(msgTemplate);
 				if (msg != null && msg.getPerformative() == ACLMessage.REQUEST) {
 					request = msg.getContent();
 					kneadingScheduler = msg.getSender();
-					kneadingTime = getKneadingTime(request) * timeFactor;
+					kneadingTime = getKneadingTime(request);
 					requestReceived = true;
 					System.out.println("Kneading time is " + kneadingTime);
 
@@ -114,6 +115,7 @@ public class KneadingAgent extends Agent {
 			@Override
 			public void action() {
 				ACLMessage reply = new ACLMessage(ACLMessage.INFORM);
+				reply.setProtocol(Protocols.KNEAD);
 				reply.addReceiver(kneadingScheduler);
 				reply.setContent(request);
 				reply.setLanguage("English");
