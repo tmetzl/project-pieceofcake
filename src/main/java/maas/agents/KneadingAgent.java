@@ -12,6 +12,8 @@ import jade.lang.acl.ACLMessage;
 @SuppressWarnings("serial")
 public class KneadingAgent extends Agent {
 
+	private long timeFactor = 1000l;
+
 	public long getKneadingTime(String message) {
 		JSONObject obj = new JSONObject(message);
 		String[] keys = JSONObject.getNames(obj);
@@ -39,7 +41,7 @@ public class KneadingAgent extends Agent {
 
 		public ProcessKneadingRequest() {
 			this.addSubBehaviour(new ReceiveKneadingRequest());
-			this.addSubBehaviour(new Knead(kneadingTime));
+			this.addSubBehaviour(new Knead());
 			this.addSubBehaviour(new RespondToKneadingRequest());
 		}
 
@@ -60,9 +62,9 @@ public class KneadingAgent extends Agent {
 				if (msg != null && msg.getPerformative() == ACLMessage.REQUEST) {
 					request = msg.getContent();
 					kneadingScheduler = msg.getSender();
-					kneadingTime = getKneadingTime(request);
+					kneadingTime = getKneadingTime(request) * timeFactor;
 					requestReceived = true;
-					// System.out.println("Kneading time is " + kneadingTime);
+					System.out.println("Kneading time is " + kneadingTime);
 
 				} else {
 					block();
@@ -80,12 +82,7 @@ public class KneadingAgent extends Agent {
 		private class Knead extends Behaviour {
 
 			private boolean kneadingFinished = false;
-			private long kneadingTime;
 			private long startingTime;
-
-			public Knead(long kneadingTime) {
-				this.kneadingTime = kneadingTime;
-			}
 
 			@Override
 			public void onStart() {
@@ -97,7 +94,7 @@ public class KneadingAgent extends Agent {
 			public void action() {
 				long currentTime = System.currentTimeMillis();
 				long remainingTime = kneadingTime - (currentTime - startingTime);
-				if (remainingTime >= 0) {
+				if (remainingTime <= 0) {
 					kneadingFinished = true;
 				} else {
 					block(remainingTime);
@@ -122,6 +119,7 @@ public class KneadingAgent extends Agent {
 				reply.setLanguage("English");
 				reply.setOntology("Bakery-order-ontology");
 				myAgent.send(reply);
+				System.out.println("Dough is kneaded.");
 
 			}
 
