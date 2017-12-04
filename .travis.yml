@@ -15,10 +15,9 @@ addons:
       - GUI-Feature
 
 jdk:
-    - openjdk8
+    - oraclejdk8
 
 script:
-    - sudo apt-get update && sudo apt-get install openjfx
     - ./gradlew sonarqube
 
 cache:
