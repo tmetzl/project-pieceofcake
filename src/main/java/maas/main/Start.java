@@ -30,7 +30,7 @@ public class Start {
 	private Logger logger;
 	private List<CustomerAgent> customers;
 
-	public Start(String scenario) throws StaleProxyException {
+	public Start(String scenario) {
 		// Create logger
 		logger = Logger.getJADELogger(this.getClass().getName());
 		jade.core.Runtime runtime = jade.core.Runtime.instance();
@@ -46,7 +46,12 @@ public class Start {
 		
 		customers = new LinkedList<>();
 		
-		loadScenario(scenario);		
+		try {
+			loadScenario(scenario);
+		} catch (StaleProxyException e) {
+			logger.log(Logger.WARNING, e.getMessage(), e);
+			e.printStackTrace();
+		}		
 		
 	}
 	
