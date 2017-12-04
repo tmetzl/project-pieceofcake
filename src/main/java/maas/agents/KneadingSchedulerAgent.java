@@ -21,13 +21,12 @@ public class KneadingSchedulerAgent extends Agent {
 	private List<String> listOfDough;
 	private Bakery myBakery;
 	boolean[] kneadingMachineFree;
-	int myFreeMachine;
 
 	public KneadingSchedulerAgent(String[] kneadingAgentNames, List<String> listOfDough, Bakery myBakery) {
 		this.myBakery = myBakery;
 		this.kneadingAgents = new AID[kneadingAgentNames.length];
-		for (int i=0;i<kneadingAgentNames.length;i++) {
-			this.kneadingAgents[i] = new AID(kneadingAgentNames[i],AID.ISLOCALNAME);
+		for (int i = 0; i < kneadingAgentNames.length; i++) {
+			this.kneadingAgents[i] = new AID(kneadingAgentNames[i], AID.ISLOCALNAME);
 		}
 		this.kneadingMachineFree = new boolean[kneadingAgents.length];
 		Arrays.fill(kneadingMachineFree, true);
@@ -46,7 +45,8 @@ public class KneadingSchedulerAgent extends Agent {
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hello! KneadingSchedulerAgent " + getAID().getName() + " is ready.");
-		// addBehaviour(new ProcessKneadingRequest());
+		addBehaviour(new RequestKneading());
+		addBehaviour(new ReceiveKneadedDough());
 	}
 
 	@Override
@@ -57,6 +57,7 @@ public class KneadingSchedulerAgent extends Agent {
 	private class RequestKneading extends SequentialBehaviour {
 
 		private String request;
+		int myFreeMachine;
 
 		public RequestKneading() {
 
@@ -80,7 +81,7 @@ public class KneadingSchedulerAgent extends Agent {
 						break;
 					}
 				}
-				if (!freeMachineFound){
+				if (!freeMachineFound) {
 					block(500);
 				}
 
@@ -111,20 +112,38 @@ public class KneadingSchedulerAgent extends Agent {
 		}
 
 	}
-	
+
 	private class ReceiveKneadedDough extends Behaviour {
+
+		private boolean respondReceived = false;
+		private String response;
+		private AID kneadingAgentId;
 
 		@Override
 		public void action() {
-			// TODO Auto-generated method stub
-			
+			ACLMessage msg = myAgent.receive();
+			if (msg != null && msg.getPerformative() == ACLMessage.INFORM) {
+				response = msg.getContent();
+				kneadingAgentId = msg.getSender();
+				// setting the agent to be free
+				for (int i = 0; i < kneadingAgents.length; i++) {
+					if (kneadingAgents[i].equals(kneadingAgentId)) {
+						kneadingMachineFree[i] = true;
+						break;
+					}
+				}
+				respondReceived = true;
+
+			} else {
+				block();
+			}
+
 		}
 
 		@Override
 		public boolean done() {
-			// TODO Auto-generated method stub
-			return false;
+			return respondReceived;
 		}
-		
+
 	}
 }
