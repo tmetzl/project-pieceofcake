@@ -75,19 +75,18 @@ public class CustomerController extends HBox {
 		customerChooser.setItems(availableChoices);
 		customerChooser.getSelectionModel().select(0);
 
-		Callback<ListView<CustomerAgent>, ListCell<CustomerAgent>> cellFactoryComboBox = arg -> {
-			return new ListCell<CustomerAgent>() {
-				@Override
-				protected void updateItem(CustomerAgent agent, boolean empty) {
-					super.updateItem(agent, empty);
-					if (agent == null || empty) {
-						setGraphic(null);
-					} else {
-						setText(agent.getGuiId());
-					}
+		Callback<ListView<CustomerAgent>, ListCell<CustomerAgent>> cellFactoryComboBox = arg -> new ListCell<CustomerAgent>() {
+			@Override
+			protected void updateItem(CustomerAgent agent, boolean empty) {
+				super.updateItem(agent, empty);
+				if (agent == null || empty) {
+					setGraphic(null);
+				} else {
+					setText(agent.getGuiId());
 				}
-			};
+			}
 		};
+
 		customerChooser.setButtonCell((ListCell<CustomerAgent>) cellFactoryComboBox.call(null));
 		customerChooser.setCellFactory(cellFactoryComboBox);
 		updateCustomer(customers.get(0));
@@ -107,24 +106,21 @@ public class CustomerController extends HBox {
 		List<Order> orders = selectedAgent.getOrders();
 		ordersView.setItems(FXCollections.observableArrayList(orders));
 
-		Callback<ListView<Order>, ListCell<Order>> cellFactoryListView = arg -> {
-			return new ListCell<Order>() {
-				@Override
-				protected void updateItem(Order order, boolean empty) {
-					super.updateItem(order, empty);
-					if (order == null || empty) {
-						setGraphic(null);
-					} else {
-						setText(order.getGuiId());
-					}
+		Callback<ListView<Order>, ListCell<Order>> cellFactoryListView = arg -> new ListCell<Order>() {
+			@Override
+			protected void updateItem(Order order, boolean empty) {
+				super.updateItem(order, empty);
+				if (order == null || empty) {
+					setGraphic(null);
+				} else {
+					setText(order.getGuiId());
 				}
-			};
+			}
 		};
 
 		ordersView.setCellFactory(cellFactoryListView);
-		ordersView.getSelectionModel().selectedItemProperty().addListener((ov, oldOrder, newOrder) -> {
-			orderSelected(newOrder);
-		});
+		ordersView.getSelectionModel().selectedItemProperty()
+				.addListener((ov, oldOrder, newOrder) -> orderSelected(newOrder));
 
 	}
 
