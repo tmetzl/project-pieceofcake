@@ -17,34 +17,30 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
 import maas.config.Protocols;
-import maas.objects.Bakery;
-import maas.objects.Order;
-import maas.objects.Product;
 
 @SuppressWarnings("serial")
 public class KneadingSchedulerAgent extends Agent {
 
 	private AID[] kneadingAgents;
-	private List<String> listOfDough;
-	private Bakery myBakery;
-	boolean[] kneadingMachineFree;
+	private boolean[] kneadingMachineFree;
+	private Queue<KneadingInfo> doughQueue = new LinkedList<>();
+	private AID DoughFactoryAgentId;
+	private boolean requestKneadingRunning = false;
 
-	public KneadingSchedulerAgent(String[] kneadingAgentNames, List<String> listOfDough, Bakery myBakery) {
-		this.myBakery = myBakery;
+	public KneadingSchedulerAgent(String[] kneadingAgentNames) {
 		this.kneadingAgents = new AID[kneadingAgentNames.length];
 		for (int i = 0; i < kneadingAgentNames.length; i++) {
 			this.kneadingAgents[i] = new AID(kneadingAgentNames[i], AID.ISLOCALNAME);
 		}
 		this.kneadingMachineFree = new boolean[kneadingAgents.length];
 		Arrays.fill(kneadingMachineFree, true);
-		this.listOfDough = listOfDough;
 
 	}
 
-	public String getJSONMessage(Bakery myBakery, String dough) {
-		Product product = myBakery.getProductByName(dough);
-		long kneadingTime = product.getDoughPrepTime();
-		String jsonMessage = String.format("{\"%s\":%d}", dough, kneadingTime);
+	public String getJSONMessage(KneadingInfo dough) {
+		String product = dough.productName;
+		long kneadingTime = dough.kneadingTime;
+		String jsonMessage = String.format("{\"%s\":%d}", product, kneadingTime);
 		return jsonMessage;
 	}
 
@@ -52,7 +48,8 @@ public class KneadingSchedulerAgent extends Agent {
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hello! KneadingSchedulerAgent " + getAID().getName() + " is ready.");
-		addBehaviour(new RequestKneading());
+		addBehaviour(new ReceiveDoughMessage());
+		// addBehaviour(new RequestKneading());
 		addBehaviour(new ReceiveKneadedDough());
 	}
 
@@ -70,24 +67,26 @@ public class KneadingSchedulerAgent extends Agent {
 	private class ReceiveDoughMessage extends CyclicBehaviour {
 
 		private String doughRequest;
-		private AID DoughFactoryAgentId;
-		private Queue<KneadingInfo> doughQueue = new LinkedList<>();
 
 		@Override
 		public void action() {
-			MessageTemplate msgTemplate = MessageTemplate.MatchProtocol(Protocols.KNEAD);
+			MessageTemplate msgTemplate = MessageTemplate.MatchProtocol(Protocols.DOUGH);
 			ACLMessage msg = myAgent.receive(msgTemplate);
 			if (msg != null && msg.getPerformative() == ACLMessage.REQUEST) {
 				doughRequest = msg.getContent();
 				DoughFactoryAgentId = msg.getSender();
 				JSONObject obj = new JSONObject(doughRequest);
 				String[] names = JSONObject.getNames(obj);
-				KneadingInfo dough = new KneadingInfo();
-				
-				for (int i=0;i<names.length;i++){
+
+				for (int i = 0; i < names.length; i++) {
+					KneadingInfo dough = new KneadingInfo();
 					dough.productName = names[i];
 					dough.kneadingTime = obj.getLong(names[i]);
 					doughQueue.add(dough);
+				}
+				if (!requestKneadingRunning) {
+					myAgent.addBehaviour(new RequestKneading());
+					requestKneadingRunning = true;
 				}
 
 			} else {
@@ -107,6 +106,18 @@ public class KneadingSchedulerAgent extends Agent {
 
 			this.addSubBehaviour(new FindNextFreeKneadingMachine());
 			this.addSubBehaviour(new SendDoughToKnead());
+
+		}
+
+		@Override
+		public int onEnd() {
+			reset();
+			if (!doughQueue.isEmpty()) {
+				myAgent.addBehaviour(this);
+				return super.onEnd();
+			}
+			requestKneadingRunning = false;
+			return 0;
 
 		}
 
@@ -144,14 +155,15 @@ public class KneadingSchedulerAgent extends Agent {
 			public void action() {
 				ACLMessage kneadingRequest = new ACLMessage(ACLMessage.REQUEST);
 				kneadingRequest.addReceiver(kneadingAgents[myFreeMachine]);
-				request = getJSONMessage(myBakery, listOfDough.get(0));
+				kneadingRequest.setProtocol(Protocols.KNEAD);
+				request = getJSONMessage(doughQueue.element());
 				kneadingRequest.setContent(request);
 				kneadingRequest.setLanguage("English");
 				kneadingRequest.setOntology("Bakery-order-ontology");
 				myAgent.send(kneadingRequest);
 				kneadingMachineFree[myFreeMachine] = false;
 				System.out.println("Set machine " + myFreeMachine + " to occupied.");
-				listOfDough.remove(0);
+				doughQueue.remove();
 
 			}
 
@@ -166,7 +178,8 @@ public class KneadingSchedulerAgent extends Agent {
 
 		@Override
 		public void action() {
-			ACLMessage msg = myAgent.receive();
+			MessageTemplate msgTemplate = MessageTemplate.MatchProtocol(Protocols.KNEAD);
+			ACLMessage msg = myAgent.receive(msgTemplate);
 			if (msg != null && msg.getPerformative() == ACLMessage.INFORM) {
 				response = msg.getContent();
 				kneadingAgentId = msg.getSender();
@@ -178,6 +191,16 @@ public class KneadingSchedulerAgent extends Agent {
 						break;
 					}
 				}
+
+				// sending the kneaded dough to the factory
+				ACLMessage doughReady = new ACLMessage(ACLMessage.INFORM);
+				doughReady.addReceiver(DoughFactoryAgentId);
+				doughReady.setProtocol(Protocols.DOUGH);
+				doughReady.setContent(response);
+				doughReady.setLanguage("English");
+				doughReady.setOntology("Bakery-order-ontology");
+				myAgent.send(doughReady);
+				System.out.println("Dough for " + response + " is ready.");
 
 			} else {
 				block();
