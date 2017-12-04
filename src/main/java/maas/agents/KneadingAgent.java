@@ -1,5 +1,7 @@
 package maas.agents;
 
+import org.json.JSONObject;
+
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -9,6 +11,13 @@ import jade.lang.acl.ACLMessage;
 
 @SuppressWarnings("serial")
 public class KneadingAgent extends Agent {
+
+	public long getKneadingTime(String message) {
+		JSONObject obj = new JSONObject(message);
+		String[] keys = JSONObject.getNames(obj);
+		long kneadingTime = obj.getLong(keys[0]);
+		return kneadingTime;
+	}
 
 	@Override
 	protected void setup() {
@@ -51,9 +60,9 @@ public class KneadingAgent extends Agent {
 				if (msg != null && msg.getPerformative() == ACLMessage.REQUEST) {
 					request = msg.getContent();
 					kneadingScheduler = msg.getSender();
-					// TODO: extract kneading time - maybe a better way???
-					kneadingTime = Long.parseLong(request);
+					kneadingTime = getKneadingTime(request);
 					requestReceived = true;
+					// System.out.println("Kneading time is " + kneadingTime);
 
 				} else {
 					block();
