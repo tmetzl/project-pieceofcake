@@ -1,7 +1,11 @@
 package maas.agents;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+
+import org.json.JSONObject;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -10,7 +14,9 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
+import maas.config.Protocols;
 import maas.objects.Bakery;
 import maas.objects.Order;
 import maas.objects.Product;
@@ -53,6 +59,43 @@ public class KneadingSchedulerAgent extends Agent {
 	@Override
 	protected void takeDown() {
 		System.out.println(getAID().getLocalName() + ": Terminating.");
+	}
+
+	private class KneadingInfo {
+
+		private String productName;
+		private long kneadingTime;
+	}
+
+	private class ReceiveDoughMessage extends CyclicBehaviour {
+
+		private String doughRequest;
+		private AID DoughFactoryAgentId;
+		private Queue<KneadingInfo> doughQueue = new LinkedList<>();
+
+		@Override
+		public void action() {
+			MessageTemplate msgTemplate = MessageTemplate.MatchProtocol(Protocols.KNEAD);
+			ACLMessage msg = myAgent.receive(msgTemplate);
+			if (msg != null && msg.getPerformative() == ACLMessage.REQUEST) {
+				doughRequest = msg.getContent();
+				DoughFactoryAgentId = msg.getSender();
+				JSONObject obj = new JSONObject(doughRequest);
+				String[] names = JSONObject.getNames(obj);
+				KneadingInfo dough = new KneadingInfo();
+				
+				for (int i=0;i<names.length;i++){
+					dough.productName = names[i];
+					dough.kneadingTime = obj.getLong(names[i]);
+					doughQueue.add(dough);
+				}
+
+			} else {
+				block();
+			}
+
+		}
+
 	}
 
 	private class RequestKneading extends SequentialBehaviour {
