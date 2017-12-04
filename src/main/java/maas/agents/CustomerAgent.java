@@ -174,4 +174,24 @@ public class CustomerAgent extends Agent {
 		}
 	}
 
+	public String getGuiId() {
+		return guiId;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public int getLocationX() {
+		return locationX;
+	}
+
+	public int getLocationY() {
+		return locationY;
+	}
+
+	public List<Order> getOrders() {
+		return orders;
+	}
+
 }
