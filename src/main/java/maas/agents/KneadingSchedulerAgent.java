@@ -6,6 +6,7 @@ import java.util.List;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -105,6 +106,8 @@ public class KneadingSchedulerAgent extends Agent {
 				kneadingRequest.setLanguage("English");
 				kneadingRequest.setOntology("Bakery-order-ontology");
 				myAgent.send(kneadingRequest);
+				kneadingMachineFree[myFreeMachine] = false;
+				System.out.println("Set machine " + myFreeMachine + " to occupied.");
 				listOfDough.remove(0);
 
 			}
@@ -113,9 +116,8 @@ public class KneadingSchedulerAgent extends Agent {
 
 	}
 
-	private class ReceiveKneadedDough extends Behaviour {
+	private class ReceiveKneadedDough extends CyclicBehaviour {
 
-		private boolean respondReceived = false;
 		private String response;
 		private AID kneadingAgentId;
 
@@ -129,20 +131,15 @@ public class KneadingSchedulerAgent extends Agent {
 				for (int i = 0; i < kneadingAgents.length; i++) {
 					if (kneadingAgents[i].equals(kneadingAgentId)) {
 						kneadingMachineFree[i] = true;
+						System.out.println("Set machine " + i + " to free.");
 						break;
 					}
 				}
-				respondReceived = true;
 
 			} else {
 				block();
 			}
 
-		}
-
-		@Override
-		public boolean done() {
-			return respondReceived;
 		}
 
 	}
