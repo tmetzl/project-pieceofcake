@@ -28,6 +28,7 @@ public class Start {
 
 	private AgentContainer container;
 	private Logger logger;
+	private List<CustomerAgent> customers;
 
 	public Start(String scenario) throws StaleProxyException {
 		// Create logger
@@ -42,13 +43,20 @@ public class Start {
 		Profile profile = new ProfileImpl(properties);
 
 		container = runtime.createMainContainer(profile);
-
-		loadScenario(scenario);
+		
+		customers = new LinkedList<>();
+		
+		loadScenario(scenario);		
+		
+	}
+	
+	public List<CustomerAgent> getCustomers() {
+		return customers;
 	}
 
 	public void loadScenario(String filename) throws StaleProxyException {
 
-		try (Scanner in = new Scanner(new FileReader("config/" + filename + ".json"))) {
+		try (Scanner in = new Scanner(new FileReader("src/main/config/" + filename + ".json"))) {
 
 			StringBuilder bld = new StringBuilder();
 			while (in.hasNext())
@@ -127,7 +135,7 @@ public class Start {
 		int locationY = location.getInt("y");
 		// Create the agent
 		CustomerAgent agent = new CustomerAgent(guiId, type, locationX, locationY, orders);
-
+		customers.add(agent);
 		container.acceptNewAgent(name, agent).start();
 
 	}
