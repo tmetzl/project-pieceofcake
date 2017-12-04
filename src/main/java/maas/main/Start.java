@@ -50,7 +50,6 @@ public class Start {
 			loadScenario(scenario);
 		} catch (StaleProxyException e) {
 			logger.log(Logger.WARNING, e.getMessage(), e);
-			e.printStackTrace();
 		}		
 		
 	}
@@ -108,11 +107,11 @@ public class Start {
 			}
 
 			// Step 3: Process the customers
-			JSONArray customers = scenario.getJSONArray("customers");
+			JSONArray jsonCustomers = scenario.getJSONArray("customers");
 
-			for (int i = 0; i < customers.length(); i++) {
+			for (int i = 0; i < jsonCustomers.length(); i++) {
 				// Extract one customer and its Id
-				JSONObject customer = customers.getJSONObject(i);
+				JSONObject customer = jsonCustomers.getJSONObject(i);
 				String customerId = customer.getString("guid");
 
 				// Make sure the customer has orders
@@ -164,7 +163,7 @@ public class Start {
 		container.acceptNewAgent(name, new OrderAgent(bakery)).start();
 	}
 
-	public static void main(String[] args) throws StaleProxyException {
+	public static void main(String[] args) {
 		new Start("random-scenario");
 	}
 }
