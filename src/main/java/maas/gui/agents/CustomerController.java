@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jade.util.Logger;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -68,8 +66,7 @@ public class CustomerController extends HBox {
 
 	@FXML
 	public void initialize() {
-		
-		
+
 		productId.setCellValueFactory(new PropertyValueFactory<>("productName"));
 		productAmount.setCellValueFactory(new PropertyValueFactory<>("productAmount"));
 
@@ -78,25 +75,20 @@ public class CustomerController extends HBox {
 		customerChooser.setItems(availableChoices);
 		customerChooser.getSelectionModel().select(0);
 
-		Callback cellFactoryComboBox = new Callback<ListView<CustomerAgent>, ListCell<CustomerAgent>>() {
-
-			@Override
-			public ListCell<CustomerAgent> call(ListView<CustomerAgent> arg0) {
-				return new ListCell<CustomerAgent>() {
-					@Override
-					protected void updateItem(CustomerAgent agent, boolean empty) {
-						super.updateItem(agent, empty);
-						if (agent == null || empty) {
-							setGraphic(null);
-						} else {
-							setText(agent.getGuiId());
-						}
+		Callback<ListView<CustomerAgent>, ListCell<CustomerAgent>> cellFactoryComboBox = arg -> {
+			return new ListCell<CustomerAgent>() {
+				@Override
+				protected void updateItem(CustomerAgent agent, boolean empty) {
+					super.updateItem(agent, empty);
+					if (agent == null || empty) {
+						setGraphic(null);
+					} else {
+						setText(agent.getGuiId());
 					}
-				};
-			}
-
+				}
+			};
 		};
-		customerChooser.setButtonCell((ListCell) cellFactoryComboBox.call(null));
+		customerChooser.setButtonCell((ListCell<CustomerAgent>) cellFactoryComboBox.call(null));
 		customerChooser.setCellFactory(cellFactoryComboBox);
 		updateCustomer(customers.get(0));
 
@@ -115,33 +107,23 @@ public class CustomerController extends HBox {
 		List<Order> orders = selectedAgent.getOrders();
 		ordersView.setItems(FXCollections.observableArrayList(orders));
 
-		Callback<ListView<Order>, ListCell<Order>> cellFactoryListView = new Callback<ListView<Order>, ListCell<Order>>() {
-
-			@Override
-			public ListCell<Order> call(ListView<Order> arg0) {
-				return new ListCell<Order>() {
-					@Override
-					protected void updateItem(Order order, boolean empty) {
-						super.updateItem(order, empty);
-						if (order == null || empty) {
-							setGraphic(null);
-						} else {
-							setText(order.getGuiId());
-						}
+		Callback<ListView<Order>, ListCell<Order>> cellFactoryListView = arg -> {
+			return new ListCell<Order>() {
+				@Override
+				protected void updateItem(Order order, boolean empty) {
+					super.updateItem(order, empty);
+					if (order == null || empty) {
+						setGraphic(null);
+					} else {
+						setText(order.getGuiId());
 					}
-				};
-			}
-
+				}
+			};
 		};
 
 		ordersView.setCellFactory(cellFactoryListView);
-		ordersView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Order>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Order> ov, Order oldOrder, Order newOrder) {
-				orderSelected(newOrder);
-			}
-
+		ordersView.getSelectionModel().selectedItemProperty().addListener((ov, oldOrder, newOrder) -> {
+			orderSelected(newOrder);
 		});
 
 	}
@@ -173,7 +155,6 @@ public class CustomerController extends HBox {
 			}
 			ObservableList<ShoppingListEntry> productList = FXCollections.observableArrayList(products);
 			productTable.setItems(productList);
-
 
 		} else {
 			orderId.setText("");
