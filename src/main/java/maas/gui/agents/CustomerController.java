@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import jade.util.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -60,8 +61,8 @@ public class CustomerController extends HBox {
 		try {
 			fxmlLoader.load();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			throw new RuntimeException(e);
+			Logger logger = Logger.getJADELogger("CustomerController");
+			logger.log(Logger.WARNING, "Error loading customer FXML", e);
 		}
 	}
 
@@ -137,8 +138,8 @@ public class CustomerController extends HBox {
 		ordersView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Order>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Order> ov, Order old_val, Order new_val) {
-				orderSelected(new_val);
+			public void changed(ObservableValue<? extends Order> ov, Order oldOrder, Order newOrder) {
+				orderSelected(newOrder);
 			}
 
 		});

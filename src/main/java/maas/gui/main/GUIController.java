@@ -3,6 +3,7 @@ package maas.gui.main;
 import java.io.IOException;
 import java.util.List;
 
+import jade.util.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Tab;
@@ -21,30 +22,22 @@ public class GUIController extends VBox {
 	
 	private CustomerController customerTabController;
 	
-	//private List<CustomerAgent> customers;
-	
 	public GUIController(List<CustomerAgent> customers) {
-		//this.customers = customers;
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MaasGUI.fxml"));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
-
+		
 		try {
 			fxmlLoader.load();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			throw new RuntimeException(e);
+			Logger logger = Logger.getJADELogger("GUIController");
+			logger.log(Logger.WARNING, "Error loading main FXML", e);
 		}
+
 		
 		this.customerTabController = new CustomerController(customers);
 		customerTab.setContent(customerTabController);
 		VBox.setVgrow(tabPane, Priority.ALWAYS);
-	}
-
-	@FXML
-	public void initialize() {
-
-
 	}
 
 }
