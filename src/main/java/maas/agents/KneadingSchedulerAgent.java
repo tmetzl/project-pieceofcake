@@ -3,6 +3,8 @@ package maas.agents;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 import jade.core.AID;
 import jade.core.behaviours.SequentialBehaviour;
@@ -13,6 +15,7 @@ import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import maas.config.Protocols;
+import maas.objects.Bakery;
 import maas.utils.KneadingInfo;
 
 @SuppressWarnings("serial")
@@ -23,21 +26,17 @@ public class KneadingSchedulerAgent extends SynchronizedAgent {
 	private Queue<KneadingInfo> doughQueue = new LinkedList<>();
 	private AID doughFactoryAgentId;
 	private boolean requestKneadingRunning = false;
+	private Bakery myBakery;
 
-	public KneadingSchedulerAgent(String[] kneadingAgentNames) {
+	public KneadingSchedulerAgent(String[] kneadingAgentNames, Bakery bakery) {
 		this.kneadingAgents = new AID[kneadingAgentNames.length];
 		for (int i = 0; i < kneadingAgentNames.length; i++) {
 			this.kneadingAgents[i] = new AID(kneadingAgentNames[i], AID.ISLOCALNAME);
 		}
 		this.kneadingMachineFree = new boolean[kneadingAgents.length];
 		Arrays.fill(kneadingMachineFree, true);
+		this.myBakery = bakery;
 
-	}
-
-	public String getJSONMessage(KneadingInfo dough) {
-		String product = dough.getProductName();
-		long kneadingTime = dough.getKneadingTime();
-		return String.format("{\"%s\":%d}", product, kneadingTime);
 	}
 
 	@Override
@@ -72,13 +71,11 @@ public class KneadingSchedulerAgent extends SynchronizedAgent {
 			if (msg != null && msg.getPerformative() == ACLMessage.REQUEST) {
 				String doughRequest = msg.getContent();
 				doughFactoryAgentId = msg.getSender();
-				JSONObject obj = new JSONObject(doughRequest);
-				String[] names = JSONObject.getNames(obj);
+				JSONArray obj = new JSONArray(doughRequest);
 
-				for (int i = 0; i < names.length; i++) {
+				for (int i = 0; i < obj.length(); i++) {
 					KneadingInfo dough = new KneadingInfo();
-					dough.setProductName(names[i]);
-					dough.setKneadingTime(obj.getLong(names[i]));
+					dough.fromJSONMessage(obj.getJSONObject(i));
 					doughQueue.add(dough);
 				}
 				if (!requestKneadingRunning) {
@@ -153,7 +150,7 @@ public class KneadingSchedulerAgent extends SynchronizedAgent {
 				ACLMessage kneadingRequest = new ACLMessage(ACLMessage.REQUEST);
 				kneadingRequest.addReceiver(kneadingAgents[myFreeMachine]);
 				kneadingRequest.setProtocol(Protocols.KNEAD);
-				request = getJSONMessage(doughQueue.element());
+				request = doughQueue.element().toJSONMessage();
 				kneadingRequest.setContent(request);
 				kneadingRequest.setLanguage("English");
 				kneadingRequest.setOntology("Bakery-order-ontology");
@@ -203,6 +200,42 @@ public class KneadingSchedulerAgent extends SynchronizedAgent {
 				block();
 			}
 
+		}
+
+	}
+
+	private class RestDough extends Behaviour {
+
+		private boolean restingFinished = false;
+		private long startingTime;
+		private KneadingInfo dough;
+
+		public RestDough(KneadingInfo dough) {
+			this.dough = dough;
+		}
+
+		@Override
+		public void onStart() {
+			this.startingTime = System.currentTimeMillis();
+
+		}
+
+		@Override
+		public void action() {
+			long currentTime = System.currentTimeMillis();
+			long remainingTime = dough.getRestingTime() - (currentTime - startingTime);
+			if (remainingTime <= 0) {
+				restingFinished = true;
+				myBakery.updateDoughList(dough.getProductName());
+			} else {
+				block(remainingTime);
+			}
+
+		}
+
+		@Override
+		public boolean done() {
+			return restingFinished;
 		}
 
 	}
