@@ -191,7 +191,7 @@ public class StartKneadingProcess {
 		listOfDough.add("Bread");
 		listOfDough.add("Donut");
 
-		KneadingSchedulerAgent scheduler = new KneadingSchedulerAgent(kneadingAgents);
+		KneadingSchedulerAgent scheduler = new KneadingSchedulerAgent(kneadingAgents, bakery);
 		container.acceptNewAgent("myKneadingScheduler", scheduler).start();
 
 	}
