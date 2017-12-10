@@ -1,5 +1,6 @@
 package maas.objects;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -8,8 +9,10 @@ import java.util.Map;
 
 import maas.utils.OrderDueDateComparator;
 
-public class Bakery {
+public class Bakery implements Serializable {
 
+	private static final long serialVersionUID = 8794276456115280744L;
+	
 	private String guiId;
 	private String name;
 	private int locationX;

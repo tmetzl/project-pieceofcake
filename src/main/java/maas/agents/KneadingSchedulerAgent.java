@@ -6,6 +6,7 @@ import java.util.Queue;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import jade.core.AID;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.util.Logger;
@@ -174,6 +175,9 @@ public class KneadingSchedulerAgent extends SynchronizedAgent {
 			ACLMessage msg = myAgent.receive(msgTemplate);
 			if (msg != null && msg.getPerformative() == ACLMessage.INFORM) {
 				String response = msg.getContent();
+				KneadingInfo dough = new KneadingInfo();
+				dough.fromJSONMessage(new JSONObject(response));
+				myAgent.addBehaviour(new RestDough(dough));
 				AID kneadingAgentId = msg.getSender();
 				// setting the agent to be free
 				for (int i = 0; i < kneadingAgents.length; i++) {
@@ -184,17 +188,6 @@ public class KneadingSchedulerAgent extends SynchronizedAgent {
 						break;
 					}
 				}
-
-				// sending the kneaded dough to the factory
-				ACLMessage doughReady = new ACLMessage(ACLMessage.INFORM);
-				doughReady.addReceiver(doughFactoryAgentId);
-				doughReady.setProtocol(Protocols.DOUGH);
-				doughReady.setContent(response);
-				doughReady.setLanguage("English");
-				doughReady.setOntology("Bakery-order-ontology");
-				myAgent.send(doughReady);
-				String message = String.format("Dough for %s is ready.", response);
-				logger.log(Logger.INFO, message);
 
 			} else {
 				block();
