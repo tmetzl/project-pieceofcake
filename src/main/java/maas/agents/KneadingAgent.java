@@ -14,14 +14,13 @@ import maas.config.Protocols;
 
 @SuppressWarnings("serial")
 public class KneadingAgent extends Agent {
-	
+
 	private Logger logger;
 
 	public long getKneadingTime(String message) {
 		JSONObject obj = new JSONObject(message);
 		String[] keys = JSONObject.getNames(obj);
-		long kneadingTime = obj.getLong(keys[0]);
-		return kneadingTime;
+		return obj.getLong(keys[0]);
 	}
 
 	@Override
@@ -70,7 +69,8 @@ public class KneadingAgent extends Agent {
 					kneadingScheduler = msg.getSender();
 					kneadingTime = getKneadingTime(request);
 					requestReceived = true;
-					System.out.println("Kneading time is " + kneadingTime);
+					String message = String.format("Kneading time is %d", kneadingTime);
+					logger.log(Logger.INFO, message);
 
 				} else {
 					block();
@@ -126,7 +126,7 @@ public class KneadingAgent extends Agent {
 				reply.setLanguage("English");
 				reply.setOntology("Bakery-order-ontology");
 				myAgent.send(reply);
-				System.out.println("Dough is kneaded.");
+				logger.log(Logger.INFO, "Dough is kneaded.");
 
 			}
 
