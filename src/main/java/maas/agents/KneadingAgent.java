@@ -11,17 +11,12 @@ import jade.lang.acl.ACLMessage;
 import jade.util.Logger;
 import jade.lang.acl.MessageTemplate;
 import maas.config.Protocols;
+import maas.utils.KneadingInfo;
 
 @SuppressWarnings("serial")
 public class KneadingAgent extends Agent {
 
 	private Logger logger;
-
-	public long getKneadingTime(String message) {
-		JSONObject obj = new JSONObject(message);
-		String[] keys = JSONObject.getNames(obj);
-		return obj.getLong(keys[0]);
-	}
 
 	@Override
 	protected void setup() {
@@ -67,7 +62,10 @@ public class KneadingAgent extends Agent {
 				if (msg != null && msg.getPerformative() == ACLMessage.REQUEST) {
 					request = msg.getContent();
 					kneadingScheduler = msg.getSender();
-					kneadingTime = getKneadingTime(request);
+					JSONObject obj = new JSONObject(request);
+					KneadingInfo dough = new KneadingInfo();
+					dough.fromJSONMessage(obj);
+					kneadingTime = dough.getKneadingTime();
 					requestReceived = true;
 					String message = String.format("Kneading time is %d", kneadingTime);
 					logger.log(Logger.INFO, message);
