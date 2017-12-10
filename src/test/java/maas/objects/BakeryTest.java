@@ -62,7 +62,7 @@ public class BakeryTest {
 		List<Order> orders = prepareOrderListForTests();
 		List<Product> products = prepareProductListForTests();
 		
-		assertNull(bakery.getOrder());
+		assertNull(bakery.getOrdersOfDay(1));
 		assertNull(bakery.getProductByName("testProduct"));
 		assertNull(bakery.getPrice(orders.get(0)));
 		for (Order order : orders) {
@@ -71,7 +71,13 @@ public class BakeryTest {
 		for (Product product : products) {
 			bakery.addProduct(product);
 		}
-		assertEquals("order-002", bakery.getOrder().getGuiId());
+		List<Order> ordersOfDayTwo = bakery.getOrdersOfDay(2);
+		assertEquals(ordersOfDayTwo.size(), 2);
+		assertEquals("order-001", ordersOfDayTwo.get(0).getGuiId());
+		assertEquals("order-003", ordersOfDayTwo.get(1).getGuiId());
+		List<Order> ordersOfDayOne = bakery.getOrdersOfDay(1);
+		assertEquals(ordersOfDayOne.size(), 1);
+		assertEquals("order-002", ordersOfDayOne.get(0).getGuiId());
 		assertNull(bakery.getPrice(orders.get(0)));
 		assertEquals(new Double(282.8), bakery.getPrice(orders.get(1)));
 		assertEquals(new Double(134.1), bakery.getPrice(orders.get(2)));
