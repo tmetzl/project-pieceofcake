@@ -8,6 +8,8 @@ import java.util.Queue;
 import org.json.JSONObject;
 
 import jade.core.AID;
+import jade.core.behaviours.SequentialBehaviour;
+import jade.util.Logger;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
@@ -19,7 +21,7 @@ import jade.util.Logger;
 import maas.config.Protocols;
 
 @SuppressWarnings("serial")
-public class KneadingSchedulerAgent extends Agent {
+public class KneadingSchedulerAgent extends SynchronizedAgent {
 
 	private AID[] kneadingAgents;
 	private boolean[] kneadingMachineFree;
@@ -46,16 +48,26 @@ public class KneadingSchedulerAgent extends Agent {
 
 	@Override
 	protected void setup() {
+		super.setup();
 		// Printout a welcome message
-		System.out.println("Hello! KneadingSchedulerAgent " + getAID().getName() + " is ready.");
+		String welcomeMessage = String.format("Kneading-Scheduler %s is ready!", getAID().getLocalName());
+		logger.log(Logger.INFO, welcomeMessage);
+
+		SequentialBehaviour seq = new SequentialBehaviour();
+
+		seq.addSubBehaviour(new SynchronizeClock());
+		seq.addSubBehaviour(new WaitForStart());
+
+		addBehaviour(seq);
 		addBehaviour(new ReceiveDoughMessage());
 		// addBehaviour(new RequestKneading());
 		addBehaviour(new ReceiveKneadedDough());
+
 	}
 
 	@Override
 	protected void takeDown() {
-		System.out.println(getAID().getLocalName() + ": Terminating.");
+		logger.log(Logger.INFO, getAID().getLocalName() + ": Terminating.");
 	}
 
 	private class KneadingInfo {

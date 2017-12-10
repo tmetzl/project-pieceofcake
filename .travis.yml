@@ -12,11 +12,10 @@ addons:
     branches:
       - master
       - Development
-      - Kneading-Feature
       - KneadingScheduler-Feature
 
 jdk:
-    - openjdk8
+    - oraclejdk8
 
 script:
     - ./gradlew sonarqube

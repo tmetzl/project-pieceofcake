@@ -8,11 +8,14 @@ import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.util.Logger;
 import jade.lang.acl.MessageTemplate;
 import maas.config.Protocols;
 
 @SuppressWarnings("serial")
 public class KneadingAgent extends Agent {
+	
+	private Logger logger;
 
 	public long getKneadingTime(String message) {
 		JSONObject obj = new JSONObject(message);
@@ -23,14 +26,16 @@ public class KneadingAgent extends Agent {
 
 	@Override
 	protected void setup() {
+		logger = Logger.getJADELogger(this.getClass().getName());
 		// Printout a welcome message
-		System.out.println("Hello! Kneading-Machine " + getAID().getName() + " is ready.");
+		String welcomeMessage = String.format("Kneading machine %s is ready!", getAID().getLocalName());
+		logger.log(Logger.INFO, welcomeMessage);
 		addBehaviour(new ProcessKneadingRequest());
 	}
 
 	@Override
 	protected void takeDown() {
-		System.out.println(getAID().getLocalName() + ": Terminating.");
+		logger.log(Logger.INFO, getAID().getLocalName() + ": Terminating.");
 	}
 
 	private class ProcessKneadingRequest extends SequentialBehaviour {

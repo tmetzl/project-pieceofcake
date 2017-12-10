@@ -32,22 +32,22 @@ public class BakeryTest {
 	
 	public List<Product> prepareProductListForTests() {
 		List<Product> products = new LinkedList<Product>();
-		String jsonProduct1 = "{\"boxing_temp\": 6,\"sales_price\": 14,\"breads_per_oven\": 6,"
+		String jsonProduct1 = "{\"boxing_temp\": 6,\"sales_price\": 14.1,\"breads_per_oven\": 6,"
 				+ "\"breads_per_box\": 6,\"item_prep_time\": 11,\"dough_prep_time\": 1,"
 				+ "\"baking_temp\": 94,\"cooling_rate\": 1,\"guid\": \"Bread\","
-				+ "\"baking_time\": 11,\"resting_time\": 9,\"production_cost\": 7}";
-		String jsonProduct2 = "{\"boxing_temp\": 6,\"sales_price\": 20,\"breads_per_oven\": 6,"
+				+ "\"baking_time\": 11,\"resting_time\": 9,\"production_cost\": 7.1}";
+		String jsonProduct2 = "{\"boxing_temp\": 6,\"sales_price\": 20.2,\"breads_per_oven\": 6,"
 				+ "\"breads_per_box\": 6,\"item_prep_time\": 11,\"dough_prep_time\": 1,"
 				+ "\"baking_temp\": 94,\"cooling_rate\": 1,\"guid\": \"Cake\","
-				+ "\"baking_time\": 11,\"resting_time\": 9,\"production_cost\": 7}";
-		String jsonProduct3 = "{\"boxing_temp\": 6,\"sales_price\": 4,\"breads_per_oven\": 6,"
+				+ "\"baking_time\": 11,\"resting_time\": 9,\"production_cost\": 7.1}";
+		String jsonProduct3 = "{\"boxing_temp\": 6,\"sales_price\": 4.3,\"breads_per_oven\": 6,"
 				+ "\"breads_per_box\": 6,\"item_prep_time\": 11,\"dough_prep_time\": 1,"
 				+ "\"baking_temp\": 94,\"cooling_rate\": 1,\"guid\": \"Pie\","
-				+ "\"baking_time\": 11,\"resting_time\": 9,\"production_cost\": 7}";
-		String jsonProduct4 = "{\"boxing_temp\": 6,\"sales_price\": 5,\"breads_per_oven\": 6,"
+				+ "\"baking_time\": 11,\"resting_time\": 9,\"production_cost\": 7.1}";
+		String jsonProduct4 = "{\"boxing_temp\": 6,\"sales_price\": 5.2,\"breads_per_oven\": 6,"
 				+ "\"breads_per_box\": 6,\"item_prep_time\": 11,\"dough_prep_time\": 1,"
 				+ "\"baking_temp\": 94,\"cooling_rate\": 1,\"guid\": \"Donut\","
-				+ "\"baking_time\": 11,\"resting_time\": 9,\"production_cost\": 7}";
+				+ "\"baking_time\": 11,\"resting_time\": 9,\"production_cost\": 7.1}";
 		
 		products.add(new Product(jsonProduct1));
 		products.add(new Product(jsonProduct2));
@@ -73,8 +73,8 @@ public class BakeryTest {
 		}
 		assertEquals("order-002", bakery.getOrder().getGuiId());
 		assertNull(bakery.getPrice(orders.get(0)));
-		assertEquals(new Integer(279), bakery.getPrice(orders.get(1)));
-		assertEquals(new Integer(132), bakery.getPrice(orders.get(2)));
+		assertEquals(new Double(282.8), bakery.getPrice(orders.get(1)));
+		assertEquals(new Double(134.1), bakery.getPrice(orders.get(2)));
 		
 		
 		

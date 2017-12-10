@@ -12,6 +12,13 @@
 * JADE 4.5.+
 * JUnit 4.12
 * JSON 20171018
+* JavaFX
+
+### JavaFX
+
+For JavaFX you either need to use the Oracle JDK or if you use OpenJDK you need to install openjfx:
+
+    sudo apt-get install openjfx
 
 ## Howto run
 
