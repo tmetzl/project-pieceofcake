@@ -28,8 +28,6 @@ public class Bakery {
 		this.orders = new LinkedList<>();
 		this.ordersInProcess = new LinkedList<>();
 		this.cookBook = new HashMap<>();
-
-		System.out.println("Bakery " + name + " at location (" + locationX + ", " + locationY + ")");
 	}
 
 	public Product getProductByName(String productName) {
@@ -39,8 +37,8 @@ public class Bakery {
 		return null;
 	}
 	
-	public Integer getPrice(Order order) {
-		int price = 0;
+	public Double getPrice(Order order) {
+		double price = 0;
 		
 		String[] productIds = order.getProductIds();
 		int[] productAmount = order.getProductAmounts();
