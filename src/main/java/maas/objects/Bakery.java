@@ -15,9 +15,10 @@ public class Bakery {
 	private int locationX;
 	private int locationY;
 
-	private List<Order> orders;
+	private Map<Integer, List<Order>> orderDayMap;
 	private List<Order> ordersInProcess;
 	private Map<String, Product> cookBook;
+	private Map<String, Boolean> doughInStock;
 
 	public Bakery(String guiId, String name, int locationX, int locationY) {
 		this.guiId = guiId;
@@ -25,9 +26,10 @@ public class Bakery {
 		this.locationX = locationX;
 		this.locationY = locationY;
 
-		this.orders = new LinkedList<>();
 		this.ordersInProcess = new LinkedList<>();
 		this.cookBook = new HashMap<>();
+		this.orderDayMap = new HashMap<>();
+		this.doughInStock = new HashMap<>();
 	}
 
 	public Product getProductByName(String productName) {
@@ -36,27 +38,33 @@ public class Bakery {
 		}
 		return null;
 	}
-	
+
 	public Double getPrice(Order order) {
 		double price = 0;
-		
+
 		String[] productIds = order.getProductIds();
 		int[] productAmount = order.getProductAmounts();
-		
-		for (int i=0;i<productIds.length;i++) {
+
+		for (int i = 0; i < productIds.length; i++) {
 			Product product = getProductByName(productIds[i]);
 			if (product == null) {
 				return null;
 			}
-			price += productAmount[i]*product.getSalesPrice();
+			price += productAmount[i] * product.getSalesPrice();
 		}
-		
+
 		return price;
 	}
 
 	public void addOrder(Order order) {
-		this.orders.add(order);
-		Collections.sort(this.orders, new OrderDueDateComparator());
+		int day = order.getDueDate() / 24;
+		List<Order> ordersPerDay = orderDayMap.get(day);
+		if (ordersPerDay == null) {
+			ordersPerDay = new LinkedList<>();
+		}
+		ordersPerDay.add(order);
+		Collections.sort(ordersPerDay, new OrderDueDateComparator());
+		orderDayMap.put(day, ordersPerDay);
 	}
 
 	public void addProduct(Product product) {
@@ -64,14 +72,19 @@ public class Bakery {
 		this.cookBook.put(productId, product);
 	}
 
-	public Order getOrder() {
-		if (!this.orders.isEmpty()) {
-			Order order = this.orders.get(0);
-			this.ordersInProcess.add(order);
-			this.orders.remove(0);
-			return order;
-		}
-		return null;
+	public List<Order> getOrdersOfDay(int day) {
+		return orderDayMap.get(day);
 	}
 
+	public boolean isDoughInStock(String productName) {
+		Boolean answer = doughInStock.get(productName);
+		if (answer != null) {
+			return answer;
+		}
+		return false;
+	}
+
+	public void updateDoughList(String productName) {
+		doughInStock.put(productName, true);
+	}
 }
