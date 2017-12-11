@@ -4,6 +4,7 @@
 [![Build Status](https://travis-ci.org/HBRS-MAAS/project-pieceofcake.svg?branch=master)](https://travis-ci.org/HBRS-MAAS/project-pieceofcake)
 [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=project-pieceofcake)](https://sonarcloud.io/dashboard?id=project-pieceofcake)
 
+
 ## Members
 * Tim Metzler @[tmetzl](http://github.com/tmetzl)
 * Sogol Haghighat @[SogolHaghighat](http://github.com/SogolHaghighat)
@@ -12,6 +13,13 @@
 * JADE 4.5.+
 * JUnit 4.12
 * JSON 20171018
+* JavaFX
+
+### JavaFX
+
+For JavaFX you either need to use the Oracle JDK or if you use OpenJDK you need to install openjfx:
+
+    sudo apt-get install openjfx
 
 ## Howto run
 

@@ -18,8 +18,13 @@ import jade.util.Logger;
 import jade.util.leap.Properties;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.StaleProxyException;
+import maas.agents.BakeryClockAgent;
 import maas.agents.CustomerAgent;
+import maas.agents.KneadingAgent;
+import maas.agents.KneadingSchedulerAgent;
 import maas.agents.OrderAgent;
+import maas.agents.StartUpAgent;
+import maas.agents.TimerAgent;
 import maas.objects.Bakery;
 import maas.objects.Order;
 import maas.objects.Product;
@@ -28,8 +33,9 @@ public class Start {
 
 	private AgentContainer container;
 	private Logger logger;
+	private List<CustomerAgent> customers;
 
-	public Start(String scenario) throws StaleProxyException {
+	public Start(String scenario) {
 		// Create logger
 		logger = Logger.getJADELogger(this.getClass().getName());
 		jade.core.Runtime runtime = jade.core.Runtime.instance();
@@ -43,12 +49,27 @@ public class Start {
 
 		container = runtime.createMainContainer(profile);
 
-		loadScenario(scenario);
+		customers = new LinkedList<>();
+
+		try {
+			container.acceptNewAgent("Timer", TimerAgent.getInstance()).start();
+
+			loadScenario(scenario);
+
+			container.acceptNewAgent("StartUp", new StartUpAgent()).start();
+		} catch (StaleProxyException e) {
+			logger.log(Logger.WARNING, e.getMessage(), e);
+		}
+
+	}
+
+	public List<CustomerAgent> getCustomers() {
+		return customers;
 	}
 
 	public void loadScenario(String filename) throws StaleProxyException {
 
-		try (Scanner in = new Scanner(new FileReader("config/" + filename + ".json"))) {
+		try (Scanner in = new Scanner(new FileReader("src/main/config/" + filename + ".json"))) {
 
 			StringBuilder bld = new StringBuilder();
 			while (in.hasNext())
@@ -95,11 +116,11 @@ public class Start {
 			}
 
 			// Step 3: Process the customers
-			JSONArray customers = scenario.getJSONArray("customers");
+			JSONArray jsonCustomers = scenario.getJSONArray("customers");
 
-			for (int i = 0; i < customers.length(); i++) {
+			for (int i = 0; i < jsonCustomers.length(); i++) {
 				// Extract one customer and its Id
-				JSONObject customer = customers.getJSONObject(i);
+				JSONObject customer = jsonCustomers.getJSONObject(i);
 				String customerId = customer.getString("guid");
 
 				// Make sure the customer has orders
@@ -127,7 +148,7 @@ public class Start {
 		int locationY = location.getInt("y");
 		// Create the agent
 		CustomerAgent agent = new CustomerAgent(guiId, type, locationX, locationY, orders);
-
+		customers.add(agent);
 		container.acceptNewAgent(name, agent).start();
 
 	}
@@ -138,8 +159,17 @@ public class Start {
 		JSONObject location = jsonBakery.getJSONObject("location");
 		int locationX = location.getInt("x");
 		int locationY = location.getInt("y");
+		JSONArray kneadingMachines = jsonBakery.getJSONArray("kneading_machines");
+		int numberOfKneadingMachines = kneadingMachines.length();
 
 		Bakery bakery = new Bakery(guiId, name, locationX, locationY);
+		BakeryClockAgent myBakeryClock = new BakeryClockAgent(bakery);
+
+		String[] kneadingAgentNames = new String[numberOfKneadingMachines];
+		for (int i = 0; i < numberOfKneadingMachines; i++) {
+			JSONObject kneadingMachine = kneadingMachines.getJSONObject(i);
+			kneadingAgentNames[i] = kneadingMachine.getString("guid");
+		}
 
 		JSONArray products = jsonBakery.getJSONArray("products");
 		for (int i = 0; i < products.length(); i++) {
@@ -148,10 +178,16 @@ public class Start {
 			bakery.addProduct(product);
 		}
 
+		for (String kneadingAgentName : kneadingAgentNames) {
+			container.acceptNewAgent(kneadingAgentName, new KneadingAgent()).start();
+		}
+		container.acceptNewAgent(name + "-kneadingScheduler", new KneadingSchedulerAgent(kneadingAgentNames, bakery))
+				.start();
+		container.acceptNewAgent(name + "-clock", myBakeryClock).start();
 		container.acceptNewAgent(name, new OrderAgent(bakery)).start();
 	}
 
-	public static void main(String[] args) throws StaleProxyException {
+	public static void main(String[] args) {
 		new Start("random-scenario");
 	}
 }

@@ -1,8 +1,13 @@
 package maas.objects;
 
+import java.io.Serializable;
+
 import org.json.JSONObject;
 
-public class Product {
+public class Product implements Serializable {
+	
+
+	private static final long serialVersionUID = 2892103285509962088L;
 	
 	private String id;
 	private int doughPrepTime;
@@ -14,8 +19,8 @@ public class Product {
 	private int coolingRate;
 	private int boxingTemp;
 	private int breadsPerBox;
-	private int productionCost;
-	private int salesPrice;
+	private double productionCost;
+	private double salesPrice;
 	
 	public Product(String jsonProduct) {
 		// Parse the jsonProduct
@@ -30,8 +35,8 @@ public class Product {
 		this.coolingRate = product.getInt("cooling_rate");
 		this.boxingTemp = product.getInt("boxing_temp");
 		this.breadsPerBox = product.getInt("breads_per_box");
-		this.productionCost = product.getInt("production_cost");
-		this.salesPrice = product.getInt("sales_price");
+		this.productionCost = product.getDouble("production_cost");
+		this.salesPrice = product.getDouble("sales_price");
 	}
 	public String getId() {
 		return id;
@@ -63,10 +68,10 @@ public class Product {
 	public int getBreadsPerBox() {
 		return breadsPerBox;
 	}
-	public int getProductionCost() {
+	public double getProductionCost() {
 		return productionCost;
 	}
-	public int getSalesPrice() {
+	public double getSalesPrice() {
 		return salesPrice;
 	}
 	
