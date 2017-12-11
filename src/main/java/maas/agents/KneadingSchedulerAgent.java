@@ -2,6 +2,7 @@ package maas.agents;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import org.json.JSONArray;
@@ -16,18 +17,20 @@ import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import maas.config.Protocols;
+import maas.interfaces.BakeryObserver;
 import maas.objects.Bakery;
-import maas.utils.KneadingInfo;
+import maas.objects.KneadingInfo;
+import maas.objects.Order;
 
 @SuppressWarnings("serial")
-public class KneadingSchedulerAgent extends SynchronizedAgent {
+public class KneadingSchedulerAgent extends SynchronizedAgent implements BakeryObserver {
 
 	private AID[] kneadingAgents;
 	private boolean[] kneadingMachineFree;
 	private Queue<KneadingInfo> doughQueue = new LinkedList<>();
-	private AID doughFactoryAgentId;
 	private boolean requestKneadingRunning = false;
 	private Bakery myBakery;
+	private List<Order> ordersOfDay; 
 
 	public KneadingSchedulerAgent(String[] kneadingAgentNames, Bakery bakery) {
 		this.kneadingAgents = new AID[kneadingAgentNames.length];
@@ -62,6 +65,16 @@ public class KneadingSchedulerAgent extends SynchronizedAgent {
 	protected void takeDown() {
 		logger.log(Logger.INFO, getAID().getLocalName() + ": Terminating.");
 	}
+	
+	@Override
+	public void notifyObserver(String topic) {
+		int day = getDay();
+		List<Order> currentOrders = myBakery.getOrdersOfDay(day);
+		if (currentOrders.size() != ordersOfDay.size()) {
+			ordersOfDay = currentOrders;
+			// TODO update the dough queue
+		}
+	}
 
 	private class ReceiveDoughMessage extends CyclicBehaviour {
 
@@ -71,7 +84,6 @@ public class KneadingSchedulerAgent extends SynchronizedAgent {
 			ACLMessage msg = myAgent.receive(msgTemplate);
 			if (msg != null && msg.getPerformative() == ACLMessage.REQUEST) {
 				String doughRequest = msg.getContent();
-				doughFactoryAgentId = msg.getSender();
 				JSONArray obj = new JSONArray(doughRequest);
 
 				for (int i = 0; i < obj.length(); i++) {
@@ -230,6 +242,5 @@ public class KneadingSchedulerAgent extends SynchronizedAgent {
 		public boolean done() {
 			return restingFinished;
 		}
-
 	}
 }
