@@ -149,7 +149,10 @@ public class Start {
 	public double[] getLocation(JSONObject jsonObject) {
 		JSONObject location = jsonObject.getJSONObject("location");
 		
-		double[] locationXY = {location.getDouble("x"), location.getDouble("y")};
+		double[] locationXY = new double[2];
+		locationXY[0] = location.getDouble("x");
+		locationXY[1] = location.getDouble("y");
+		
 		return locationXY;
 	}
 
