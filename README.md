@@ -4,9 +4,9 @@
 [![Build Status](https://travis-ci.org/HBRS-MAAS/project-pieceofcake.svg?branch=master)](https://travis-ci.org/HBRS-MAAS/project-pieceofcake)
 [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=project-pieceofcake)](https://sonarcloud.io/dashboard?id=project-pieceofcake)
 [![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=coverage)](https://sonarcloud.io/component_measures?id=project-pieceofcake&metric=coverage)
-[![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=lines)](https://sonarcloud.io/component_measures?id=project-pieceofcake&metric=line_coverage)
-[![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=bugs)](https://sonarcloud.io/dashboard?id=project-pieceofcake)
-[![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=code_smells)](https://sonarcloud.io/project/issues?id=project-pieceofcake&resolved=false&types=CODE_SMELL)
+[![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=lines)](https://sonarcloud.io/component_measures?id=project-pieceofcake&metric=lines)
+[![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=bugs)](https://sonarcloud.io/component_measures?id=project-pieceofcake&metric=bugs)
+[![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=code_smells)](https://sonarcloud.io/component_measures?id=project-pieceofcake&metric=code_smells)
 
 
 
