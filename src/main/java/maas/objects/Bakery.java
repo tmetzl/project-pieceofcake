@@ -6,13 +6,20 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.sun.org.apache.xerces.internal.parsers.CachingParserPool.SynchronizedGrammarPool;
+
+import maas.agents.SynchronizedAgent;
+import maas.config.Topic;
+import maas.interfaces.BakeryObservable;
+import maas.interfaces.BakeryObserver;
 import maas.utils.OrderDueDateComparator;
 
-public class Bakery implements Serializable {
+public class Bakery implements Serializable, BakeryObservable {
 
 	private static final long serialVersionUID = 8794276456115280744L;
-	
+
 	private String guiId;
 	private String name;
 	private int locationX;
@@ -22,6 +29,7 @@ public class Bakery implements Serializable {
 	private List<Order> ordersInProcess;
 	private Map<String, Product> cookBook;
 	private Map<String, Boolean> doughInStock;
+	private Map<String, List<BakeryObserver>> observers;
 
 	public Bakery(String guiId, String name, int locationX, int locationY) {
 		this.guiId = guiId;
@@ -33,6 +41,7 @@ public class Bakery implements Serializable {
 		this.cookBook = new HashMap<>();
 		this.orderDayMap = new HashMap<>();
 		this.doughInStock = new HashMap<>();
+		this.observers = new HashMap<>();
 	}
 
 	public Product getProductByName(String productName) {
@@ -68,6 +77,7 @@ public class Bakery implements Serializable {
 		ordersPerDay.add(order);
 		Collections.sort(ordersPerDay, new OrderDueDateComparator());
 		orderDayMap.put(day, ordersPerDay);
+		notifyObservers(Topic.DAILY_ORDERS);
 	}
 
 	public void addProduct(Product product) {
@@ -89,5 +99,34 @@ public class Bakery implements Serializable {
 
 	public void updateDoughList(String productName) {
 		doughInStock.put(productName, true);
+		notifyObservers(Topic.DOUGH);
+	}
+
+	@Override
+	public void registerObserver(BakeryObserver observer, String topic) {
+		List<BakeryObserver> observerList = observers.get(topic);
+		if (observerList == null) {
+			observerList = new LinkedList<>();
+		}
+		observerList.add(observer);
+		observers.put(topic, observerList);
+	}
+
+	@Override
+	public void notifyObservers(String topic) {
+		List<BakeryObserver> observerList = observers.get(topic);
+		if (observerList != null) {
+			for (BakeryObserver observer : observerList) {
+				observer.notifyObserver(topic);
+			}
+		}
+	}
+	
+	public void newDay() {
+		doughInStock.clear();
+		Set<String> topics = observers.keySet();
+		for (String topic : topics) {
+			notifyObservers(topic);
+		}
 	}
 }
