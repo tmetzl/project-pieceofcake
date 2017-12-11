@@ -24,9 +24,8 @@ public class Node implements Serializable {
 
 	@Override
 	public String toString() {
-		String s = String.format("Node %s: %s from company %s of type %s at (%.2f, %.2f)", guid, name, company, type,
+		return String.format("Node %s: %s from company %s of type %s at (%.2f, %.2f)", guid, name, company, type,
 				locationX, locationY);
-		return s;
 	}
 
 	@Override
