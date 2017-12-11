@@ -11,8 +11,6 @@ addons:
       secure: "FyXeRSuAcqk+VhCcTibRUEjxVowGrWffQGr7Owy73vx23+3Z9BAUURi0Z1kwirwskfJ6/u7J4r3xbNxXQB0ip8xp9DzGTUzjw+J2+6F4+jgobJRGnIRsAtVCIxPXPqf7AcrDeWeB82ewy6xstmfh2d6uwBbqme+PhAE4/HgZVKYCvHikRF/1WAQPIEzHFqcWxw2maLm3IKJ5UYMypLmc06wKOlQgwjeKzM8FrzcRXZUpXTnRdSh97vPF1Vd68Y1BSaikL+ZDZJeLY8BwDXVZKnDtDLkj4zB2sxb/Afb03VxZdR6880xPfiCoIJSbcS+Klo+2r+5rkvvWwQQug27FKTOmITtBDOOfh6NWu5ZCDTnjl021AcHWP1t33qhzdero89upOTi0nWJMfjm1avoAlNfOVnJ07gBSsOcQz07eKZ/SOjDWmXkcqgDN5MVv3ajeWbVOQTeSVdENjhHWOFGg7Pspv0zsL7xB0ie1XOXrlmC0pM6F3o08ArWFthXzCnbRg+IcwmrObB1A0GiaI6INMk4UCF8V0xlYbyQlpNZWIYiHtUMv22Hc87cNXs5oEzWzG/VF0NcCEsGP5grZSduB7BEl04lCwQujP042UbaCBWAvLa6qeToGZ0ieCNXCCzSftHCSyqZyWa17saejEdH8h8KF4ZC0CTmet2kxBLkVilQ="
     branches:
       - master
-      - Development
-      - KneadingScheduler-Feature
 
 jdk:
     - oraclejdk8
