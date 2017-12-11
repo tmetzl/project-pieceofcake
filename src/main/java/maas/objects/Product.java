@@ -1,8 +1,13 @@
 package maas.objects;
 
+import java.io.Serializable;
+
 import org.json.JSONObject;
 
-public class Product {
+public class Product implements Serializable {
+	
+
+	private static final long serialVersionUID = 2892103285509962088L;
 	
 	private String id;
 	private int doughPrepTime;
