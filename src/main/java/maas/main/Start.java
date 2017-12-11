@@ -19,12 +19,15 @@ import jade.util.leap.Properties;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.StaleProxyException;
 import maas.agents.CustomerAgent;
+import maas.agents.GPSAgent;
 import maas.agents.OrderAgent;
 import maas.agents.StartUpAgent;
 import maas.agents.TimerAgent;
 import maas.objects.Bakery;
 import maas.objects.Order;
 import maas.objects.Product;
+import maas.streetnetwork.DiGraph;
+import maas.streetnetwork.Node;
 
 public class Start {
 
@@ -129,6 +132,10 @@ public class Start {
 					createCustomer(customer, customerOrders);
 				}
 			}
+			
+			// Step 4: Process the street network
+			JSONObject network = scenario.getJSONObject("street_network");
+			createStreetNetwork(network);
 
 		} catch (FileNotFoundException e) {
 			logger.log(Logger.WARNING, e.getMessage(), e);
@@ -168,6 +175,37 @@ public class Start {
 		}
 
 		container.acceptNewAgent(name, new OrderAgent(bakery)).start();
+	}
+	
+	public void createStreetNetwork(JSONObject network) throws StaleProxyException {
+		DiGraph streetNetwork = new DiGraph();
+		JSONArray nodes = network.getJSONArray("nodes");
+		
+		for (int i=0;i<nodes.length();i++) {
+			JSONObject jsonNode = nodes.getJSONObject(i);
+			String guid = jsonNode.getString("guid");
+			String name = jsonNode.getString("name");
+			String type = jsonNode.getString("type");
+			String company = jsonNode.getString("company");
+			JSONObject location = jsonNode.getJSONObject("location");
+			
+			double locationX = location.getDouble("x");
+			double locationY = location.getDouble("y");
+
+			streetNetwork.addNode(new Node(guid, name, type, company, locationX, locationY));
+		}
+		
+		JSONArray links = network.getJSONArray("links");
+		for (int i=0;i<links.length();i++) {
+			JSONObject link = links.getJSONObject(i);
+			String from = link.getString("source");
+			String to = link.getString("target");
+			double dist = link.getDouble("dist");
+			String edgeGuid = link.getString("guid");
+			streetNetwork.addEdge(from, to, dist, edgeGuid);
+		}
+		
+		container.acceptNewAgent("gps-agent", new GPSAgent(streetNetwork)).start();
 	}
 
 	public static void main(String[] args) {
