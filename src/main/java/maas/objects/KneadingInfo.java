@@ -58,4 +58,9 @@ public class KneadingInfo implements Serializable {
 		return false;
 	}
 	
+	@Override
+	public int hashCode() {
+		return productName.hashCode();
+	}
+	
 }
