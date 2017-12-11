@@ -26,7 +26,7 @@ public class Bakery implements Serializable, BakeryObservable {
 	private List<Order> ordersInProcess;
 	private Map<String, Product> cookBook;
 	private Map<String, Boolean> doughInStock;
-	private Map<String, List<BakeryObserver>> observers;
+	private transient Map<String, List<BakeryObserver>> observers;
 
 	public Bakery(String guiId, String name, int locationX, int locationY) {
 		this.guiId = guiId;
