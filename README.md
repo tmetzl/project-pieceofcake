@@ -3,6 +3,7 @@
 ## Build Status
 [![Build Status](https://travis-ci.org/HBRS-MAAS/project-pieceofcake.svg?branch=master)](https://travis-ci.org/HBRS-MAAS/project-pieceofcake)
 [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=project-pieceofcake)](https://sonarcloud.io/dashboard?id=project-pieceofcake)
+[![Lines of code](https://sonarcloud.io/api/badges/gate?key=project-pieceofcake&metric=lines)](https://sonarcloud.io/dashboard/index/project-pieceofcake)
 
 ## Members
 * Tim Metzler @[tmetzl](http://github.com/tmetzl)
