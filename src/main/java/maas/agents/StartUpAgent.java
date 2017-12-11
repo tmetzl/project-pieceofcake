@@ -26,7 +26,7 @@ public class StartUpAgent extends Agent {
 		logger.log(Logger.INFO, welcomeMessage);
 
 		try {
-			Thread.sleep(20000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			logger.log(Logger.WARNING, e.getMessage(), e);
 			Thread.currentThread().interrupt();

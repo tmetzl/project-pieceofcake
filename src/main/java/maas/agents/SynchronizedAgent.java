@@ -70,6 +70,10 @@ public class SynchronizedAgent extends Agent {
 		return (getSynchronizedTime() - startUpTime) / 1000l;
 	}
 
+	protected int getDay() {
+		return (int) (getScenarioTime() / 24);
+	}
+
 	class SynchronizeClock extends SequentialBehaviour {
 
 		private long sendTime;
