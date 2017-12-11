@@ -18,8 +18,11 @@ import jade.util.Logger;
 import jade.util.leap.Properties;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.StaleProxyException;
+import maas.agents.BakeryClockAgent;
 import maas.agents.CustomerAgent;
 import maas.agents.GPSAgent;
+import maas.agents.KneadingAgent;
+import maas.agents.KneadingSchedulerAgent;
 import maas.agents.OrderAgent;
 import maas.agents.StartUpAgent;
 import maas.agents.TimerAgent;
@@ -48,22 +51,21 @@ public class Start {
 		Profile profile = new ProfileImpl(properties);
 
 		container = runtime.createMainContainer(profile);
-		
 
 		customers = new LinkedList<>();
-		
+
 		try {
 			container.acceptNewAgent("Timer", TimerAgent.getInstance()).start();
-			
+
 			loadScenario(scenario);
-			
+
 			container.acceptNewAgent("StartUp", new StartUpAgent()).start();
 		} catch (StaleProxyException e) {
 			logger.log(Logger.WARNING, e.getMessage(), e);
-		}		
-		
+		}
+
 	}
-	
+
 	public List<CustomerAgent> getCustomers() {
 		return customers;
 	}
@@ -164,8 +166,17 @@ public class Start {
 		JSONObject location = jsonBakery.getJSONObject("location");
 		int locationX = location.getInt("x");
 		int locationY = location.getInt("y");
+		JSONArray kneadingMachines = jsonBakery.getJSONArray("kneading_machines");
+		int numberOfKneadingMachines = kneadingMachines.length();
 
 		Bakery bakery = new Bakery(guiId, name, locationX, locationY);
+		BakeryClockAgent myBakeryClock = new BakeryClockAgent(bakery);
+
+		String[] kneadingAgentNames = new String[numberOfKneadingMachines];
+		for (int i = 0; i < numberOfKneadingMachines; i++) {
+			JSONObject kneadingMachine = kneadingMachines.getJSONObject(i);
+			kneadingAgentNames[i] = kneadingMachine.getString("guid");
+		}
 
 		JSONArray products = jsonBakery.getJSONArray("products");
 		for (int i = 0; i < products.length(); i++) {
@@ -174,6 +185,12 @@ public class Start {
 			bakery.addProduct(product);
 		}
 
+		for (String kneadingAgentName : kneadingAgentNames) {
+			container.acceptNewAgent(kneadingAgentName, new KneadingAgent()).start();
+		}
+		container.acceptNewAgent(name + "-kneadingScheduler", new KneadingSchedulerAgent(kneadingAgentNames, bakery))
+				.start();
+		container.acceptNewAgent(name + "-clock", myBakeryClock).start();
 		container.acceptNewAgent(name, new OrderAgent(bakery)).start();
 	}
 	

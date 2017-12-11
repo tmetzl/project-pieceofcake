@@ -1,13 +1,16 @@
 package maas.objects;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
 
+import junit.framework.AssertionFailedError;
 import maas.objects.Order;
 
 public class BakeryTest {
@@ -62,7 +65,7 @@ public class BakeryTest {
 		List<Order> orders = prepareOrderListForTests();
 		List<Product> products = prepareProductListForTests();
 		
-		assertNull(bakery.getOrder());
+		assertNull(bakery.getOrdersOfDay(1));
 		assertNull(bakery.getProductByName("testProduct"));
 		assertNull(bakery.getPrice(orders.get(0)));
 		for (Order order : orders) {
@@ -71,13 +74,27 @@ public class BakeryTest {
 		for (Product product : products) {
 			bakery.addProduct(product);
 		}
-		assertEquals("order-002", bakery.getOrder().getGuiId());
+		List<Order> ordersOfDayTwo = bakery.getOrdersOfDay(2);
+		assertEquals(2, ordersOfDayTwo.size());
+		assertEquals("order-001", ordersOfDayTwo.get(0).getGuiId());
+		assertEquals("order-003", ordersOfDayTwo.get(1).getGuiId());
+		List<Order> ordersOfDayOne = bakery.getOrdersOfDay(1);
+		assertEquals(1, ordersOfDayOne.size());
+		assertEquals("order-002", ordersOfDayOne.get(0).getGuiId());
 		assertNull(bakery.getPrice(orders.get(0)));
 		assertEquals(new Double(282.8), bakery.getPrice(orders.get(1)));
 		assertEquals(new Double(134.1), bakery.getPrice(orders.get(2)));
 		
 		
 		
+	}
+	
+	@Test
+	public void bakeryDoughListTest() {
+		Bakery bakery = new Bakery("bakery-002", "TestBakery2", 12, 12);
+		assertFalse(bakery.isDoughInStock("Bread"));
+		bakery.updateDoughList("Bread");
+		assertTrue(bakery.isDoughInStock("Bread"));
 	}
 
 }
