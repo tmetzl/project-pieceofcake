@@ -23,13 +23,13 @@ public class CustomerAgent extends SynchronizedAgent {
 
 	private String guiId;
 	private int type;
-	private int locationX;
-	private int locationY;
+	private double locationX;
+	private double locationY;
 	private List<Order> orders;
 	private List<Order> placedOrders;
 	private List<Order> failedOrders;
 
-	public CustomerAgent(String guiId, int type, int locationX, int locationY, List<Order> orders) {
+	public CustomerAgent(String guiId, int type, double locationX, double locationY, List<Order> orders) {
 		this.guiId = guiId;
 		this.type = type;
 		this.locationX = locationX;
@@ -245,11 +245,11 @@ public class CustomerAgent extends SynchronizedAgent {
 		return type;
 	}
 
-	public int getLocationX() {
+	public double getLocationX() {
 		return locationX;
 	}
 
-	public int getLocationY() {
+	public double getLocationY() {
 		return locationY;
 	}
 
