@@ -1,8 +1,5 @@
 package maas.agents;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.domain.DFService;
@@ -18,7 +15,6 @@ import maas.objects.Order;
 @SuppressWarnings("serial")
 public class OrderAgent extends SynchronizedAgent {
 
-	private transient List<Order> orders = new LinkedList<>();
 	private transient Bakery myBakery;
 
 	public OrderAgent(Bakery bakery) {
@@ -93,7 +89,7 @@ public class OrderAgent extends SynchronizedAgent {
 					String jsonOrder = msg.getContent();
 					Order order = new Order(jsonOrder);
 					// Add to active orders
-					orders.add(order);
+					myBakery.addOrder(order);
 				}
 			} else {
 				block();
