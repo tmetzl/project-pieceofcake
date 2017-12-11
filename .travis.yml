@@ -12,7 +12,7 @@ addons:
     branches:
       - master
       - Development
-      - KneadingScheduler-Feature
+      - Streetnetwork-Feature
 
 jdk:
     - oraclejdk8

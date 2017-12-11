@@ -20,6 +20,7 @@ import jade.wrapper.AgentContainer;
 import jade.wrapper.StaleProxyException;
 import maas.agents.BakeryClockAgent;
 import maas.agents.CustomerAgent;
+import maas.agents.GPSAgent;
 import maas.agents.KneadingAgent;
 import maas.agents.KneadingSchedulerAgent;
 import maas.agents.OrderAgent;
@@ -28,12 +29,16 @@ import maas.agents.TimerAgent;
 import maas.objects.Bakery;
 import maas.objects.Order;
 import maas.objects.Product;
+import maas.streetnetwork.DiGraph;
+import maas.streetnetwork.Node;
 
 public class Start {
 
+	private static final String LOCATION = "location";
 	private AgentContainer container;
 	private Logger logger;
 	private List<CustomerAgent> customers;
+	
 
 	public Start(String scenario) {
 		// Create logger
@@ -131,6 +136,10 @@ public class Start {
 					createCustomer(customer, customerOrders);
 				}
 			}
+			
+			// Step 4: Process the street network
+			JSONObject network = scenario.getJSONObject("street_network");
+			createStreetNetwork(network);
 
 		} catch (FileNotFoundException e) {
 			logger.log(Logger.WARNING, e.getMessage(), e);
@@ -143,7 +152,7 @@ public class Start {
 		String name = customer.getString("name");
 		String guiId = customer.getString("guid");
 		int type = customer.getInt("type");
-		JSONObject location = customer.getJSONObject("location");
+		JSONObject location = customer.getJSONObject(LOCATION);
 		int locationX = location.getInt("x");
 		int locationY = location.getInt("y");
 		// Create the agent
@@ -156,7 +165,7 @@ public class Start {
 	public void createBakery(JSONObject jsonBakery) throws StaleProxyException {
 		String name = jsonBakery.getString("name");
 		String guiId = jsonBakery.getString("guid");
-		JSONObject location = jsonBakery.getJSONObject("location");
+		JSONObject location = jsonBakery.getJSONObject(LOCATION);
 		int locationX = location.getInt("x");
 		int locationY = location.getInt("y");
 		JSONArray kneadingMachines = jsonBakery.getJSONArray("kneading_machines");
@@ -185,6 +194,37 @@ public class Start {
 				.start();
 		container.acceptNewAgent(name + "-clock", myBakeryClock).start();
 		container.acceptNewAgent(name, new OrderAgent(bakery)).start();
+	}
+	
+	public void createStreetNetwork(JSONObject network) throws StaleProxyException {
+		DiGraph streetNetwork = new DiGraph();
+		JSONArray nodes = network.getJSONArray("nodes");
+		
+		for (int i=0;i<nodes.length();i++) {
+			JSONObject jsonNode = nodes.getJSONObject(i);
+			String guid = jsonNode.getString("guid");
+			String name = jsonNode.getString("name");
+			String type = jsonNode.getString("type");
+			String company = jsonNode.getString("company");
+			JSONObject location = jsonNode.getJSONObject(LOCATION);
+			
+			double locationX = location.getDouble("x");
+			double locationY = location.getDouble("y");
+
+			streetNetwork.addNode(new Node(guid, name, type, company, locationX, locationY));
+		}
+		
+		JSONArray links = network.getJSONArray("links");
+		for (int i=0;i<links.length();i++) {
+			JSONObject link = links.getJSONObject(i);
+			String from = link.getString("source");
+			String to = link.getString("target");
+			double dist = link.getDouble("dist");
+			String edgeGuid = link.getString("guid");
+			streetNetwork.addEdge(from, to, dist, edgeGuid);
+		}
+		
+		container.acceptNewAgent("gps-agent", new GPSAgent(streetNetwork)).start();
 	}
 
 	public static void main(String[] args) {
