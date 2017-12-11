@@ -3,7 +3,11 @@
 ## Build Status
 [![Build Status](https://travis-ci.org/HBRS-MAAS/project-pieceofcake.svg?branch=master)](https://travis-ci.org/HBRS-MAAS/project-pieceofcake)
 [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=project-pieceofcake)](https://sonarcloud.io/dashboard?id=project-pieceofcake)
+[![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=coverage)](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake)
 [![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=lines)](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake)
+[![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=bugs)](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake)
+[![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=code_smells)](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake)
+
 
 
 ## Members
