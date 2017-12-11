@@ -34,7 +34,6 @@ import maas.streetnetwork.Node;
 
 public class Start {
 
-	private static final String LOCATION = "location";
 	private AgentContainer container;
 	private Logger logger;
 	private List<CustomerAgent> customers;
@@ -146,17 +145,22 @@ public class Start {
 		}
 
 	}
+	
+	public double[] getLocation(JSONObject jsonObject) {
+		JSONObject location = jsonObject.getJSONObject("location");
+		
+		double[] locationXY = {location.getDouble("x"), location.getDouble("y")};
+		return locationXY;
+	}
 
 	public void createCustomer(JSONObject customer, List<Order> orders) throws StaleProxyException {
 		// Get the parameters
 		String name = customer.getString("name");
 		String guiId = customer.getString("guid");
 		int type = customer.getInt("type");
-		JSONObject location = customer.getJSONObject(LOCATION);
-		int locationX = location.getInt("x");
-		int locationY = location.getInt("y");
+		double[] location = getLocation(customer);
 		// Create the agent
-		CustomerAgent agent = new CustomerAgent(guiId, type, locationX, locationY, orders);
+		CustomerAgent agent = new CustomerAgent(guiId, type, location[0], location[1], orders);
 		customers.add(agent);
 		container.acceptNewAgent(name, agent).start();
 
@@ -165,13 +169,11 @@ public class Start {
 	public void createBakery(JSONObject jsonBakery) throws StaleProxyException {
 		String name = jsonBakery.getString("name");
 		String guiId = jsonBakery.getString("guid");
-		JSONObject location = jsonBakery.getJSONObject(LOCATION);
-		int locationX = location.getInt("x");
-		int locationY = location.getInt("y");
+		
 		JSONArray kneadingMachines = jsonBakery.getJSONArray("kneading_machines");
 		int numberOfKneadingMachines = kneadingMachines.length();
-
-		Bakery bakery = new Bakery(guiId, name, locationX, locationY);
+		double[] location = getLocation(jsonBakery);
+		Bakery bakery = new Bakery(guiId, name, location[0], location[1]);
 		BakeryClockAgent myBakeryClock = new BakeryClockAgent(bakery);
 
 		String[] kneadingAgentNames = new String[numberOfKneadingMachines];
@@ -206,12 +208,9 @@ public class Start {
 			String name = jsonNode.getString("name");
 			String type = jsonNode.getString("type");
 			String company = jsonNode.getString("company");
-			JSONObject location = jsonNode.getJSONObject(LOCATION);
-			
-			double locationX = location.getDouble("x");
-			double locationY = location.getDouble("y");
+			double[] location = getLocation(jsonNode);
 
-			streetNetwork.addNode(new Node(guid, name, type, company, locationX, locationY));
+			streetNetwork.addNode(new Node(guid, name, type, company, location[0], location[1]));
 		}
 		
 		JSONArray links = network.getJSONArray("links");
