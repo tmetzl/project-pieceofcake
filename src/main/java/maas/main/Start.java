@@ -18,6 +18,7 @@ import jade.util.Logger;
 import jade.util.leap.Properties;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.StaleProxyException;
+import maas.agents.BakeryClockAgent;
 import maas.agents.CustomerAgent;
 import maas.agents.OrderAgent;
 import maas.agents.StartUpAgent;
@@ -159,6 +160,8 @@ public class Start {
 		int locationY = location.getInt("y");
 
 		Bakery bakery = new Bakery(guiId, name, locationX, locationY);
+		BakeryClockAgent myBakeryClock = new BakeryClockAgent(bakery);
+		container.acceptNewAgent(name + "-clock", myBakeryClock).start();
 
 		JSONArray products = jsonBakery.getJSONArray("products");
 		for (int i = 0; i < products.length(); i++) {
