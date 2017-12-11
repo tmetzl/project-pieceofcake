@@ -97,8 +97,10 @@ public class KneadingSchedulerAgent extends SynchronizedAgent implements BakeryO
 		for (Order order : ordersOfDay) {
 			String[] productNames = order.getProductIds();
 			for (String product : productNames) {
+				KneadingInfo dough = new KneadingInfo();
+				dough.setProductName(product);
 				if (!myBakery.isDoughInStock(product) && !doughInProcess.contains(product)
-						&& !doughQueue.contains(product)) {
+						&& !doughQueue.contains(dough)) {
 					differentProducts.add(product);
 				}
 			}

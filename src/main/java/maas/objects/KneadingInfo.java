@@ -49,4 +49,13 @@ public class KneadingInfo implements Serializable {
 		restingTime = obj.getLong("resting_time");
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof KneadingInfo) {
+			KneadingInfo dough = (KneadingInfo) o;
+			return dough.getProductName().equals(productName);
+		}
+		return false;
+	}
+	
 }
