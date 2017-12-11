@@ -34,9 +34,11 @@ import maas.streetnetwork.Node;
 
 public class Start {
 
+	private static final String LOCATION = "location";
 	private AgentContainer container;
 	private Logger logger;
 	private List<CustomerAgent> customers;
+	
 
 	public Start(String scenario) {
 		// Create logger
@@ -150,7 +152,7 @@ public class Start {
 		String name = customer.getString("name");
 		String guiId = customer.getString("guid");
 		int type = customer.getInt("type");
-		JSONObject location = customer.getJSONObject("location");
+		JSONObject location = customer.getJSONObject(LOCATION);
 		int locationX = location.getInt("x");
 		int locationY = location.getInt("y");
 		// Create the agent
@@ -163,7 +165,7 @@ public class Start {
 	public void createBakery(JSONObject jsonBakery) throws StaleProxyException {
 		String name = jsonBakery.getString("name");
 		String guiId = jsonBakery.getString("guid");
-		JSONObject location = jsonBakery.getJSONObject("location");
+		JSONObject location = jsonBakery.getJSONObject(LOCATION);
 		int locationX = location.getInt("x");
 		int locationY = location.getInt("y");
 		JSONArray kneadingMachines = jsonBakery.getJSONArray("kneading_machines");
@@ -204,7 +206,7 @@ public class Start {
 			String name = jsonNode.getString("name");
 			String type = jsonNode.getString("type");
 			String company = jsonNode.getString("company");
-			JSONObject location = jsonNode.getJSONObject("location");
+			JSONObject location = jsonNode.getJSONObject(LOCATION);
 			
 			double locationX = location.getDouble("x");
 			double locationY = location.getDouble("y");
