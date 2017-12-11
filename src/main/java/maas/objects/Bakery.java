@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.sun.org.apache.xerces.internal.parsers.CachingParserPool.SynchronizedGrammarPool;
-
-import maas.agents.SynchronizedAgent;
 import maas.config.Topic;
 import maas.interfaces.BakeryObservable;
 import maas.interfaces.BakeryObserver;
