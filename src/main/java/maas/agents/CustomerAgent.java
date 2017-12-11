@@ -47,7 +47,7 @@ public class CustomerAgent extends SynchronizedAgent {
 		super.setup();
 
 		// Printout a welcome message
-		String welcomeMessage = String.format("Customer %s of type %d at location (%d,%d) is ready!",
+		String welcomeMessage = String.format("Customer %s of type %d at location (%.2f,%.2f) is ready!",
 				getAID().getLocalName(), type, locationX, locationY);
 		logger.log(Logger.INFO, welcomeMessage);
 
