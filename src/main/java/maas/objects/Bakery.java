@@ -19,8 +19,8 @@ public class Bakery implements Serializable, BakeryObservable {
 
 	private String guiId;
 	private String name;
-	private int locationX;
-	private int locationY;
+	private double locationX;
+	private double locationY;
 
 	private Map<Integer, List<Order>> orderDayMap;
 	private List<Order> ordersInProcess;
@@ -28,7 +28,7 @@ public class Bakery implements Serializable, BakeryObservable {
 	private Map<String, Boolean> doughInStock;
 	private transient Map<String, List<BakeryObserver>> observers;
 
-	public Bakery(String guiId, String name, int locationX, int locationY) {
+	public Bakery(String guiId, String name, double locationX, double locationY) {
 		this.guiId = guiId;
 		this.name = name;
 		this.locationX = locationX;
@@ -125,5 +125,21 @@ public class Bakery implements Serializable, BakeryObservable {
 		for (String topic : topics) {
 			notifyObservers(topic);
 		}
+	}
+
+	public String getGuiId() {
+		return guiId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public double getLocationX() {
+		return locationX;
+	}
+
+	public double getLocationY() {
+		return locationY;
 	}
 }
