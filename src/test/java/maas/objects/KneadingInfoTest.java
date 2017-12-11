@@ -6,8 +6,6 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
-import maas.utils.KneadingInfo;
-
 public class KneadingInfoTest {
 
 	JSONObject jsonDough1;

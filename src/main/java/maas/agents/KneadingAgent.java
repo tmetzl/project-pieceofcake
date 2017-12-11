@@ -11,7 +11,7 @@ import jade.lang.acl.ACLMessage;
 import jade.util.Logger;
 import jade.lang.acl.MessageTemplate;
 import maas.config.Protocols;
-import maas.utils.KneadingInfo;
+import maas.objects.KneadingInfo;
 
 @SuppressWarnings("serial")
 public class KneadingAgent extends Agent {
