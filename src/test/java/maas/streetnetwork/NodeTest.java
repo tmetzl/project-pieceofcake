@@ -38,6 +38,7 @@ public class NodeTest {
 		assertTrue(nodeA.equals(nodeA1));
 		assertFalse(nodeA.equals(nodeB));
 		assertFalse(nodeA.equals(nodeC));
+		assertFalse(nodeA.equals(new Object()));
 	}
 
 	@Test
