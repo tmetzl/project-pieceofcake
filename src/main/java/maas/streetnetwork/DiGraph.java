@@ -49,7 +49,7 @@ public class DiGraph implements Serializable {
 	public List<Edge> getEdges(String guid) {
 		List<Edge> edges = adjacencyMap.get(getNode(guid));
 		if (edges == null) {
-			edges = new LinkedList<Edge>();
+			edges = new LinkedList<>();
 		}
 		return edges;
 	}
