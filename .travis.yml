@@ -13,12 +13,14 @@ addons:
       - master
       - Development
       - Streetnetwork-Feature
+      - Travis-Bugfix
 
 jdk:
     - oraclejdk8
 
 script:
     - ./gradlew sonarqube
+    - ./gradlew run
 
 cache:
     directories:
