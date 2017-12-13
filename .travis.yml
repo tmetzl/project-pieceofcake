@@ -17,6 +17,7 @@ jdk:
 
 script:
     - ./gradlew sonarqube
+    - ./gradlew run
 
 cache:
     directories:
