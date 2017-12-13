@@ -54,8 +54,4 @@ public class DiGraph implements Serializable {
 		return edges;
 	}
 
-	public static void main(String[] args) {
-		new DiGraph();
-	}
-
 }
