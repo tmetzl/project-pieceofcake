@@ -1,13 +1,20 @@
 package maas.agents;
 
+import jade.content.lang.Codec;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
+import jade.domain.FIPANames;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.JADEAgentManagement.JADEManagementOntology;
+import jade.domain.JADEAgentManagement.ShutdownPlatform;
 import jade.lang.acl.ACLMessage;
 import jade.util.Logger;
 import maas.config.Protocols;
@@ -16,6 +23,13 @@ import maas.config.Protocols;
 public class StartUpAgent extends Agent {
 
 	private Logger logger;
+	private long startUpTime;
+	private long shutDownTime;
+	private int durationDays = 5;
+	
+	public StartUpAgent(int durationDays) {
+		this.durationDays = durationDays + 1;
+	}
 
 	@Override
 	protected void setup() {
@@ -35,7 +49,7 @@ public class StartUpAgent extends Agent {
 		addBehaviour(new StartUp());
 
 	}
-	
+
 	@Override
 	protected void takeDown() {
 		logger.log(Logger.INFO, getAID().getLocalName() + ": Terminating.");
@@ -48,6 +62,8 @@ public class StartUpAgent extends Agent {
 		public StartUp() {
 			this.addSubBehaviour(new FindSynchronizedAgents());
 			this.addSubBehaviour(new ScheduleStart(5000));
+			this.addSubBehaviour(new WaitForShutDown());
+			this.addSubBehaviour(new Shutdown());
 		}
 
 		private class FindSynchronizedAgents extends OneShotBehaviour {
@@ -90,13 +106,63 @@ public class StartUpAgent extends Agent {
 				}
 				msg.setLanguage("English");
 				msg.setProtocol(Protocols.STARTUP);
-				long startUpTime = System.currentTimeMillis() + startUpDelay;
+				startUpTime = System.currentTimeMillis() + startUpDelay;
+				shutDownTime = startUpTime + (durationDays * 24000l);
 				msg.setContent(String.valueOf(startUpTime));
 				myAgent.send(msg);
 			}
 
 		}
+		
+		private class WaitForShutDown extends Behaviour {
+			
+			private boolean waitingFinished = false;
+
+			@Override
+			public void action() {
+				long currentTime = System.currentTimeMillis();
+				long remainingTime = shutDownTime - currentTime;
+
+				if (currentTime >= shutDownTime) {
+					logger.log(Logger.INFO, "Terminating.");
+					waitingFinished = true;
+				} else {
+					block(remainingTime);
+				}
+
+			}
+
+			@Override
+			public boolean done() {
+				return waitingFinished;
+			}
+			
+		}
+		
+		// Taken from
+		// http://www.rickyvanrijn.nl/2017/08/29/how-to-shutdown-jade-agent-platform-programmatically/
+		private class Shutdown extends OneShotBehaviour {
+			public void action() {
+				ACLMessage shutdownMessage = new ACLMessage(ACLMessage.REQUEST);
+				Codec codec = new SLCodec();
+				myAgent.getContentManager().registerLanguage(codec);
+				myAgent.getContentManager().registerOntology(JADEManagementOntology.getInstance());
+				shutdownMessage.addReceiver(myAgent.getAMS());
+				shutdownMessage.setLanguage(FIPANames.ContentLanguage.FIPA_SL);
+				shutdownMessage.setOntology(JADEManagementOntology.getInstance().getName());
+				try {
+					myAgent.getContentManager().fillContent(shutdownMessage,
+							new Action(myAgent.getAID(), new ShutdownPlatform()));
+					myAgent.send(shutdownMessage);
+				} catch (Exception e) {
+					logger.log(Logger.WARNING, e.getMessage(), e);
+				}
+
+			}
+		}
 
 	}
+
+	
 
 }
