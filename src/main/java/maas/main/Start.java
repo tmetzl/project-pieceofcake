@@ -60,7 +60,7 @@ public class Start {
 
 			loadScenario(scenario);
 
-			container.acceptNewAgent("StartUp", new StartUpAgent()).start();
+			
 		} catch (StaleProxyException e) {
 			logger.log(Logger.WARNING, e.getMessage(), e);
 		}
@@ -139,6 +139,10 @@ public class Start {
 			// Step 4: Process the street network
 			JSONObject network = scenario.getJSONObject("street_network");
 			createStreetNetwork(network);
+			
+			// Step 5: Get the duration and set up the startUp agent
+			int duration = scenario.getJSONObject("meta").getInt("duration_days");
+			container.acceptNewAgent("StartUp", new StartUpAgent(duration)).start();
 
 		} catch (FileNotFoundException e) {
 			logger.log(Logger.WARNING, e.getMessage(), e);
