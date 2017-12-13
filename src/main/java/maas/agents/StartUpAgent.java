@@ -155,7 +155,7 @@ public class StartUpAgent extends Agent {
 							new Action(myAgent.getAID(), new ShutdownPlatform()));
 					myAgent.send(shutdownMessage);
 				} catch (Exception e) {
-					// LOGGER.error(e);
+					logger.log(Logger.WARNING, e.getMessage(), e);
 				}
 
 			}
