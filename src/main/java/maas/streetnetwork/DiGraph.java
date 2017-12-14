@@ -47,8 +47,7 @@ public class DiGraph implements Serializable {
 	}
 
 	public List<Edge> getEdges(String guid) {
-		List<Edge> edges = adjacencyMap.get(getNode(guid));
-		return edges;
+		return adjacencyMap.get(getNode(guid));
 	}
 
 }
