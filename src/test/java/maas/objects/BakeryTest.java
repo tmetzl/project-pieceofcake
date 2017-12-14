@@ -112,12 +112,16 @@ public class BakeryTest {
 	
 	@Test
 	public void bakeryObserverTest() {
-		TestObserver observer = new TestObserver();
+		TestObserver doughListObserver1 = new TestObserver();
+		TestObserver doughListObserver2 = new TestObserver();
 		Bakery bakery = new Bakery("bakery-001", "TestBakery", 10.1, 17.2);
-		bakery.registerObserver(observer, Topic.DOUGH);
-		assertFalse(observer.notified);
+		bakery.registerObserver(doughListObserver1, Topic.DOUGH);
+		bakery.registerObserver(doughListObserver2, Topic.DOUGH);
+		assertFalse(doughListObserver1.notified);
+		assertFalse(doughListObserver2.notified);
 		bakery.newDay();
-		assertTrue(observer.notified);		
+		assertTrue(doughListObserver1.notified);
+		assertTrue(doughListObserver2.notified);
 	}
 	
 	
