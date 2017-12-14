@@ -24,6 +24,8 @@ public class DiGraphTest {
 			nodes.add(new Node("node-"+i, "Node "+i, "Type "+i, "Company "+i, 3.2+i, 6.2+i));
 		}
 		
+		nodes.add(new Node("node-1", "Node 1", "Type 1", "Company 1", 4.2, 7.2));
+		
 		graph = new DiGraph();
 		
 		for (Node node : nodes) {
