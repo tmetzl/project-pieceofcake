@@ -1,7 +1,6 @@
 package maas.streetnetwork;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedList;
@@ -66,7 +65,6 @@ public class DiGraphTest {
 	public void getEdgeTest() {
 		List<Edge> edgesOfNodeOne = graph.getEdges("node-0");
 		
-		assertNotNull(edgesOfNodeOne);
 		assertEquals(9, edgesOfNodeOne.size());
 		
 		for (int i=0;i<edgesOfNodeOne.size();i++) {
@@ -77,9 +75,16 @@ public class DiGraphTest {
 		
 		for (int i=1;i<10;i++) {
 			List<Edge> edges = graph.getEdges("node-"+i);
-			assertNotNull(edges);
 			assertTrue(edges.isEmpty());
 		}
+		
+		boolean thrown = false;
+		try {
+			graph.getEdges("node_that_doesn't-exist");
+		} catch (NoSuchElementException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
 	}
 	
 	
