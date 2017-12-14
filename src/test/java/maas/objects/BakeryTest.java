@@ -10,10 +10,12 @@ import java.util.List;
 
 import org.junit.Test;
 
+import maas.config.Topic;
+import maas.interfaces.BakeryObserver;
 import maas.objects.Order;
 
 public class BakeryTest {
-	
+		
 	public List<Order> prepareOrderListForTests() {
 		List<Order> orders = new LinkedList<Order>();
 		String jsonOrder1 = "{\"order_date\": {\"day\": 1,\"hour\": 6},"
@@ -95,6 +97,8 @@ public class BakeryTest {
 		assertFalse(bakery.isDoughInStock("Bread"));
 		bakery.updateDoughList("Bread");
 		assertTrue(bakery.isDoughInStock("Bread"));
+		bakery.newDay();
+		assertFalse(bakery.isDoughInStock("Bread"));
 	}
 	
 	@Test
@@ -104,6 +108,28 @@ public class BakeryTest {
 		assertEquals("TestBakery", bakery.getName());
 		assertEquals(10.1, bakery.getLocationX(), 1e-10);
 		assertEquals(17.2, bakery.getLocationY(), 1e-10);
+	}
+	
+	@Test
+	public void bakeryObserverTest() {
+		TestObserver observer = new TestObserver();
+		Bakery bakery = new Bakery("bakery-001", "TestBakery", 10.1, 17.2);
+		bakery.registerObserver(observer, Topic.DOUGH);
+		assertFalse(observer.notified);
+		bakery.newDay();
+		assertTrue(observer.notified);		
+	}
+	
+	
+	private class TestObserver implements BakeryObserver {
+		
+		boolean notified = false;
+
+		@Override
+		public void notifyObserver(String topic) {
+			notified = true;			
+		}
+		
 	}
 	
 	
