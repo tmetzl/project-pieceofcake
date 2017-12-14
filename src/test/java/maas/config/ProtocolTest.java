@@ -10,11 +10,12 @@ import org.junit.Test;
 public class ProtocolTest {
 	
 	@Test
-	public void testPrivateConstructorAccessibility() {
-		final Constructor<?>[] constructors = Protocols.class.getDeclaredConstructors();
-		for (Constructor<?> constructor : constructors) {
-			assertTrue(Modifier.isPrivate(constructor.getModifiers()));
-		}
+	public void testPrivateConstructorAccessibility() throws Exception {
+		Constructor<Protocols> constructor = Protocols.class.getDeclaredConstructor();
+		assertTrue(Modifier.isPrivate(constructor.getModifiers()));
+		
+		constructor.setAccessible(true);
+		constructor.newInstance();	
 	}
 
 }
