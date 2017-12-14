@@ -57,6 +57,7 @@ public class BakeryTest {
 		products.add(new Product(jsonProduct4));
 		return products;
 	}
+
 	
 	@Test
 	public void bakeryTest() {
@@ -95,5 +96,16 @@ public class BakeryTest {
 		bakery.updateDoughList("Bread");
 		assertTrue(bakery.isDoughInStock("Bread"));
 	}
+	
+	@Test
+	public void bakeryGetterTest() {
+		Bakery bakery = new Bakery("bakery-001", "TestBakery", 10.1, 17.2);
+		assertEquals("bakery-001", bakery.getGuiId());
+		assertEquals("TestBakery", bakery.getName());
+		assertEquals(10.1, bakery.getLocationX(), 1e-10);
+		assertEquals(17.2, bakery.getLocationY(), 1e-10);
+	}
+	
+	
 
 }
