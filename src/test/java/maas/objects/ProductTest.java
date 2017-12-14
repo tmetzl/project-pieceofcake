@@ -18,7 +18,7 @@ public class ProductTest {
 		Product product = new Product(jsonProduct);
 
 		assertEquals(6, product.getBoxingTemp());
-		assertEquals(3.29, product.getSalesPrice(),1e-10);
+		assertEquals(3.29, product.getSalesPrice(), 1e-10);
 		assertEquals(6, product.getBreadsPerOven());
 		assertEquals(6, product.getBreadsPerBox());
 		assertEquals(11, product.getItemPrepTime());
@@ -27,8 +27,13 @@ public class ProductTest {
 		assertEquals(1, product.getCoolingRate());
 		assertEquals(11, product.getBakingTime());
 		assertEquals(9, product.getDoughRestingTime());
-		assertEquals(1.43, product.getProductionCost(),1e-10);
+		assertEquals(1.43, product.getProductionCost(), 1e-10);
 		assertTrue("Bread".equals(product.getId()));
+
+		String toString = "Product Bread\nDough preparation time: 1\nDough resting time: 9\nItem preparation time: 11"
+				+ "\nBreads per oven: 6\nBaking time: 11\nBaking temp: 94\nCooling rate: 1\nBoxing temperature: 6"
+				+ "\nBreads per box: 6\nProduction cost: 1.43\nSales price: 3.29";
+		assertEquals(toString, product.toString());
 
 	}
 
