@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import junit.framework.AssertionFailedError;
 import maas.objects.Order;
 
 public class BakeryTest {
