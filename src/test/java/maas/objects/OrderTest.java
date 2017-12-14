@@ -29,6 +29,10 @@ public class OrderTest {
 		assertEquals(16, productAmounts[1]);
 		assertEquals(jsonOrder, order.toJSONString());
 
+		String toString = "Order order-001 from customer customer-001\nOrderDate (in hours): 30"
+				+ "\nDueDate (in hours): 67\nProducts: (Brezel, 7), (Bread, 16)";
+		
+		assertEquals(toString, order.toString());
 	}
 
 }
