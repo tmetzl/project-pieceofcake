@@ -7,8 +7,6 @@ import maas.main.Scenario;
 
 public class MainController {
 	
-	private Scenario scenario;
-
 	@FXML
 	private TabPane tabPane;
 	@FXML
@@ -18,8 +16,7 @@ public class MainController {
 	
 	@FXML
 	private void initialize() {
-		scenario = Scenario.getInstance();
-		customerTabController.setCustomers(scenario.getCustomers());
+		customerTabController.setCustomers(Scenario.getInstance().getCustomers());
 	}
 
 }
