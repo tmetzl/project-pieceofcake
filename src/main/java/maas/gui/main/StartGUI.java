@@ -2,6 +2,7 @@ package maas.gui.main;
 
 import java.io.IOException;
 
+import jade.util.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -13,10 +14,6 @@ public class StartGUI extends Application {
 	
 	@Override
 	public void start(Stage stage) {
-		//Start start;
-		//start = new Start("random-scenario");
-		//MainController controller = new MainController(start.getCustomers());
-
 		try {
 			Scenario scenario = Scenario.getInstance();
 			scenario.load("random-scenario");
@@ -29,8 +26,8 @@ public class StartGUI extends Application {
 			stage.setScene(scene);
 			stage.show();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger logger = Logger.getJADELogger(this.getClass().getName());
+			logger.log(Logger.WARNING, e.getMessage(), e);
 		}
 
 	}
