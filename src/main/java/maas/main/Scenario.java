@@ -35,35 +35,35 @@ import maas.streetnetwork.DiGraph;
 import maas.streetnetwork.Node;
 
 public class Scenario {
-	
+
 	private static Scenario instance;
-	
+
 	private Logger logger;
 	private boolean started;
-	private JSONObject scenario;
+	private JSONObject jsonScenario;
 	private DiGraph streetNetwork;
-	
+
 	private Map<String, Agent> tierOneAgents;
 	private Map<String, Agent> tierTwoAgents;
 	private Map<String, List<Order>> customerOrderMap;
 	private List<CustomerAgent> customers;
-	
+
 	private Scenario() {
 		started = false;
 		logger = Logger.getJADELogger(this.getClass().getName());
 		tierOneAgents = new HashMap<>();
 		tierTwoAgents = new HashMap<>();
 	}
-	
+
 	public static Scenario getInstance() {
 		if (instance == null) {
 			instance = new Scenario();
 		}
 		return instance;
 	}
-	
+
 	public void load(String filename) {
-		if (scenario != null) {
+		if (jsonScenario != null) {
 			return;
 		}
 		try (Scanner in = new Scanner(new FileReader("src/main/config/" + filename + ".json"))) {
@@ -75,8 +75,8 @@ public class Scenario {
 			String text = bld.toString();
 
 			// Parse scenario as JSONObject
-			scenario = new JSONObject(text);
-			
+			jsonScenario = new JSONObject(text);
+
 			loadStreetNetwork();
 			loadOrders();
 			loadCustomers();
@@ -85,7 +85,7 @@ public class Scenario {
 			logger.log(Logger.WARNING, e.getMessage(), e);
 		}
 	}
-	
+
 	public void start() {
 		if (!started) {
 			started = true;
@@ -99,10 +99,10 @@ public class Scenario {
 			Profile profile = new ProfileImpl(properties);
 
 			AgentContainer container = runtime.createMainContainer(profile);
-			
+
 			try {
 				container.acceptNewAgent("Timer", TimerAgent.getInstance()).start();
-				
+
 				for (Map.Entry<String, Agent> entry : tierOneAgents.entrySet()) {
 					String name = entry.getKey();
 					Agent agent = entry.getValue();
@@ -113,34 +113,33 @@ public class Scenario {
 					Agent agent = entry.getValue();
 					container.acceptNewAgent(name, agent).start();
 				}
-				
-				
-				int duration = scenario.getJSONObject("meta").getInt("duration_days");
+
+				int duration = jsonScenario.getJSONObject("meta").getInt("duration_days");
 				container.acceptNewAgent("StartUp", new StartUpAgent(duration)).start();
 			} catch (StaleProxyException s) {
 				logger.log(Logger.WARNING, s.getMessage(), s);
 			}
-			
+
 		}
 	}
-	
+
 	private void loadStreetNetwork() {
 		streetNetwork = new DiGraph();
-		JSONObject network = scenario.getJSONObject("street_network");
+		JSONObject network = jsonScenario.getJSONObject("street_network");
 		JSONArray nodes = network.getJSONArray("nodes");
-		
-		for (int i=0;i<nodes.length();i++) {
+
+		for (int i = 0; i < nodes.length(); i++) {
 			JSONObject jsonNode = nodes.getJSONObject(i);
 			String guid = jsonNode.getString("guid");
 			String name = jsonNode.getString("name");
 			String type = jsonNode.getString("type");
 			String company = jsonNode.getString("company");
 			double[] location = getLocation(jsonNode);
-			streetNetwork.addNode(new Node(guid, name, type, company, location[0], location[1]));			
+			streetNetwork.addNode(new Node(guid, name, type, company, location[0], location[1]));
 		}
-		
+
 		JSONArray links = network.getJSONArray("links");
-		for (int i=0;i<links.length();i++) {
+		for (int i = 0; i < links.length(); i++) {
 			JSONObject link = links.getJSONObject(i);
 			String from = link.getString("source");
 			String to = link.getString("target");
@@ -150,9 +149,9 @@ public class Scenario {
 		}
 		tierOneAgents.put("GPS Service", new GPSAgent(streetNetwork));
 	}
-	
+
 	private void loadOrders() {
-		JSONArray orders = scenario.getJSONArray("orders");
+		JSONArray orders = jsonScenario.getJSONArray("orders");
 		customerOrderMap = new HashMap<>();
 		for (int i = 0; i < orders.length(); i++) {
 			// Convert each order to a JSONObject
@@ -175,10 +174,10 @@ public class Scenario {
 			}
 		}
 	}
-	
+
 	private void loadCustomers() {
 		customers = new ArrayList<>();
-		JSONArray jsonCustomers = scenario.getJSONArray("customers");
+		JSONArray jsonCustomers = jsonScenario.getJSONArray("customers");
 
 		for (int i = 0; i < jsonCustomers.length(); i++) {
 			// Extract one customer and its Id
@@ -200,17 +199,17 @@ public class Scenario {
 				customers.add(agent);
 				tierTwoAgents.put(name, agent);
 			}
-		}		
+		}
 	}
-	
+
 	private void loadBakeries() {
-		JSONArray bakeries = scenario.getJSONArray("bakeries");
+		JSONArray bakeries = jsonScenario.getJSONArray("bakeries");
 
 		for (int i = 0; i < bakeries.length(); i++) {
 			JSONObject jsonBakery = bakeries.getJSONObject(i);
 			String name = jsonBakery.getString("name");
 			String guiId = jsonBakery.getString("guid");
-			
+
 			JSONArray kneadingMachines = jsonBakery.getJSONArray("kneading_machines");
 			int numberOfKneadingMachines = kneadingMachines.length();
 			double[] location = getLocation(jsonBakery);
@@ -239,21 +238,21 @@ public class Scenario {
 		}
 
 	}
-	
+
 	private double[] getLocation(JSONObject jsonObject) {
 		JSONObject location = jsonObject.getJSONObject("location");
-		
+
 		double[] locationXY = new double[2];
 		locationXY[0] = location.getDouble("x");
 		locationXY[1] = location.getDouble("y");
-		
+
 		return locationXY;
 	}
-	
+
 	public List<CustomerAgent> getCustomers() {
 		return customers;
 	}
-	
+
 	public DiGraph getStreetNetwork() {
 		return streetNetwork;
 	}
