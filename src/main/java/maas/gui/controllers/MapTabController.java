@@ -29,11 +29,8 @@ public class MapTabController {
 
 	public void setStreetNetwork(DiGraph streetNetwork) {
 		this.streetNetwork = streetNetwork;
-		System.out.println("StreetNetwork updated!");
 		getDimensions();
 		updateConversionFactors();
-		System.out.println(
-				String.format("%.2f %.2f %.2f %.2f", dimensions[0], dimensions[1], dimensions[2], dimensions[3]));
 		draw();
 	}
 
