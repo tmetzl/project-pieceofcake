@@ -28,6 +28,7 @@ import maas.objects.Product;
 @SuppressWarnings("serial")
 public class KneadingSchedulerAgent extends SynchronizedAgent implements BakeryObserver {
 
+	private String[] kneadingAgentNames;
 	private AID[] kneadingAgents;
 	private boolean[] kneadingMachineFree;
 	private Queue<KneadingInfo> doughQueue;
@@ -37,10 +38,8 @@ public class KneadingSchedulerAgent extends SynchronizedAgent implements BakeryO
 	private List<Order> ordersOfDay;
 
 	public KneadingSchedulerAgent(String[] kneadingAgentNames, Bakery bakery) {
+		this.kneadingAgentNames = kneadingAgentNames;
 		this.kneadingAgents = new AID[kneadingAgentNames.length];
-		for (int i = 0; i < kneadingAgentNames.length; i++) {
-			this.kneadingAgents[i] = new AID(kneadingAgentNames[i], AID.ISLOCALNAME);
-		}
 		this.kneadingMachineFree = new boolean[kneadingAgents.length];
 		Arrays.fill(kneadingMachineFree, true);
 		this.myBakery = bakery;
@@ -55,6 +54,10 @@ public class KneadingSchedulerAgent extends SynchronizedAgent implements BakeryO
 	@Override
 	protected void setup() {
 		super.setup();
+		this.kneadingAgents = new AID[kneadingAgentNames.length];
+		for (int i = 0; i < kneadingAgentNames.length; i++) {
+			this.kneadingAgents[i] = new AID(kneadingAgentNames[i], AID.ISLOCALNAME);
+		}
 		// Printout a welcome message
 		String welcomeMessage = String.format("Kneading-Scheduler %s is ready!", getAID().getLocalName());
 		logger.log(Logger.INFO, welcomeMessage);
