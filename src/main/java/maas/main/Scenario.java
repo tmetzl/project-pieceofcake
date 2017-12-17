@@ -103,12 +103,15 @@ public class Scenario {
 			try {
 				container.acceptNewAgent("Timer", TimerAgent.getInstance()).start();
 				
-				for (String name : tierOneAgents.keySet()) {
-					container.acceptNewAgent(name, tierOneAgents.get(name)).start();
+				for (Map.Entry<String, Agent> entry : tierOneAgents.entrySet()) {
+					String name = entry.getKey();
+					Agent agent = entry.getValue();
+					container.acceptNewAgent(name, agent).start();
 				}
-				
-				for (String name : tierTwoAgents.keySet()) {
-					container.acceptNewAgent(name, tierTwoAgents.get(name)).start();
+				for (Map.Entry<String, Agent> entry : tierTwoAgents.entrySet()) {
+					String name = entry.getKey();
+					Agent agent = entry.getValue();
+					container.acceptNewAgent(name, agent).start();
 				}
 				
 				
