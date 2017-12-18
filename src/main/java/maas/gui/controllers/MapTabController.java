@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import javafx.fxml.FXML;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
@@ -40,8 +38,6 @@ public class MapTabController {
 
 	public void setStreetNetwork(DiGraph streetNetwork) {
 		this.streetNetwork = streetNetwork;
-		//mapCanvas.setHeight(500);
-		//mapCanvas.setWidth(600);
 		getDimensions();
 		updateConversionFactors();
 		draw();
