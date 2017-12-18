@@ -1,30 +1,24 @@
-package maas.gui.agents;
+package maas.gui.controllers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import jade.util.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import maas.agents.CustomerAgent;
 import maas.gui.utils.ShoppingListEntry;
 import maas.objects.Order;
 
-public class CustomerController extends HBox {
-
-	private List<CustomerAgent> customers;
+public class CustomerTabController {
 
 	@FXML
 	private ComboBox<CustomerAgent> customerChooser;
@@ -48,25 +42,8 @@ public class CustomerController extends HBox {
 	private Text orderDate;
 	@FXML
 	private Text orderDueDate;
-
-	public CustomerController(List<CustomerAgent> customers) {
-		this.customers = new ArrayList<>(customers);
-
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("CustomerGUI.fxml"));
-		fxmlLoader.setRoot(this);
-		fxmlLoader.setController(this);
-
-		try {
-			fxmlLoader.load();
-		} catch (IOException e) {
-			Logger logger = Logger.getJADELogger("CustomerController");
-			logger.log(Logger.WARNING, "Error loading customer FXML", e);
-		}
-	}
-
-	@FXML
-	public void initialize() {
-
+	
+	public void setCustomers(List<CustomerAgent> customers) {
 		productId.setCellValueFactory(new PropertyValueFactory<>("productName"));
 		productAmount.setCellValueFactory(new PropertyValueFactory<>("productAmount"));
 
@@ -90,7 +67,6 @@ public class CustomerController extends HBox {
 		customerChooser.setButtonCell((ListCell<CustomerAgent>) cellFactoryComboBox.call(null));
 		customerChooser.setCellFactory(cellFactoryComboBox);
 		updateCustomer(customers.get(0));
-
 	}
 
 	public void updateCustomer(CustomerAgent selectedAgent) {
@@ -128,7 +104,6 @@ public class CustomerController extends HBox {
 	public void customerChanged() {
 		CustomerAgent customer = customerChooser.getSelectionModel().getSelectedItem();
 		updateCustomer(customer);
-
 	}
 
 	public String toDate(int hours) {

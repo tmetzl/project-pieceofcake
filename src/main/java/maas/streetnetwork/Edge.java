@@ -21,6 +21,10 @@ public class Edge implements Serializable {
 	public String getGuid() {
 		return guid;
 	}
+	
+	public Node getFrom() {
+		return from;
+	}
 
 	public Node getTo() {
 		return to;

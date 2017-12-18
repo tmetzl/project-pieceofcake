@@ -10,6 +10,8 @@ import java.util.Set;
 
 public class DiGraph implements Serializable {
 
+	private static final long serialVersionUID = -6116419588894989745L;
+	
 	private Map<Node, List<Edge>> adjacencyMap;
 
 	public DiGraph() {
@@ -46,10 +48,6 @@ public class DiGraph implements Serializable {
 
 	public List<Edge> getEdges(String guid) {
 		return adjacencyMap.get(getNode(guid));
-	}
-
-	public static void main(String[] args) {
-		new DiGraph();
 	}
 
 }

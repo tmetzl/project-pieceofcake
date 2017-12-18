@@ -39,8 +39,7 @@ public class Node implements Serializable {
 	
 	@Override
 	public int hashCode() {
-		String info = company+guid+name+type+locationX+""+locationY;
-		return info.hashCode();
+		return guid.hashCode();
 	}
 
 	public String getCompany() {

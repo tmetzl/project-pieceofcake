@@ -8,8 +8,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root prefHeight="400.0" prefWidth="600.0" type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
-<VBox VBox.vgrow="ALWAYS">
+<VBox VBox.vgrow="ALWAYS" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="maas.gui.controllers.MainController">
   <children>
     <MenuBar maxHeight="25.0" minHeight="25.0" prefHeight="25.0" VBox.vgrow="NEVER">
       <menus>
@@ -29,22 +28,29 @@
       <children>
             <TabPane fx:id="tabPane" prefHeight="375.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <tabs>
-                <Tab fx:id="customerTab" text="Customers">
+                <Tab text="Customers">
+                  <content>
+                    <fx:include fx:id="customerTab" source="customerTab.fxml" />
+                  </content>
                 </Tab>
                 <Tab text="Bakeries">
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                   </content>
                 </Tab>
-                  <Tab text="Trucks">
-                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                     </content>
-                  </Tab>
+                <Tab text="Trucks">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  </content>
+                </Tab>
+                <Tab text="Map">
+                  <content>
+                    <fx:include fx:id="mapTab" source="mapTab.fxml" />
+                  </content>
+                </Tab>
               </tabs>
             </TabPane>
       </children>
     </AnchorPane>
   </children>
 </VBox>
-</fx:root>

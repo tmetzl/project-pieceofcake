@@ -23,7 +23,6 @@ public class Bakery implements Serializable, BakeryObservable {
 	private double locationY;
 
 	private Map<Integer, List<Order>> orderDayMap;
-	private List<Order> ordersInProcess;
 	private Map<String, Product> cookBook;
 	private Map<String, Boolean> doughInStock;
 	private transient Map<String, List<BakeryObserver>> observers;
@@ -34,7 +33,6 @@ public class Bakery implements Serializable, BakeryObservable {
 		this.locationX = locationX;
 		this.locationY = locationY;
 
-		this.ordersInProcess = new LinkedList<>();
 		this.cookBook = new HashMap<>();
 		this.orderDayMap = new HashMap<>();
 		this.doughInStock = new HashMap<>();
