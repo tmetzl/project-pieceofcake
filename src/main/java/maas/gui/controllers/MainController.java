@@ -13,7 +13,7 @@ public class MainController {
 	@FXML
 	private HBox customerTab;
 	@FXML
-	private AnchorPane mapTab;
+	private HBox mapTab;
 	@FXML
 	private CustomerTabController customerTabController;
 	@FXML

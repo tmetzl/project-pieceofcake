@@ -6,9 +6,12 @@ import java.util.Set;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
+import maas.gui.utils.ResizableCanvas;
 import maas.streetnetwork.DiGraph;
 import maas.streetnetwork.Edge;
 import maas.streetnetwork.Node;
@@ -17,7 +20,7 @@ public class MapTabController {
 
 	private static final double ARR_SIZE = 4;
 	private static final double BORDER_DISTANCE = 20;
-	private static final double ICON_SIZE = 10;
+	private static final double ICON_SIZE = 15;
 
 	private DiGraph streetNetwork;
 	private double[] dimensions;
@@ -25,11 +28,29 @@ public class MapTabController {
 	private double heightFactor;
 
 	@FXML
-	private Canvas mapCanvas;
+	private ResizableCanvas mapCanvas;
+	@FXML
+	private HBox mapContainer;
+	
+	@FXML
+	private void initialize() {
+		mapContainer.widthProperty().addListener(event -> resizeCanvas());
+		mapContainer.heightProperty().addListener(event -> resizeCanvas());
+	}
 
 	public void setStreetNetwork(DiGraph streetNetwork) {
 		this.streetNetwork = streetNetwork;
+		//mapCanvas.setHeight(500);
+		//mapCanvas.setWidth(600);
 		getDimensions();
+		updateConversionFactors();
+		draw();
+	}
+	
+	private void resizeCanvas() {
+		mapCanvas.setWidth(mapContainer.getWidth());
+		mapCanvas.setHeight(mapContainer.getHeight());
+		mapCanvas.getGraphicsContext2D().clearRect(0, 0, mapCanvas.getWidth(), mapCanvas.getHeight());
 		updateConversionFactors();
 		draw();
 	}
