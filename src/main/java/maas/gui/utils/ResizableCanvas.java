@@ -4,11 +4,6 @@ import javafx.scene.canvas.Canvas;
 
 public class ResizableCanvas extends Canvas {
 	
-	public void draw() {
-		System.out.println("draw");
-		System.out.println(getWidth()+"\t"+getHeight());
-	}
-	
 	@Override
 	public boolean isResizable() {
 		return true;
