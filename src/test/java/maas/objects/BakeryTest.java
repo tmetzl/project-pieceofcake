@@ -10,10 +10,12 @@ import java.util.List;
 
 import org.junit.Test;
 
+import maas.config.Topic;
+import maas.interfaces.BakeryObserver;
 import maas.objects.Order;
 
 public class BakeryTest {
-	
+		
 	public List<Order> prepareOrderListForTests() {
 		List<Order> orders = new LinkedList<Order>();
 		String jsonOrder1 = "{\"order_date\": {\"day\": 1,\"hour\": 6},"
@@ -57,6 +59,7 @@ public class BakeryTest {
 		products.add(new Product(jsonProduct4));
 		return products;
 	}
+
 	
 	@Test
 	public void bakeryTest() {
@@ -94,6 +97,45 @@ public class BakeryTest {
 		assertFalse(bakery.isDoughInStock("Bread"));
 		bakery.updateDoughList("Bread");
 		assertTrue(bakery.isDoughInStock("Bread"));
+		bakery.newDay();
+		assertFalse(bakery.isDoughInStock("Bread"));
 	}
+	
+	@Test
+	public void bakeryGetterTest() {
+		Bakery bakery = new Bakery("bakery-001", "TestBakery", 10.1, 17.2);
+		assertEquals("bakery-001", bakery.getGuiId());
+		assertEquals("TestBakery", bakery.getName());
+		assertEquals(10.1, bakery.getLocationX(), 1e-10);
+		assertEquals(17.2, bakery.getLocationY(), 1e-10);
+	}
+	
+	@Test
+	public void bakeryObserverTest() {
+		TestObserver doughListObserver1 = new TestObserver();
+		TestObserver doughListObserver2 = new TestObserver();
+		Bakery bakery = new Bakery("bakery-001", "TestBakery", 10.1, 17.2);
+		bakery.registerObserver(doughListObserver1, Topic.DOUGH);
+		bakery.registerObserver(doughListObserver2, Topic.DOUGH);
+		assertFalse(doughListObserver1.notified);
+		assertFalse(doughListObserver2.notified);
+		bakery.newDay();
+		assertTrue(doughListObserver1.notified);
+		assertTrue(doughListObserver2.notified);
+	}
+	
+	
+	private class TestObserver implements BakeryObserver {
+		
+		boolean notified = false;
+
+		@Override
+		public void notifyObserver(String topic) {
+			notified = true;			
+		}
+		
+	}
+	
+	
 
 }
