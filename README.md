@@ -5,7 +5,7 @@
 [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=project-pieceofcake)](https://sonarcloud.io/dashboard?id=project-pieceofcake)
 [![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=coverage)](https://sonarcloud.io/component_measures?id=project-pieceofcake&metric=coverage)
 [![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=lines)](https://sonarcloud.io/component_measures?id=project-pieceofcake&metric=lines)
-[![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=nloc)](https://sonarcloud.io/component_measures?id=project-pieceofcake&metric=nloc)
+[![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=ncloc)](https://sonarcloud.io/component_measures?id=project-pieceofcake&metric=ncloc)
 [![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=bugs)](https://sonarcloud.io/component_measures?id=project-pieceofcake&metric=bugs)
 [![Quality Gate](http://sonarcloud.io/api/badges/measure?key=project-pieceofcake&metric=code_smells)](https://sonarcloud.io/component_measures?id=project-pieceofcake&metric=code_smells)
 
