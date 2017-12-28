@@ -11,6 +11,8 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+import maas.objects.Location;
+
 public class DiGraphTest {
 	
 	private DiGraph graph;
@@ -21,10 +23,10 @@ public class DiGraphTest {
 		nodes = new LinkedList<>();
 		
 		for (int i=0;i<10;i++) {
-			nodes.add(new Node("node-"+i, "Node "+i, "Type "+i, "Company "+i, 3.2+i, 6.2+i));
+			nodes.add(new Node("node-"+i, "Node "+i, "Type "+i, "Company "+i, new Location(3.2+i, 6.2+i)));
 		}
 		
-		nodes.add(new Node("node-1", "Node 1", "Type 1", "Company 1", 4.2, 7.2));
+		nodes.add(new Node("node-1", "Node 1", "Type 1", "Company 1", new Location(4.2, 7.2)));
 		
 		graph = new DiGraph();
 		
