@@ -11,27 +11,26 @@ import java.util.Set;
 import maas.config.Topic;
 import maas.interfaces.BakeryObservable;
 import maas.interfaces.BakeryObserver;
+import maas.interfaces.Localizable;
 import maas.utils.OrderDueDateComparator;
 
-public class Bakery implements Serializable, BakeryObservable {
+public class Bakery implements Serializable, BakeryObservable, Localizable {
 
 	private static final long serialVersionUID = 8794276456115280744L;
 
 	private String guiId;
 	private String name;
-	private double locationX;
-	private double locationY;
+	private Location location;
 
 	private Map<Integer, List<Order>> orderDayMap;
 	private Map<String, Product> cookBook;
 	private Map<String, Boolean> doughInStock;
 	private transient Map<String, List<BakeryObserver>> observers;
 
-	public Bakery(String guiId, String name, double locationX, double locationY) {
+	public Bakery(String guiId, String name, Location location) {
 		this.guiId = guiId;
 		this.name = name;
-		this.locationX = locationX;
-		this.locationY = locationY;
+		this.location = location;
 
 		this.cookBook = new HashMap<>();
 		this.orderDayMap = new HashMap<>();
@@ -133,11 +132,13 @@ public class Bakery implements Serializable, BakeryObservable {
 		return name;
 	}
 
+	@Override
 	public double getLocationX() {
-		return locationX;
+		return location.getLocationX();
 	}
 
+	@Override
 	public double getLocationY() {
-		return locationY;
+		return location.getLocationY();
 	}
 }
