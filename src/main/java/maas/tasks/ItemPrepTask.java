@@ -4,8 +4,6 @@ import org.json.JSONObject;
 
 public class ItemPrepTask extends Task{
 	
-	private String productId;
-	// maybe get this from order information
 	private int numOfItems;
 	private long itemPrepTime;
 
@@ -17,14 +15,10 @@ public class ItemPrepTask extends Task{
 		return itemPrepTime;
 	}
 
-	public String getProductId() {
-		return productId;
-	}
-	
 	@Override
 	public JSONObject toJSONObject() {
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("product_id", productId);
+		jsonObject.put("product_id", getProductId());
 		jsonObject.put("num_of_items", numOfItems);
 		jsonObject.put("item_prep_time", itemPrepTime);
 		jsonObject.put("order_id", getOrderId());
@@ -35,7 +29,7 @@ public class ItemPrepTask extends Task{
 
 	@Override
 	public void fromJSONObject(JSONObject jsonObject) {
-		productId = jsonObject.getString("product_id");
+		setProductId(jsonObject.getString("product_id"));
 		numOfItems = jsonObject.getInt("num_of_items");
 		itemPrepTime = jsonObject.getLong("item_prep_time");
 		setDueDate(jsonObject.getLong("due_date"));
