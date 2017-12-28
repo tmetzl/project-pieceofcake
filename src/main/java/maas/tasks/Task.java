@@ -7,6 +7,15 @@ public abstract class Task {
 	private long dueDate;
 	private long releaseDate;
 	private String orderId;
+	private String productId;
+
+	public String getProductId() {
+		return productId;
+	}
+
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
 
 	public long getDueDate() {
 		return dueDate;
