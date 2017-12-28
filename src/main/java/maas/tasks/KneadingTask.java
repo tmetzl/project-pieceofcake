@@ -4,12 +4,7 @@ import org.json.JSONObject;
 
 public class KneadingTask extends Task {
 
-	private String doughId;
 	private long kneadingTime;
-
-	public String getDoughId() {
-		return doughId;
-	}
 
 	public long getKneadingTime() {
 		return kneadingTime;
@@ -18,7 +13,7 @@ public class KneadingTask extends Task {
 	@Override
 	public JSONObject toJSONObject() {
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("dough_id", doughId);
+		jsonObject.put("product_id", getProductId());
 		jsonObject.put("kneading_time", kneadingTime);
 		jsonObject.put("release_date", getReleaseDate());
 		jsonObject.put("due_date", getDueDate());
@@ -28,7 +23,7 @@ public class KneadingTask extends Task {
 
 	@Override
 	public void fromJSONObject(JSONObject jsonObject) {
-		doughId = jsonObject.getString("dough_id");
+		setProductId(jsonObject.getString("product_id"));
 		kneadingTime = jsonObject.getLong("kneading_time");
 		setReleaseDate(jsonObject.getLong("release_date"));
 		setDueDate(jsonObject.getLong("due_date"));
