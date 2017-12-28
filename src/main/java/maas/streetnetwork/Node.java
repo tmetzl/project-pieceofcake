@@ -2,7 +2,10 @@ package maas.streetnetwork;
 
 import java.io.Serializable;
 
-public class Node implements Serializable {
+import maas.interfaces.Localizable;
+import maas.objects.Location;
+
+public class Node implements Serializable, Localizable {
 
 	private static final long serialVersionUID = 5938195662501825629L;
 	
@@ -10,22 +13,20 @@ public class Node implements Serializable {
 	private String name;
 	private String type;
 	private String company;
-	private double locationX;
-	private double locationY;
+	private Location location;
 
-	public Node(String guid, String name, String type, String company, double locationX, double locationY) {
+	public Node(String guid, String name, String type, String company, Location location) {
 		this.company = company;
 		this.guid = guid;
 		this.name = name;
 		this.type = type;
-		this.locationX = locationX;
-		this.locationY = locationY;
+		this.location = location;
 	}
 
 	@Override
 	public String toString() {
 		return String.format("Node %s: %s from company %s of type %s at (%.2f, %.2f)", guid, name, company, type,
-				locationX, locationY);
+				getLocationX(), getLocationY());
 	}
 
 	@Override
@@ -58,11 +59,13 @@ public class Node implements Serializable {
 		return type;
 	}
 
+	@Override
 	public double getLocationX() {
-		return locationX;
+		return location.getLocationX();
 	}
 
+	@Override
 	public double getLocationY() {
-		return locationY;
+		return location.getLocationY();
 	}
 }
