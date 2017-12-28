@@ -29,6 +29,7 @@ import maas.agents.OrderAgent;
 import maas.agents.StartUpAgent;
 import maas.agents.TimerAgent;
 import maas.objects.Bakery;
+import maas.objects.Location;
 import maas.objects.Order;
 import maas.objects.Product;
 import maas.streetnetwork.DiGraph;
@@ -134,8 +135,8 @@ public class Scenario {
 			String name = jsonNode.getString("name");
 			String type = jsonNode.getString("type");
 			String company = jsonNode.getString("company");
-			double[] location = getLocation(jsonNode);
-			streetNetwork.addNode(new Node(guid, name, type, company, location[0], location[1]));
+			Location location = getLocation(jsonNode);
+			streetNetwork.addNode(new Node(guid, name, type, company, location));
 		}
 
 		JSONArray links = network.getJSONArray("links");
@@ -193,9 +194,9 @@ public class Scenario {
 				String name = customer.getString("name");
 				String guiId = customer.getString("guid");
 				int type = customer.getInt("type");
-				double[] location = getLocation(customer);
+				Location location = getLocation(customer);
 				// Create the agent
-				CustomerAgent agent = new CustomerAgent(guiId, type, location[0], location[1], customerOrders);
+				CustomerAgent agent = new CustomerAgent(guiId, type, location, customerOrders);
 				customers.add(agent);
 				tierTwoAgents.put(name, agent);
 			}
@@ -212,8 +213,8 @@ public class Scenario {
 
 			JSONArray kneadingMachines = jsonBakery.getJSONArray("kneading_machines");
 			int numberOfKneadingMachines = kneadingMachines.length();
-			double[] location = getLocation(jsonBakery);
-			Bakery bakery = new Bakery(guiId, name, location[0], location[1]);
+			Location location = getLocation(jsonBakery);
+			Bakery bakery = new Bakery(guiId, name, location);
 			BakeryClockAgent myBakeryClock = new BakeryClockAgent(bakery);
 
 			String[] kneadingAgentNames = new String[numberOfKneadingMachines];
@@ -239,14 +240,9 @@ public class Scenario {
 
 	}
 
-	private double[] getLocation(JSONObject jsonObject) {
+	private Location getLocation(JSONObject jsonObject) {
 		JSONObject location = jsonObject.getJSONObject("location");
-
-		double[] locationXY = new double[2];
-		locationXY[0] = location.getDouble("x");
-		locationXY[1] = location.getDouble("y");
-
-		return locationXY;
+		return new Location(location.getDouble("x"), location.getDouble("y"));
 	}
 
 	public List<CustomerAgent> getCustomers() {
