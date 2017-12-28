@@ -6,6 +6,7 @@ public abstract class Task {
 
 	private long dueDate;
 	private long releaseDate;
+	private String orderId;
 
 	public long getDueDate() {
 		return dueDate;
@@ -21,6 +22,14 @@ public abstract class Task {
 
 	public void setReleaseDate(long releaseDate) {
 		this.releaseDate = releaseDate;
+	}
+
+	public String getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
 	}
 
 	public abstract JSONObject toJSONObject();

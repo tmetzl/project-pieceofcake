@@ -22,6 +22,7 @@ public class KneadingTask extends Task {
 		jsonObject.put("kneading_time", kneadingTime);
 		jsonObject.put("release_date", getReleaseDate());
 		jsonObject.put("due_date", getDueDate());
+		jsonObject.put("order_id", getOrderId());
 		return jsonObject;
 	}
 
@@ -31,6 +32,7 @@ public class KneadingTask extends Task {
 		kneadingTime = jsonObject.getLong("kneading_time");
 		setReleaseDate(jsonObject.getLong("release_date"));
 		setDueDate(jsonObject.getLong("due_date"));
+		setOrderId(jsonObject.getString("order_id"));
 	}
 
 }
