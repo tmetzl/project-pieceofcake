@@ -11,9 +11,11 @@ public class KneadingTask extends Task {
 
 	}
 
-	public KneadingTask(long kneadingTime, long restingTime, long dueDate, long releaseDate, String orderId, String productId) {
+	public KneadingTask(int day, long kneadingTime, long restingTime, long dueDate, long releaseDate, String orderId,
+			String productId) {
 		this.kneadingTime = kneadingTime;
 		this.restingTime = restingTime;
+		setDay(day);
 		setProductId(productId);
 		setDueDate(dueDate);
 		setReleaseDate(releaseDate);
@@ -37,6 +39,7 @@ public class KneadingTask extends Task {
 		jsonObject.put("release_date", getReleaseDate());
 		jsonObject.put("due_date", getDueDate());
 		jsonObject.put("order_id", getOrderId());
+		jsonObject.put("day", getDay());
 		return jsonObject;
 	}
 
@@ -48,6 +51,7 @@ public class KneadingTask extends Task {
 		setReleaseDate(jsonObject.getLong("release_date"));
 		setDueDate(jsonObject.getLong("due_date"));
 		setOrderId(jsonObject.getString("order_id"));
+		setDay(jsonObject.getInt("day"));
 	}
 
 }

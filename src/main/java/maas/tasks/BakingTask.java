@@ -13,8 +13,8 @@ public class BakingTask extends Task {
 
 	}
 
-	public BakingTask(long bakingTime, long bakingTemperature, int numOfItems, double coolingTimeFactor, long dueDate,
-			long releaseDate, String orderId, String productId) {
+	public BakingTask(int day, long bakingTime, long bakingTemperature, int numOfItems, double coolingTimeFactor,
+			long dueDate, long releaseDate, String orderId, String productId) {
 		this.bakingTemperature = bakingTemperature;
 		this.bakingTime = bakingTime;
 		this.numOfItems = numOfItems;
@@ -23,6 +23,7 @@ public class BakingTask extends Task {
 		setDueDate(dueDate);
 		setReleaseDate(releaseDate);
 		setOrderId(orderId);
+		setDay(day);
 	}
 
 	public int getNumOfItems() {
@@ -52,6 +53,7 @@ public class BakingTask extends Task {
 		jsonObject.put("baking_temp", bakingTemperature);
 		jsonObject.put("num_of_items", numOfItems);
 		jsonObject.put("cooling_time_factor", coolingTimeFactor);
+		jsonObject.put("day", getDay());
 		return jsonObject;
 	}
 
@@ -65,6 +67,7 @@ public class BakingTask extends Task {
 		bakingTemperature = jsonObject.getLong("baking_temp");
 		numOfItems = jsonObject.getInt("num_of_items");
 		coolingTimeFactor = jsonObject.getDouble("cooling_time_factor");
+		setDay(jsonObject.getInt("day"));
 	}
 
 }

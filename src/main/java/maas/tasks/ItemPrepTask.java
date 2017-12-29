@@ -11,7 +11,7 @@ public class ItemPrepTask extends Task {
 
 	}
 
-	public ItemPrepTask(int numOfItems, long itemPrepTime, long dueDate, long releaseDate, String orderId,
+	public ItemPrepTask(int day, int numOfItems, long itemPrepTime, long dueDate, long releaseDate, String orderId,
 			String productId) {
 		this.numOfItems = numOfItems;
 		this.itemPrepTime = itemPrepTime;
@@ -19,6 +19,7 @@ public class ItemPrepTask extends Task {
 		setDueDate(dueDate);
 		setReleaseDate(releaseDate);
 		setOrderId(orderId);
+		setDay(day);
 	}
 
 	public int getNumOfItems() {
@@ -38,6 +39,7 @@ public class ItemPrepTask extends Task {
 		jsonObject.put("order_id", getOrderId());
 		jsonObject.put("due_date", getDueDate());
 		jsonObject.put("release_date", getReleaseDate());
+		jsonObject.put("day", getDay());
 		return jsonObject;
 	}
 
@@ -49,6 +51,7 @@ public class ItemPrepTask extends Task {
 		setDueDate(jsonObject.getLong("due_date"));
 		setReleaseDate(jsonObject.getLong("release_date"));
 		setOrderId(jsonObject.getString("order_id"));
+		setDay(jsonObject.getInt("day"));
 
 	}
 
