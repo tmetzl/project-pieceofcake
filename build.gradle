@@ -21,8 +21,11 @@ repositories {
     maven { 
         url 'http://repo1.maven.org/maven2' 
     }
-    maven {
-        url 'http://jade.tilab.com/maven/'
+    //maven {
+    //    url 'http://jade.tilab.com/maven/'
+    //}
+    flatDir {
+        dirs 'libs'
     }
 }
 
@@ -44,8 +47,9 @@ jacoco {
 
 
 dependencies {
-    compile group: 'com.tilab.jade', name: 'jade', version: '4.5.+'
+    //compile group: 'com.tilab.jade', name: 'jade', version: '4.5.+'
     compile group: 'org.json', name: 'json', version: '20171018'
+    compile name: 'jade-4.5.0'
 
     testCompile 'junit:junit:4.12'
     //compile 'junit:junit:4.12'
