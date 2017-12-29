@@ -1,5 +1,6 @@
 package maas.schedules;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,21 +51,9 @@ public class KneadingSchedule implements Schedule<KneadingTask> {
 		long completionTime = getEarliestCompletionTime(task) - task.getRestingTime();
 		ScheduledTask<KneadingTask> newTask = new ScheduledTask<>(completionTime - task.getKneadingTime(),
 				completionTime, task);
-		// If schedule is empty directly insert the new task
-		if (schedule.isEmpty()) {
-			schedule.add(newTask);
-		} else {
-			int i = 0;
-			Iterator<ScheduledTask<KneadingTask>> iter = schedule.iterator();
-			while (iter.hasNext()) {
-				ScheduledTask<KneadingTask> scheduledTask = iter.next();
-				if (completionTime <= scheduledTask.getStart()) {
-					break;
-				}
-				i++;
-			}
-			schedule.add(i, newTask);
-		}
+		// Insert task and sort
+		schedule.add(newTask);
+		Collections.sort(schedule);
 	}
 
 	@Override
