@@ -1,6 +1,6 @@
 package maas.tasks;
 
-public class ScheduledTask<T extends Task> {
+public class ScheduledTask<T extends Task> implements Comparable<ScheduledTask<T>>{
 	
 	private long start;
 	private long end;
@@ -27,6 +27,16 @@ public class ScheduledTask<T extends Task> {
 	@Override
 	public String toString() {
 		return String.format("(%d, %d, %s)", start, end, task);
+	}
+
+	@Override
+	public int compareTo(ScheduledTask<T> arg0) {
+		if (getStart() < arg0.getStart()) {
+			return -1;
+		} else if (getStart() > arg0.getStart()) {
+			return 1;
+		}
+		return 0;
 	}
 
 }
