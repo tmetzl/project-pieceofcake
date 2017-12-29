@@ -16,6 +16,7 @@ public class KneadingTaskTest {
 		jsonObject.put("release_date", 2);
 		jsonObject.put("due_date", 14);
 		jsonObject.put("order_id", "order-001");
+		jsonObject.put("day", 1);
 
 		KneadingTask kneadingTask = new KneadingTask();
 		kneadingTask.fromJSONObject(jsonObject);
@@ -26,16 +27,28 @@ public class KneadingTaskTest {
 		assertEquals(2, kneadingTask.getReleaseDate());
 		assertEquals(14, kneadingTask.getDueDate());
 		assertEquals("order-001", kneadingTask.getOrderId());
+		assertEquals(1, kneadingTask.getDay());
 
 		JSONObject jsonObjectFromKneadingTask = kneadingTask.toJSONObject();
 
-		assertEquals(6, jsonObjectFromKneadingTask.length());
+		assertEquals(7, jsonObjectFromKneadingTask.length());
 		assertEquals("Bread", jsonObjectFromKneadingTask.getString("product_id"));
 		assertEquals(10l, jsonObjectFromKneadingTask.getLong("kneading_time"));
 		assertEquals(2l, jsonObjectFromKneadingTask.getLong("resting_time"));
 		assertEquals(2l, jsonObjectFromKneadingTask.getLong("release_date"));
 		assertEquals(14l, jsonObjectFromKneadingTask.getLong("due_date"));
 		assertEquals("order-001", jsonObjectFromKneadingTask.getString("order_id"));
+		assertEquals(1, jsonObjectFromKneadingTask.getInt("day"));
+		
+		KneadingTask anotherKneadingTask = new KneadingTask(1, 10, 2, 14, 2, "order-001", "Bread");
+
+		assertEquals("Bread", anotherKneadingTask.getProductId());
+		assertEquals(10, anotherKneadingTask.getKneadingTime());
+		assertEquals(2, anotherKneadingTask.getRestingTime());
+		assertEquals(2, anotherKneadingTask.getReleaseDate());
+		assertEquals(14, anotherKneadingTask.getDueDate());
+		assertEquals("order-001", anotherKneadingTask.getOrderId());
+		assertEquals(1, anotherKneadingTask.getDay());
 	}
 
 }
