@@ -8,6 +8,21 @@ public class DeliveryTask extends Task {
 	private double locationX;
 	private double locationY;
 
+	public DeliveryTask() {
+
+	}
+
+	public DeliveryTask(int numOfBoxes, double locationX, double locationY, long dueDate, long releaseDate,
+			String orderId, String productId) {
+		this.numOfBoxes = numOfBoxes;
+		this.locationX = locationX;
+		this.locationY = locationY;
+		setProductId(productId);
+		setDueDate(dueDate);
+		setReleaseDate(releaseDate);
+		setOrderId(orderId);
+	}
+
 	public int getNumOfBoxes() {
 		return numOfBoxes;
 	}

@@ -2,10 +2,24 @@ package maas.tasks;
 
 import org.json.JSONObject;
 
-public class ItemPrepTask extends Task{
-	
+public class ItemPrepTask extends Task {
+
 	private int numOfItems;
 	private long itemPrepTime;
+
+	public ItemPrepTask() {
+
+	}
+
+	public ItemPrepTask(int numOfItems, long itemPrepTime, long dueDate, long releaseDate, String orderId,
+			String productId) {
+		this.numOfItems = numOfItems;
+		this.itemPrepTime = itemPrepTime;
+		setProductId(productId);
+		setDueDate(dueDate);
+		setReleaseDate(releaseDate);
+		setOrderId(orderId);
+	}
 
 	public int getNumOfItems() {
 		return numOfItems;
@@ -35,7 +49,7 @@ public class ItemPrepTask extends Task{
 		setDueDate(jsonObject.getLong("due_date"));
 		setReleaseDate(jsonObject.getLong("release_date"));
 		setOrderId(jsonObject.getString("order_id"));
-		
+
 	}
 
 }
