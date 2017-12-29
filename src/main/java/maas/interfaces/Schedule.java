@@ -11,6 +11,6 @@ public interface Schedule<T extends Task>{
 	
 	public ScheduledTask<T> getNextScheduledTask();
 	
-	public void removeTask(T task);
+	public void removeFirst();
 
 }
