@@ -1,8 +1,12 @@
 package maas.objects;
 
+import java.io.Serializable;
+
 import maas.interfaces.Localizable;
 
-public class Location implements Localizable {
+public class Location implements Localizable,Serializable {
+	
+	private static final long serialVersionUID = -8057452819976425821L;
 	
 	private double x;
 	private double y;
@@ -19,7 +23,6 @@ public class Location implements Localizable {
 	}
 	@Override
 	public double getLocationY() {
-		// TODO Auto-generated method stub
 		return y;
 	}
 
