@@ -5,34 +5,29 @@ import org.json.JSONObject;
 public class DeliveryTask extends Task {
 
 	private int numOfBoxes;
-	private double locationX;
-	private double locationY;
+	private String customerId;
 
 	public DeliveryTask() {
 
 	}
 
-	public DeliveryTask(int numOfBoxes, double locationX, double locationY, long dueDate, long releaseDate,
-			String orderId, String productId) {
+	public DeliveryTask(int day, int numOfBoxes, String customerId, long dueDate, long releaseDate, String orderId,
+			String productId) {
 		this.numOfBoxes = numOfBoxes;
-		this.locationX = locationX;
-		this.locationY = locationY;
+		this.customerId = customerId;
 		setProductId(productId);
 		setDueDate(dueDate);
 		setReleaseDate(releaseDate);
 		setOrderId(orderId);
+		setDay(day);
 	}
 
 	public int getNumOfBoxes() {
 		return numOfBoxes;
 	}
 
-	public double getLocationX() {
-		return locationX;
-	}
-
-	public double getLocationY() {
-		return locationY;
+	public String getCustomerId() {
+		return customerId;
 	}
 
 	@Override
@@ -43,8 +38,8 @@ public class DeliveryTask extends Task {
 		jsonObject.put("due_date", getDueDate());
 		jsonObject.put("order_id", getOrderId());
 		jsonObject.put("num_of_boxes", numOfBoxes);
-		jsonObject.put("loc_x", locationX);
-		jsonObject.put("loc_y", locationY);
+		jsonObject.put("customer_id", customerId);
+		jsonObject.put("day", getDay());
 		return jsonObject;
 	}
 
@@ -55,8 +50,8 @@ public class DeliveryTask extends Task {
 		setDueDate(jsonObject.getLong("due_date"));
 		setOrderId(jsonObject.getString("order_id"));
 		numOfBoxes = jsonObject.getInt("num_of_boxes");
-		locationX = jsonObject.getDouble("loc_x");
-		locationY = jsonObject.getDouble("loc_y");
+		customerId = jsonObject.getString("customer_id");
+		setDay(jsonObject.getInt("day"));
 	}
 
 }
