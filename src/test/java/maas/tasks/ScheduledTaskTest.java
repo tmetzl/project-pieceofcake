@@ -10,7 +10,7 @@ public class ScheduledTaskTest {
 	@Test
 	public void testGetters() {
 		KneadingTask kneadingTask = new KneadingTask(40, 20, 400, 100, "order-001", "product-001");
-		ScheduledTask scheduledTask = new ScheduledTask(100l, 350l, kneadingTask);
+		ScheduledTask<KneadingTask> scheduledTask = new ScheduledTask<>(100l, 350l, kneadingTask);
 		assertEquals(100l, scheduledTask.getStart());
 		assertEquals(350l, scheduledTask.getEnd());
 		
