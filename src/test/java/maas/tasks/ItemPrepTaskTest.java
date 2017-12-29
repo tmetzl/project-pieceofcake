@@ -31,12 +31,12 @@ public class ItemPrepTaskTest {
 		jsonObjectFromItemPrepTask = itemPrepTask.toJSONObject();
 
 		assertEquals(6, jsonObjectFromItemPrepTask.length());
-		assertEquals("Bread", jsonObjectFromItemPrepTask.get("product_id"));
-		assertEquals(2l, jsonObjectFromItemPrepTask.get("item_prep_time"));
-		assertEquals(2l, jsonObjectFromItemPrepTask.get("release_date"));
-		assertEquals(14l, jsonObjectFromItemPrepTask.get("due_date"));
-		assertEquals("order-001", jsonObjectFromItemPrepTask.get("order_id"));
-		assertEquals(5, jsonObjectFromItemPrepTask.get("num_of_items"));
+		assertEquals("Bread", jsonObjectFromItemPrepTask.getString("product_id"));
+		assertEquals(2l, jsonObjectFromItemPrepTask.getLong("item_prep_time"));
+		assertEquals(2l, jsonObjectFromItemPrepTask.getLong("release_date"));
+		assertEquals(14l, jsonObjectFromItemPrepTask.getLong("due_date"));
+		assertEquals("order-001", jsonObjectFromItemPrepTask.getString("order_id"));
+		assertEquals(5, jsonObjectFromItemPrepTask.getInt("num_of_items"));
 	}
 
 }

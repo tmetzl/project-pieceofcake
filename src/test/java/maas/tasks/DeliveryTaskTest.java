@@ -32,13 +32,13 @@ public class DeliveryTaskTest {
 		JSONObject jsonObjectFromDeliveryTask = deliveryTask.toJSONObject();
 
 		assertEquals(7, jsonObjectFromDeliveryTask.length());
-		assertEquals("Bread", jsonObjectFromDeliveryTask.get("product_id"));
-		assertEquals(2l, jsonObjectFromDeliveryTask.get("release_date"));
-		assertEquals(14l, jsonObjectFromDeliveryTask.get("due_date"));
-		assertEquals("order-001", jsonObjectFromDeliveryTask.get("order_id"));
-		assertEquals(5, jsonObjectFromDeliveryTask.get("num_of_boxes"));
-		assertEquals(0.0, jsonObjectFromDeliveryTask.get("loc_x"));
-		assertEquals(0.0, jsonObjectFromDeliveryTask.get("loc_y"));
+		assertEquals("Bread", jsonObjectFromDeliveryTask.getString("product_id"));
+		assertEquals(2l, jsonObjectFromDeliveryTask.getLong("release_date"));
+		assertEquals(14l, jsonObjectFromDeliveryTask.getLong("due_date"));
+		assertEquals("order-001", jsonObjectFromDeliveryTask.getString("order_id"));
+		assertEquals(5, jsonObjectFromDeliveryTask.getInt("num_of_boxes"));
+		assertEquals(0.0, jsonObjectFromDeliveryTask.getDouble("loc_x"), 0.01);
+		assertEquals(0.0, jsonObjectFromDeliveryTask.getDouble("loc_y"), 0.01);
 	}
 
 }
