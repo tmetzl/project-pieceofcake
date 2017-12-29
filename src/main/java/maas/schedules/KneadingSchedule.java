@@ -18,7 +18,6 @@ public class KneadingSchedule implements Schedule<KneadingTask> {
 
 	@Override
 	public long getEarliestCompletionTime(KneadingTask task) {
-		// TODO: Use release date too (tasks might come late that day)
 		if (schedule.isEmpty()) {
 			return task.getReleaseDate() + task.getKneadingTime() + task.getRestingTime();
 		}
