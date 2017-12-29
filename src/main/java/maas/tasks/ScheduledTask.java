@@ -1,12 +1,12 @@
 package maas.tasks;
 
-public class ScheduledTask {
+public class ScheduledTask<T extends Task> {
 	
 	private long start;
 	private long end;
-	private Task task;
+	private T task;
 	
-	public ScheduledTask(long start, long end, Task task) {
+	public ScheduledTask(long start, long end, T task) {
 		this.start = start;
 		this.end = end;
 		this.task = task;
@@ -20,7 +20,7 @@ public class ScheduledTask {
 		return end;
 	}
 
-	public Task getTask() {
+	public T getTask() {
 		return task;
 	}
 	
