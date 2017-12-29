@@ -41,6 +41,16 @@ public class DiGraph implements Serializable {
 		nodesAdjacentToA.add(edge);
 		adjacencyMap.put(nodeA, nodesAdjacentToA);
 	}
+	
+	public boolean hasEdge(Node from, Node to) {
+		List<Edge> edges = adjacencyMap.get(from);
+		for (Edge edge : edges) {
+			if (edge.getTo() == to) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public Set<Node> getNodes() {
 		return adjacencyMap.keySet();
