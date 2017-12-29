@@ -47,7 +47,6 @@ public class KneadingScheduleTest {
 
 		schedule.insert(tasks.get(1));
 		long completionTimeTask3 = schedule.getEarliestCompletionTime(tasks.get(2));
-		System.out.println(completionTimeTask3);
 		assertEquals(335, completionTimeTask3);
 
 		schedule.insert(tasks.get(2));
@@ -71,17 +70,17 @@ public class KneadingScheduleTest {
 		nextScheduledTask = schedule.getNextScheduledTask();
 		taskId = nextScheduledTask.getTask().getOrderId() + nextScheduledTask.getTask().getProductId();		
 		assertEquals(task1Id, taskId);
-		schedule.removeTask(tasks.get(1));
+		schedule.removeFirst();
 		
 		nextScheduledTask = schedule.getNextScheduledTask();
 		taskId = nextScheduledTask.getTask().getOrderId() + nextScheduledTask.getTask().getProductId();		
 		assertEquals(task0Id, taskId);
-		schedule.removeTask(tasks.get(0));
+		schedule.removeFirst();
 		
 		nextScheduledTask = schedule.getNextScheduledTask();
 		taskId = nextScheduledTask.getTask().getOrderId() + nextScheduledTask.getTask().getProductId();		
 		assertEquals(task2Id, taskId);
-		schedule.removeTask(tasks.get(2));
+		schedule.removeFirst();
 		
 		nextScheduledTask = schedule.getNextScheduledTask();
 		assertNull(nextScheduledTask);

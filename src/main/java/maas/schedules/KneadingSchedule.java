@@ -1,7 +1,6 @@
 package maas.schedules;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -65,17 +64,9 @@ public class KneadingSchedule implements Schedule<KneadingTask> {
 	}
 
 	@Override
-	public void removeTask(KneadingTask task) {
-		// Unique task id is combination of order and product id
-		String taskId = task.getOrderId() + task.getProductId();
-		Iterator<ScheduledTask<KneadingTask>> iter = schedule.iterator();
-		while (iter.hasNext()) {
-			ScheduledTask<KneadingTask> scheduledTask = iter.next();
-			String scheduledTaskId = scheduledTask.getTask().getOrderId() + scheduledTask.getTask().getProductId();
-			if (scheduledTaskId.equals(taskId)) {
-				iter.remove();
-				return;
-			}
+	public void removeFirst() {
+		if (!schedule.isEmpty()) {
+			schedule.remove(0);
 		}
 	}
 
