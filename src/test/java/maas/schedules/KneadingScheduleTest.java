@@ -46,6 +46,7 @@ public class KneadingScheduleTest {
 		assertEquals(170, completionTimeTask2);
 
 		schedule.insert(tasks.get(1));
+		schedule.insert(tasks.get(1));
 		long completionTimeTask3 = schedule.getEarliestCompletionTime(tasks.get(2));
 		assertEquals(335, completionTimeTask3);
 
@@ -84,6 +85,7 @@ public class KneadingScheduleTest {
 		
 		nextScheduledTask = schedule.getNextScheduledTask();
 		assertNull(nextScheduledTask);
+		schedule.removeFirst();
 	}
 
 }
