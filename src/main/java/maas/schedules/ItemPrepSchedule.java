@@ -58,13 +58,13 @@ public class ItemPrepSchedule implements Schedule<ItemPrepTask> {
 			int items = (int) (availableTime / task.getItemPrepTime());
 			// Check if all remainingItems fit
 			if (remainingItems - items <= 0) {
-				ItemPrepTask subtask = new ItemPrepTask(remainingItems, task.getItemPrepTime(), task.getDueDate(),
-						task.getReleaseDate(), task.getOrderId(), task.getProductId());
+				ItemPrepTask subtask = new ItemPrepTask(task.getDay(), remainingItems, task.getItemPrepTime(),
+						task.getDueDate(), task.getReleaseDate(), task.getOrderId(), task.getProductId());
 				subtasks.add(new ScheduledTask<>(start, start + remainingItems * task.getItemPrepTime(), subtask));
 				break;
 			} else if (items > 0) {
 				// Add a new subtask
-				ItemPrepTask subtask = new ItemPrepTask(items, task.getItemPrepTime(), task.getDueDate(),
+				ItemPrepTask subtask = new ItemPrepTask(task.getDay(), items, task.getItemPrepTime(), task.getDueDate(),
 						task.getReleaseDate(), task.getOrderId(), task.getProductId());
 				subtasks.add(new ScheduledTask<>(start, start + items * task.getItemPrepTime(), subtask));
 				remainingItems = remainingItems - items;
@@ -73,8 +73,8 @@ public class ItemPrepSchedule implements Schedule<ItemPrepTask> {
 		}
 		// Check if items still remain
 		if (remainingItems > 0) {
-			ItemPrepTask subtask = new ItemPrepTask(remainingItems, task.getItemPrepTime(), task.getDueDate(),
-					task.getReleaseDate(), task.getOrderId(), task.getProductId());
+			ItemPrepTask subtask = new ItemPrepTask(task.getDay(), remainingItems, task.getItemPrepTime(),
+					task.getDueDate(), task.getReleaseDate(), task.getOrderId(), task.getProductId());
 			subtasks.add(new ScheduledTask<>(start, start + remainingItems * task.getItemPrepTime(), subtask));
 		}
 		// Add all new tasks and sort

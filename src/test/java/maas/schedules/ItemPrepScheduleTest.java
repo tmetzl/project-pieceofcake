@@ -21,9 +21,9 @@ public class ItemPrepScheduleTest {
 	public void prepareScheduleAndTasks() {
 		schedule = new ItemPrepSchedule();
 		tasks = new ArrayList<>();
-		ItemPrepTask task0 = new ItemPrepTask(10, 5, 600, 40, "order-001", "Bread");
-		ItemPrepTask task1 = new ItemPrepTask(6, 4, 200, 100, "order-001", "Cake");
-		ItemPrepTask task2 = new ItemPrepTask(12, 8, 300, 0, "order-002", "Pie");
+		ItemPrepTask task0 = new ItemPrepTask(1, 10, 5, 600, 40, "order-001", "Bread");
+		ItemPrepTask task1 = new ItemPrepTask(1, 6, 4, 200, 100, "order-001", "Cake");
+		ItemPrepTask task2 = new ItemPrepTask(1, 12, 8, 300, 0, "order-002", "Pie");
 		tasks.add(task0);
 		tasks.add(task1);
 		tasks.add(task2);

@@ -21,9 +21,9 @@ public class KneadingScheduleTest {
 	public void prepareScheduleAndTasks() {
 		schedule = new KneadingSchedule();
 		tasks = new ArrayList<>();
-		KneadingTask task1 = new KneadingTask(50, 20, 300, 200, "order-001", "Bread");
-		KneadingTask task2 = new KneadingTask(30, 40, 400, 100, "order-001", "Pie");
-		KneadingTask task3 = new KneadingTask(70, 15, 500, 220, "order-002", "Donut");
+		KneadingTask task1 = new KneadingTask(1, 50, 20, 300, 200, "order-001", "Bread");
+		KneadingTask task2 = new KneadingTask(1, 30, 40, 400, 100, "order-001", "Pie");
+		KneadingTask task3 = new KneadingTask(1, 70, 15, 500, 220, "order-002", "Donut");
 		tasks.add(task1);
 		tasks.add(task2);
 		tasks.add(task3);
