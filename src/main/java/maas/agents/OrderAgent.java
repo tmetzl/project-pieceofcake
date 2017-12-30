@@ -11,14 +11,17 @@ import jade.util.Logger;
 import maas.config.Protocols;
 import maas.objects.Bakery;
 import maas.objects.Order;
+import maas.objects.TaskCreator;
 
 @SuppressWarnings("serial")
 public class OrderAgent extends SynchronizedAgent {
 
 	private transient Bakery myBakery;
+	private TaskCreator taskCreator;
 
 	public OrderAgent(Bakery bakery) {
 		this.myBakery = bakery;
+		this.taskCreator = new TaskCreator(bakery);
 	}
 
 	@Override
