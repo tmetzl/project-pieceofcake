@@ -133,12 +133,8 @@ public class Bakery implements Serializable, BakeryObservable, Localizable {
 	}
 
 	@Override
-	public double getLocationX() {
-		return location.getLocationX();
+	public Location getLocation() {
+		return location;
 	}
 
-	@Override
-	public double getLocationY() {
-		return location.getLocationY();
-	}
 }

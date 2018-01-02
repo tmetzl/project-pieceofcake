@@ -26,7 +26,7 @@ public class Node implements Serializable, Localizable {
 	@Override
 	public String toString() {
 		return String.format("Node %s: %s from company %s of type %s at (%.2f, %.2f)", guid, name, company, type,
-				getLocationX(), getLocationY());
+				location.getX(), location.getY());
 	}
 
 	@Override
@@ -60,12 +60,7 @@ public class Node implements Serializable, Localizable {
 	}
 
 	@Override
-	public double getLocationX() {
-		return location.getLocationX();
-	}
-
-	@Override
-	public double getLocationY() {
-		return location.getLocationY();
+	public Location getLocation() {
+		return location;
 	}
 }

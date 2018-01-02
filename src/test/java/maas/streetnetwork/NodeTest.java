@@ -30,8 +30,8 @@ public class NodeTest {
 		assertEquals("Node A", nodeA.getName());
 		assertEquals("Type A", nodeA.getType());
 		assertEquals("Company A", nodeA.getCompany());
-		assertEquals(5.4, nodeA.getLocationX(), 1e-10);
-		assertEquals(7.1, nodeA.getLocationY(), 1e-10);
+		assertEquals(5.4, nodeA.getLocation().getX(), 1e-10);
+		assertEquals(7.1, nodeA.getLocation().getY(), 1e-10);
 	}
 
 	@Test

@@ -26,13 +26,8 @@ public class SynchronizedAgent extends Agent implements Localizable {
 	Location location;
 	
 	@Override
-	public double getLocationX() {
-		return location.getLocationX();
-	}
-
-	@Override
-	public double getLocationY() {
-		return location.getLocationY();
+	public Location getLocation() {
+		return location;
 	}
 
 	@Override

@@ -103,8 +103,8 @@ public class BakeryTest {
 		Bakery bakery = new Bakery("bakery-001", "TestBakery", new Location(10.1, 17.2));
 		assertEquals("bakery-001", bakery.getGuiId());
 		assertEquals("TestBakery", bakery.getName());
-		assertEquals(10.1, bakery.getLocationX(), 1e-10);
-		assertEquals(17.2, bakery.getLocationY(), 1e-10);
+		assertEquals(10.1, bakery.getLocation().getX(), 1e-10);
+		assertEquals(17.2, bakery.getLocation().getY(), 1e-10);
 	}
 
 	@Test
