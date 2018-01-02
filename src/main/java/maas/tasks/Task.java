@@ -2,21 +2,15 @@ package maas.tasks;
 
 import org.json.JSONObject;
 
+import maas.objects.Date;
+
 public abstract class Task {
 	
-	private int day;
-	private long dueDate;
-	private long releaseDate;
+	private Date dueDate;
+	private Date releaseDate;
 	private String orderId;
 	private String productId;
 	
-	public int getDay() {
-		return day;
-	}
-
-	public void setDay(int day) {
-		this.day = day;
-	}
 
 	public String getProductId() {
 		return productId;
@@ -26,19 +20,19 @@ public abstract class Task {
 		this.productId = productId;
 	}
 
-	public long getDueDate() {
+	public Date getDueDate() {
 		return dueDate;
 	}
 
-	public void setDueDate(long dueDate) {
+	public void setDueDate(Date dueDate) {
 		this.dueDate = dueDate;
 	}
 
-	public long getReleaseDate() {
+	public Date getReleaseDate() {
 		return releaseDate;
 	}
 
-	public void setReleaseDate(long releaseDate) {
+	public void setReleaseDate(Date releaseDate) {
 		this.releaseDate = releaseDate;
 	}
 
@@ -50,8 +44,24 @@ public abstract class Task {
 		this.orderId = orderId;
 	}
 
-	public abstract JSONObject toJSONObject();
+	public JSONObject toJSONObject() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("product_id", getProductId());
+		jsonObject.put("release_date", getReleaseDate().toJSONObject());
+		jsonObject.put("due_date", getDueDate().toJSONObject());
+		jsonObject.put("order_id", getOrderId());
+		return jsonObject;
+	}
 
-	public abstract void fromJSONObject(JSONObject jsonObject);
+	public void fromJSONObject(JSONObject jsonObject) {
+		setProductId(jsonObject.getString("product_id"));
+		Date releaseDate = new Date();
+		releaseDate.fromJSONObject(jsonObject.getJSONObject("release_date"));
+		setReleaseDate(releaseDate);
+		Date dueDate = new Date();
+		dueDate.fromJSONObject(jsonObject.getJSONObject("due_date"));
+		setDueDate(dueDate);
+		setOrderId(jsonObject.getString("order_id"));
+	}
 
 }
