@@ -1,9 +1,9 @@
 package maas.interfaces;
 
+import maas.objects.Location;
+
 public interface Localizable {
 	
-	public double getLocationX();
-	
-	public double getLocationY();
+	public Location getLocation();
 
 }
