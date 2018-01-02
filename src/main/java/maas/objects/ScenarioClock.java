@@ -2,7 +2,7 @@ package maas.objects;
 
 public class ScenarioClock {
 
-	private final static long SECONDS_PER_SCENARIO_DAY = 24;
+	private static final long SECONDS_PER_SCENARIO_DAY = 24;
 
 	private boolean started;
 	private long startingTime;
