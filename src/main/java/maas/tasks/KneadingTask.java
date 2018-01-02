@@ -7,51 +7,35 @@ public class KneadingTask extends Task {
 	private long kneadingTime;
 	private long restingTime;
 
-	public KneadingTask() {
-
-	}
-
-	public KneadingTask(int day, long kneadingTime, long restingTime, long dueDate, long releaseDate, String orderId,
-			String productId) {
-		this.kneadingTime = kneadingTime;
-		this.restingTime = restingTime;
-		setDay(day);
-		setProductId(productId);
-		setDueDate(dueDate);
-		setReleaseDate(releaseDate);
-		setOrderId(orderId);
-	}
-
 	public long getKneadingTime() {
 		return kneadingTime;
+	}	
+
+	public void setKneadingTime(long kneadingTime) {
+		this.kneadingTime = kneadingTime;
 	}
 
 	public long getRestingTime() {
 		return restingTime;
 	}
+	
+	public void setRestingTime(long restingTime) {
+		this.restingTime = restingTime;
+	}
 
 	@Override
 	public JSONObject toJSONObject() {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("product_id", getProductId());
+		JSONObject jsonObject = super.toJSONObject();
 		jsonObject.put("kneading_time", kneadingTime);
 		jsonObject.put("resting_time", restingTime);
-		jsonObject.put("release_date", getReleaseDate());
-		jsonObject.put("due_date", getDueDate());
-		jsonObject.put("order_id", getOrderId());
-		jsonObject.put("day", getDay());
 		return jsonObject;
 	}
 
 	@Override
 	public void fromJSONObject(JSONObject jsonObject) {
-		setProductId(jsonObject.getString("product_id"));
+		super.fromJSONObject(jsonObject);
 		kneadingTime = jsonObject.getLong("kneading_time");
 		restingTime = jsonObject.getLong("resting_time");
-		setReleaseDate(jsonObject.getLong("release_date"));
-		setDueDate(jsonObject.getLong("due_date"));
-		setOrderId(jsonObject.getString("order_id"));
-		setDay(jsonObject.getInt("day"));
 	}
 
 }
