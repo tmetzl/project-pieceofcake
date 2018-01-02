@@ -14,6 +14,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
 import maas.config.Protocols;
+import maas.objects.Location;
 import maas.objects.Order;
 import maas.utils.OrderDateComparator;
 
@@ -29,11 +30,10 @@ public class CustomerAgent extends SynchronizedAgent {
 	private List<Order> placedOrders;
 	private List<Order> failedOrders;
 
-	public CustomerAgent(String guiId, int type, double locationX, double locationY, List<Order> orders) {
+	public CustomerAgent(String guiId, int type, Location location, List<Order> orders) {
 		this.guiId = guiId;
 		this.type = type;
-		this.locationX = locationX;
-		this.locationY = locationY;
+		this.location = location;
 
 		Collections.sort(orders, new OrderDateComparator());
 		this.orders = orders;
@@ -243,14 +243,6 @@ public class CustomerAgent extends SynchronizedAgent {
 
 	public int getType() {
 		return type;
-	}
-
-	public double getLocationX() {
-		return locationX;
-	}
-
-	public double getLocationY() {
-		return locationY;
 	}
 
 	public List<Order> getOrders() {

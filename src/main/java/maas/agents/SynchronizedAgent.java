@@ -13,14 +13,22 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
 import maas.config.Protocols;
+import maas.interfaces.Localizable;
+import maas.objects.Location;
 
 @SuppressWarnings("serial")
-public class SynchronizedAgent extends Agent {
+public class SynchronizedAgent extends Agent implements Localizable {
 
 	long timeOffset = 0l;
 	long startUpTime;
 	AID timerAgent;
 	Logger logger;
+	Location location;
+	
+	@Override
+	public Location getLocation() {
+		return location;
+	}
 
 	@Override
 	protected void setup() {

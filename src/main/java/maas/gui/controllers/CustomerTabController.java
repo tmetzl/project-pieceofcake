@@ -16,6 +16,7 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 import maas.agents.CustomerAgent;
 import maas.gui.utils.ShoppingListEntry;
+import maas.objects.Location;
 import maas.objects.Order;
 
 public class CustomerTabController {
@@ -72,8 +73,9 @@ public class CustomerTabController {
 	public void updateCustomer(CustomerAgent selectedAgent) {
 		customerName.setText(selectedAgent.getLocalName());
 		customerType.setText(String.valueOf(selectedAgent.getType()));
-		double x = selectedAgent.getLocationX();
-		double y = selectedAgent.getLocationY();
+		Location location = selectedAgent.getLocation();
+		double x = location.getX();
+		double y = location.getY();
 		customerLocation.setText(String.format("(%.2f, %.2f)", x, y));
 		updateOrders(selectedAgent);
 	}

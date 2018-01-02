@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+import maas.objects.Location;
+
 public class NodeTest {
 
 	private Node nodeA;
@@ -16,10 +18,10 @@ public class NodeTest {
 
 	@Before
 	public void initializeNodes() {
-		nodeA = new Node("node-001", "Node A", "Type A", "Company A", 5.4, 7.1);
-		nodeA1 = new Node("node-001", "Node A", "Type A", "Company A", 5.4, 7.1);
-		nodeB = new Node("node-002", "Node B", "Type B", "Company B", 8.3, 13.5);
-		nodeC = new Node("node-003", "Node C", "Type C", "Company C", 5.9, 1.1);
+		nodeA = new Node("node-001", "Node A", "Type A", "Company A", new Location(5.4, 7.1));
+		nodeA1 = new Node("node-001", "Node A", "Type A", "Company A", new Location(5.4, 7.1));
+		nodeB = new Node("node-002", "Node B", "Type B", "Company B", new Location(8.3, 13.5));
+		nodeC = new Node("node-003", "Node C", "Type C", "Company C", new Location(5.9, 1.1));
 	}
 
 	@Test
@@ -28,8 +30,8 @@ public class NodeTest {
 		assertEquals("Node A", nodeA.getName());
 		assertEquals("Type A", nodeA.getType());
 		assertEquals("Company A", nodeA.getCompany());
-		assertEquals(5.4, nodeA.getLocationX(), 1e-10);
-		assertEquals(7.1, nodeA.getLocationY(), 1e-10);
+		assertEquals(5.4, nodeA.getLocation().getX(), 1e-10);
+		assertEquals(7.1, nodeA.getLocation().getY(), 1e-10);
 	}
 
 	@Test

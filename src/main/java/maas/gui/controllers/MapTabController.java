@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 import maas.gui.utils.ResizableCanvas;
+import maas.objects.Location;
 import maas.streetnetwork.DiGraph;
 import maas.streetnetwork.Edge;
 import maas.streetnetwork.Node;
@@ -29,7 +30,7 @@ public class MapTabController {
 	private ResizableCanvas mapCanvas;
 	@FXML
 	private HBox mapContainer;
-	
+
 	@FXML
 	private void initialize() {
 		mapContainer.widthProperty().addListener(event -> resizeCanvas());
@@ -42,7 +43,7 @@ public class MapTabController {
 		updateConversionFactors();
 		draw();
 	}
-	
+
 	private void resizeCanvas() {
 		mapCanvas.setWidth(mapContainer.getWidth());
 		mapCanvas.setHeight(mapContainer.getHeight());
@@ -57,8 +58,9 @@ public class MapTabController {
 			// xMin, xMax, yMin, yMax
 			double[] dim = { 0d, 0d, 0d, 0d };
 			for (Node node : nodes) {
-				double x = node.getLocationX();
-				double y = node.getLocationY();
+				Location location = node.getLocation();
+				double x = location.getX();
+				double y = location.getY();
 				if (x < dim[0]) {
 					dim[0] = x;
 				} else if (x > dim[1]) {
@@ -99,7 +101,7 @@ public class MapTabController {
 		GraphicsContext gc = mapCanvas.getGraphicsContext2D();
 		Set<Node> nodes = streetNetwork.getNodes();
 		for (Node node : nodes) {
-			double[] coordinates = convertToCanvasCoordinates(node.getLocationX(), node.getLocationY());
+			double[] coordinates = convertToCanvasCoordinates(node.getLocation().getX(), node.getLocation().getY());
 
 			if (node.getType().equals("customer")) {
 				gc.setFill(Color.LIGHTBLUE);
@@ -119,10 +121,10 @@ public class MapTabController {
 		for (Node node : nodes) {
 			List<Edge> edges = streetNetwork.getEdges(node.getGuid());
 			for (Edge edge : edges) {
-				double[] coordinatesFrom = convertToCanvasCoordinates(edge.getFrom().getLocationX(),
-						edge.getFrom().getLocationY());
-				double[] coordinatesTo = convertToCanvasCoordinates(edge.getTo().getLocationX(),
-						edge.getTo().getLocationY());
+				double[] coordinatesFrom = convertToCanvasCoordinates(edge.getFrom().getLocation().getX(),
+						edge.getFrom().getLocation().getY());
+				double[] coordinatesTo = convertToCanvasCoordinates(edge.getTo().getLocation().getX(),
+						edge.getTo().getLocation().getY());
 				drawArrow(coordinatesFrom, coordinatesTo);
 			}
 		}
