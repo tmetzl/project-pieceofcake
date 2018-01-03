@@ -34,8 +34,8 @@ public class KneadingTask extends Task {
 	@Override
 	public void fromJSONObject(JSONObject jsonObject) {
 		super.fromJSONObject(jsonObject);
-		kneadingTime = jsonObject.getLong("kneading_time");
-		restingTime = jsonObject.getLong("resting_time");
+		setKneadingTime(jsonObject.getLong("kneading_time"));
+		setRestingTime(jsonObject.getLong("resting_time"));
 	}
 
 }
