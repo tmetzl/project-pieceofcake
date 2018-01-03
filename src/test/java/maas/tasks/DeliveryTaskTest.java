@@ -5,8 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.json.JSONObject;
 import org.junit.Test;
 
-import com.sun.xml.internal.bind.marshaller.DumbEscapeHandler;
-
 import maas.objects.Date;
 import maas.objects.Location;
 
