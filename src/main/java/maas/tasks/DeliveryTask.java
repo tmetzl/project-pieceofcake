@@ -48,8 +48,8 @@ public class DeliveryTask extends Task {
 		super.fromJSONObject(jsonObject);
 		setItemPerBox(jsonObject.getInt("item_per_box"));
 		setNumOfItems(jsonObject.getInt("num_of_items"));
-		Location location = new Location();
-		location.fromJSONObject(jsonObject.getJSONObject("location"));
-		setLocation(location);
+		Location locationFromJson = new Location();
+		locationFromJson.fromJSONObject(jsonObject.getJSONObject("location"));
+		setLocation(locationFromJson);
 	}
 }

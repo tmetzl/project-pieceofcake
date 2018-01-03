@@ -55,12 +55,12 @@ public abstract class Task {
 
 	public void fromJSONObject(JSONObject jsonObject) {
 		setProductId(jsonObject.getString("product_id"));
-		Date releaseDate = new Date();
-		releaseDate.fromJSONObject(jsonObject.getJSONObject("release_date"));
-		setReleaseDate(releaseDate);
-		Date dueDate = new Date();
-		dueDate.fromJSONObject(jsonObject.getJSONObject("due_date"));
-		setDueDate(dueDate);
+		Date releaseDateFromJson = new Date();
+		releaseDateFromJson.fromJSONObject(jsonObject.getJSONObject("release_date"));
+		setReleaseDate(releaseDateFromJson);
+		Date dueDateFromJson = new Date();
+		dueDateFromJson.fromJSONObject(jsonObject.getJSONObject("due_date"));
+		setDueDate(dueDateFromJson);
 		setOrderId(jsonObject.getString("order_id"));
 	}
 
