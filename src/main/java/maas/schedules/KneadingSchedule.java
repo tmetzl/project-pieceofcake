@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import maas.interfaces.Schedule;
+import maas.objects.Date;
 import maas.tasks.KneadingTask;
 import maas.tasks.ScheduledTask;
 
@@ -17,27 +18,36 @@ public class KneadingSchedule implements Schedule<KneadingTask> {
 	}
 
 	@Override
-	public long getEarliestCompletionTime(KneadingTask task) {
+	public Date getEarliestCompletionTime(KneadingTask task) {
+		long releaseDateInSeconds = task.getReleaseDate().toSeconds();
 		if (schedule.isEmpty()) {
-			return task.getReleaseDate() + task.getKneadingTime() + task.getRestingTime();
+			long completionTimeInSeconds = releaseDateInSeconds + task.getKneadingTime() + task.getRestingTime();
+			return new Date(completionTimeInSeconds);
 		}
 		// Check if the task already exists
 		ScheduledTask<KneadingTask> existingTask = getScheduledTask(task.getProductId());
 		if (existingTask != null) {
 			// The completion time is the end time of the task plus the resting
 			// time
-			return existingTask.getEnd() + task.getRestingTime();
+			long completionTimeInSeconds = existingTask.getEnd().toSeconds() + task.getRestingTime();
+			;
+			return new Date(completionTimeInSeconds);
 		}
-		long start = task.getReleaseDate();
+		Date startDate = task.getReleaseDate();
 		for (ScheduledTask<KneadingTask> scheduledTask : schedule) {
-			long completionTime = start + task.getKneadingTime();
 			// Check whether we can schedule the task before the scheduled task
-			if (completionTime <= scheduledTask.getStart()) {
-				return completionTime + task.getRestingTime();
+			long availableTime = scheduledTask.getStart().toSeconds() - startDate.toSeconds();
+			if (task.getKneadingTime() <= availableTime) {
+				long completionTimeInSeconds = startDate.toSeconds() + task.getKneadingTime() + task.getRestingTime();
+				return new Date(completionTimeInSeconds);
 			}
-			start = Math.max(start, scheduledTask.getEnd());
+			if (startDate.compareTo(scheduledTask.getEnd()) < 0) {
+				startDate = scheduledTask.getEnd();
+			}
 		}
-		return start + task.getKneadingTime() + task.getRestingTime();
+		// The task can only be scheduled after all existing tasks
+		long completionTimeInSeconds = startDate.toSeconds() + task.getKneadingTime() + task.getRestingTime();
+		return new Date(completionTimeInSeconds);
 	}
 
 	@Override
@@ -47,9 +57,10 @@ public class KneadingSchedule implements Schedule<KneadingTask> {
 			return;
 		}
 		// Get the completion time
-		long completionTime = getEarliestCompletionTime(task) - task.getRestingTime();
-		ScheduledTask<KneadingTask> newTask = new ScheduledTask<>(completionTime - task.getKneadingTime(),
-				completionTime, task);
+		Date endDate = getEarliestCompletionTime(task);
+		long completionTime = endDate.toSeconds() - task.getRestingTime();
+		long startTime = completionTime - task.getKneadingTime();
+		ScheduledTask<KneadingTask> newTask = new ScheduledTask<>(new Date(startTime), new Date(completionTime), task);
 		// Insert task and sort
 		schedule.add(newTask);
 		Collections.sort(schedule);

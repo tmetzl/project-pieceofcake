@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import maas.interfaces.Schedule;
+import maas.objects.Date;
 import maas.tasks.ItemPrepTask;
 import maas.tasks.ScheduledTask;
 
@@ -17,65 +18,81 @@ public class ItemPrepSchedule implements Schedule<ItemPrepTask> {
 	}
 
 	@Override
-	public long getEarliestCompletionTime(ItemPrepTask task) {
+	public Date getEarliestCompletionTime(ItemPrepTask task) {
+		long completionTimeInSeconds = 0l;
 		if (schedule.isEmpty()) {
-			return task.getReleaseDate() + task.getNumOfItems() * task.getItemPrepTime();
+			completionTimeInSeconds = task.getReleaseDate().toSeconds() + task.getNumOfItems() * task.getItemPrepTime();
+			return new Date(completionTimeInSeconds);
 		}
-		long start = task.getReleaseDate();
+		Date startDate = task.getReleaseDate();
 		int remainingItems = task.getNumOfItems();
 		for (ScheduledTask<ItemPrepTask> scheduledTask : schedule) {
 			// Check how much time we have between the last task and the next
 			// task
-			long availableTime = scheduledTask.getStart() - start;
+			long availableTime = scheduledTask.getStart().toSeconds() - startDate.toSeconds();
 			// Check how many items we could fit in that slot
 			int items = (int) (availableTime / task.getItemPrepTime());
 			// Check if all remainingItems fit
 			if (remainingItems - items <= 0) {
-				return start + remainingItems * task.getItemPrepTime();
+				completionTimeInSeconds = startDate.toSeconds() + remainingItems * task.getItemPrepTime();
+				return new Date(completionTimeInSeconds);
 			} else if (items > 0) {
 				remainingItems = remainingItems - items;
 			}
-			start = Math.max(start, scheduledTask.getEnd());
+			if (startDate.compareTo(scheduledTask.getEnd()) < 0) {
+				startDate = scheduledTask.getEnd();
+			}
 		}
-		return start + remainingItems * task.getItemPrepTime();
+		completionTimeInSeconds = startDate.toSeconds() + remainingItems * task.getItemPrepTime();
+		return new Date(completionTimeInSeconds);
 	}
 
 	@Override
 	public void insert(ItemPrepTask task) {
 		if (schedule.isEmpty()) {
-			schedule.add(new ScheduledTask<>(task.getReleaseDate(),
-					task.getReleaseDate() + task.getNumOfItems() * task.getItemPrepTime(), task));
+			Date completionDate = new Date(
+					task.getReleaseDate().toSeconds() + task.getNumOfItems() * task.getItemPrepTime());
+			schedule.add(new ScheduledTask<>(task.getReleaseDate(), completionDate, task));
 			return;
 		}
 		List<ScheduledTask<ItemPrepTask>> subtasks = new LinkedList<>();
-		long start = task.getReleaseDate();
+		Date startDate = task.getReleaseDate();
 		int remainingItems = task.getNumOfItems();
 		for (ScheduledTask<ItemPrepTask> scheduledTask : schedule) {
 			// Check how much time we have between the last task and the next
 			// task
-			long availableTime = scheduledTask.getStart() - start;
+			long availableTime = scheduledTask.getStart().toSeconds() - startDate.toSeconds();
 			// Check how many items fit in that slot
 			int items = (int) (availableTime / task.getItemPrepTime());
 			// Check if all remainingItems fit
 			if (remainingItems - items <= 0) {
-				ItemPrepTask subtask = new ItemPrepTask(task.getDay(), remainingItems, task.getItemPrepTime(),
-						task.getDueDate(), task.getReleaseDate(), task.getOrderId(), task.getProductId());
-				subtasks.add(new ScheduledTask<>(start, start + remainingItems * task.getItemPrepTime(), subtask));
+				ItemPrepTask subtask = createSubTask(task, remainingItems);
+
+				long completionTimeInSeconds = startDate.toSeconds() + remainingItems * task.getItemPrepTime();
+				Date endDate = new Date(completionTimeInSeconds);
+				subtasks.add(new ScheduledTask<>(startDate, endDate, subtask));
+				remainingItems = 0;
 				break;
 			} else if (items > 0) {
 				// Add a new subtask
-				ItemPrepTask subtask = new ItemPrepTask(task.getDay(), items, task.getItemPrepTime(), task.getDueDate(),
-						task.getReleaseDate(), task.getOrderId(), task.getProductId());
-				subtasks.add(new ScheduledTask<>(start, start + items * task.getItemPrepTime(), subtask));
+				ItemPrepTask subtask = createSubTask(task, items);
+
+				long completionTimeInSeconds = startDate.toSeconds() + items * task.getItemPrepTime();
+				Date endDate = new Date(completionTimeInSeconds);
+				subtasks.add(new ScheduledTask<>(startDate, endDate, subtask));
 				remainingItems = remainingItems - items;
 			}
-			start = Math.max(start, scheduledTask.getEnd());
+			if (startDate.compareTo(scheduledTask.getEnd()) < 0) {
+				startDate = scheduledTask.getEnd();
+			}
 		}
 		// Check if items still remain
 		if (remainingItems > 0) {
-			ItemPrepTask subtask = new ItemPrepTask(task.getDay(), remainingItems, task.getItemPrepTime(),
-					task.getDueDate(), task.getReleaseDate(), task.getOrderId(), task.getProductId());
-			subtasks.add(new ScheduledTask<>(start, start + remainingItems * task.getItemPrepTime(), subtask));
+			ItemPrepTask subtask = createSubTask(task, remainingItems);
+
+			long completionTimeInSeconds = startDate.toSeconds() + remainingItems * task.getItemPrepTime();
+			Date endDate = new Date(completionTimeInSeconds);
+			subtasks.add(new ScheduledTask<>(startDate, endDate, subtask));
 		}
 		// Add all new tasks and sort
 		schedule.addAll(subtasks);
@@ -95,6 +112,18 @@ public class ItemPrepSchedule implements Schedule<ItemPrepTask> {
 		if (!schedule.isEmpty()) {
 			schedule.remove(0);
 		}
+	}
+
+	private ItemPrepTask createSubTask(ItemPrepTask task, int numOfItems) {
+		ItemPrepTask subtask = new ItemPrepTask();
+		subtask.setReleaseDate(task.getReleaseDate());
+		subtask.setDueDate(task.getDueDate());
+		subtask.setOrderId(task.getOrderId());
+		subtask.setProductId(task.getProductId());
+
+		subtask.setItemPrepTime(task.getItemPrepTime());
+		subtask.setNumOfItems(numOfItems);
+		return subtask;
 	}
 
 }
