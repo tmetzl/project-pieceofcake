@@ -5,50 +5,47 @@ import static org.junit.Assert.assertEquals;
 import org.json.JSONObject;
 import org.junit.Test;
 
+import com.sun.xml.internal.bind.marshaller.DumbEscapeHandler;
+
+import maas.objects.Date;
+import maas.objects.Location;
+
 public class DeliveryTaskTest {
 
 	@Test
 	public void testGettersAndSetters() {
+		Date releaseDate = new Date(0, 3, 1, 0);
+		Date dueDate = new Date(1, 2, 3, 4);
+		Location location = new Location(5.0, 5.0);
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("product_id", "Bread");
-		jsonObject.put("release_date", 2);
-		jsonObject.put("due_date", 14);
+		jsonObject.put("release_date", releaseDate.toJSONObject());
+		jsonObject.put("due_date", dueDate.toJSONObject());
 		jsonObject.put("order_id", "order-001");
-		jsonObject.put("num_of_boxes", 5);
-		jsonObject.put("customer_id", "customer_001");
-		jsonObject.put("day", 1);
+		jsonObject.put("num_of_items", 10);
+		jsonObject.put("item_per_box", 5);
+		jsonObject.put("location", location.toJSONObject());
 
 		DeliveryTask deliveryTask = new DeliveryTask();
 		deliveryTask.fromJSONObject(jsonObject);
 
 		assertEquals("Bread", deliveryTask.getProductId());
-		assertEquals(2, deliveryTask.getReleaseDate());
-		assertEquals(14, deliveryTask.getDueDate());
+		assertEquals(releaseDate, deliveryTask.getReleaseDate());
+		assertEquals(dueDate, deliveryTask.getDueDate());
 		assertEquals("order-001", deliveryTask.getOrderId());
-		assertEquals(5, deliveryTask.getNumOfBoxes());
-		assertEquals("customer_001", deliveryTask.getCustomerId());
-		assertEquals(1, deliveryTask.getDay());
+		assertEquals(5, deliveryTask.getItemPerBox());
+		assertEquals(10, deliveryTask.getNumOfItems());
 
 		JSONObject jsonObjectFromDeliveryTask = deliveryTask.toJSONObject();
+		DeliveryTask anotherDeliveryTask = new DeliveryTask();
+		anotherDeliveryTask.fromJSONObject(jsonObjectFromDeliveryTask);
 
-		assertEquals(7, jsonObjectFromDeliveryTask.length());
-		assertEquals("Bread", jsonObjectFromDeliveryTask.getString("product_id"));
-		assertEquals(2l, jsonObjectFromDeliveryTask.getLong("release_date"));
-		assertEquals(14l, jsonObjectFromDeliveryTask.getLong("due_date"));
-		assertEquals("order-001", jsonObjectFromDeliveryTask.getString("order_id"));
-		assertEquals(5, jsonObjectFromDeliveryTask.getInt("num_of_boxes"));
-		assertEquals("customer_001", jsonObjectFromDeliveryTask.getString("customer_id"));
-		assertEquals(1, jsonObjectFromDeliveryTask.getInt("day"));
-
-		DeliveryTask anotherDeliveryTask = new DeliveryTask(2, 5, "customer_002", 5, 1, "order-002", "Cake");
-
-		assertEquals("Cake", anotherDeliveryTask.getProductId());
-		assertEquals(1, anotherDeliveryTask.getReleaseDate());
-		assertEquals(5, anotherDeliveryTask.getDueDate());
-		assertEquals("order-002", anotherDeliveryTask.getOrderId());
-		assertEquals(5, anotherDeliveryTask.getNumOfBoxes());
-		assertEquals("customer_002", anotherDeliveryTask.getCustomerId());
-		assertEquals(2, anotherDeliveryTask.getDay());
+		assertEquals("Bread", anotherDeliveryTask.getProductId());
+		assertEquals(releaseDate, anotherDeliveryTask.getReleaseDate());
+		assertEquals(dueDate, anotherDeliveryTask.getDueDate());
+		assertEquals("order-001", anotherDeliveryTask.getOrderId());
+		assertEquals(location, anotherDeliveryTask.getLocation());
+		assertEquals(5, anotherDeliveryTask.getItemPerBox());
+		assertEquals(10, anotherDeliveryTask.getNumOfItems());
 	}
-
 }
