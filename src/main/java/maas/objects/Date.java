@@ -20,13 +20,6 @@ public class Date {
 		this.second = second;
 	}
 
-	public Date(int day, int hour) {
-		this.day = day;
-		this.hour = hour;
-		this.minute = 0;
-		this.second = 0;
-	}
-
 	@Override
 	public String toString() {
 		return String.format("%02d:%02d:%02d:%02d", day, hour, minute, second);
