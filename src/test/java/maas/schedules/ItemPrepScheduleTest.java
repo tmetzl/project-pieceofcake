@@ -9,92 +9,119 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import maas.objects.Date;
 import maas.tasks.ItemPrepTask;
 import maas.tasks.ScheduledTask;
 
 public class ItemPrepScheduleTest {
-	
+
 	private ItemPrepSchedule schedule;
 	private List<ItemPrepTask> tasks;
-	
+
 	@Before
 	public void prepareScheduleAndTasks() {
 		schedule = new ItemPrepSchedule();
 		tasks = new ArrayList<>();
-		ItemPrepTask task0 = new ItemPrepTask(1, 10, 5, 600, 40, "order-001", "Bread");
-		ItemPrepTask task1 = new ItemPrepTask(1, 6, 4, 200, 100, "order-001", "Cake");
-		ItemPrepTask task2 = new ItemPrepTask(1, 12, 8, 300, 0, "order-002", "Pie");
+
+		ItemPrepTask task0 = new ItemPrepTask();
+		task0.setOrderId("order-001");
+		task0.setProductId("Bread");
+		task0.setReleaseDate(new Date(1, 2, 0, 0));
+		task0.setDueDate(new Date(1, 7, 30, 0));
+		task0.setItemPrepTime(600);
+		task0.setNumOfItems(5);
+
+		ItemPrepTask task1 = new ItemPrepTask();
+		task1.setOrderId("order-001");
+		task1.setProductId("Cake");
+		task1.setReleaseDate(new Date(1, 1, 0, 0));
+		task1.setDueDate(new Date(1, 5, 0, 0));
+		task1.setItemPrepTime(360);
+		task1.setNumOfItems(7);
+
+		ItemPrepTask task2 = new ItemPrepTask();
+		task2.setOrderId("order-002");
+		task2.setProductId("Pie");
+		task2.setReleaseDate(new Date(1, 0, 0, 0));
+		task2.setDueDate(new Date(1, 4, 0, 0));
+		task2.setItemPrepTime(720);
+		task2.setNumOfItems(8);
+
 		tasks.add(task0);
 		tasks.add(task1);
 		tasks.add(task2);
 	}
-	
+
 	@Test
 	public void testGetEarliestCompletionTime() {
-		long completionTimeTask0 = schedule.getEarliestCompletionTime(tasks.get(0));
-		long completionTimeTask1 = schedule.getEarliestCompletionTime(tasks.get(1));
-		long completionTimeTask2 = schedule.getEarliestCompletionTime(tasks.get(2));
-		assertEquals(90, completionTimeTask0);
-		assertEquals(124, completionTimeTask1);
-		assertEquals(96, completionTimeTask2);
+		Date completionTimeTask0 = schedule.getEarliestCompletionTime(tasks.get(0));
+		Date completionTimeTask1 = schedule.getEarliestCompletionTime(tasks.get(1));
+		Date completionTimeTask2 = schedule.getEarliestCompletionTime(tasks.get(2));
+		assertEquals(new Date(1, 2, 50, 0), completionTimeTask0);
+		assertEquals(new Date(1, 1, 42, 0), completionTimeTask1);
+		assertEquals(new Date(1, 1, 36, 0), completionTimeTask2);
 	}
-	
+
 	@Test
 	public void testInsert() {
-		schedule.insert(tasks.get(0));
-		long completionTimeTask2 = schedule.getEarliestCompletionTime(tasks.get(2));
-		assertEquals(146, completionTimeTask2);
-		
 		schedule.insert(tasks.get(2));
-		long completionTimeTask1 = schedule.getEarliestCompletionTime(tasks.get(1));
-		assertEquals(170, completionTimeTask1);
+		Date completionTimeTask1 = schedule.getEarliestCompletionTime(tasks.get(1));
+		assertEquals(new Date(1, 2, 18, 0), completionTimeTask1);
+		schedule.insert(tasks.get(1));
+		Date completionTimeTask0 = schedule.getEarliestCompletionTime(tasks.get(0));
+		assertEquals(new Date(1, 3, 8, 0), completionTimeTask0);
 	}
-	
+
 	@Test
 	public void testGetAndRemoveTask() {
 		schedule.insert(tasks.get(0));
 		schedule.insert(tasks.get(1));
 		schedule.insert(tasks.get(2));
-		
 		ScheduledTask<ItemPrepTask> nextScheduledTask;
-		
+
 		nextScheduledTask = schedule.getNextScheduledTask();
-		assertEquals(0, nextScheduledTask.getStart());
-		assertEquals(40, nextScheduledTask.getEnd());
+		assertEquals(new Date(1, 0, 0, 0), nextScheduledTask.getStart());
+		assertEquals(new Date(1, 1, 0, 0), nextScheduledTask.getEnd());
+		assertEquals("order-002", nextScheduledTask.getTask().getOrderId());
 		assertEquals("Pie", nextScheduledTask.getTask().getProductId());
-		assertEquals(5, nextScheduledTask.getTask().getNumOfItems());
+
 		schedule.removeFirst();
-		
+
 		nextScheduledTask = schedule.getNextScheduledTask();
-		assertEquals(40, nextScheduledTask.getStart());
-		assertEquals(90, nextScheduledTask.getEnd());
-		assertEquals("Bread", nextScheduledTask.getTask().getProductId());
-		assertEquals(10, nextScheduledTask.getTask().getNumOfItems());
-		schedule.removeFirst();
-		
-		nextScheduledTask = schedule.getNextScheduledTask();
-		assertEquals(90, nextScheduledTask.getStart());
-		assertEquals(98, nextScheduledTask.getEnd());
-		assertEquals("Pie", nextScheduledTask.getTask().getProductId());
-		assertEquals(1, nextScheduledTask.getTask().getNumOfItems());
-		schedule.removeFirst();
-		
-		nextScheduledTask = schedule.getNextScheduledTask();
-		assertEquals(100, nextScheduledTask.getStart());
-		assertEquals(124, nextScheduledTask.getEnd());
+		assertEquals(new Date(1, 1, 0, 0), nextScheduledTask.getStart());
+		assertEquals(new Date(1, 1, 42, 0), nextScheduledTask.getEnd());
+		assertEquals("order-001", nextScheduledTask.getTask().getOrderId());
 		assertEquals("Cake", nextScheduledTask.getTask().getProductId());
-		assertEquals(6, nextScheduledTask.getTask().getNumOfItems());
+
 		schedule.removeFirst();
-		
+
 		nextScheduledTask = schedule.getNextScheduledTask();
-		assertEquals(124, nextScheduledTask.getStart());
-		assertEquals(172, nextScheduledTask.getEnd());
+		assertEquals(new Date(1, 1, 42, 0), nextScheduledTask.getStart());
+		assertEquals(new Date(1, 1, 54, 0), nextScheduledTask.getEnd());
+		assertEquals("order-002", nextScheduledTask.getTask().getOrderId());
 		assertEquals("Pie", nextScheduledTask.getTask().getProductId());
-		assertEquals(6, nextScheduledTask.getTask().getNumOfItems());
+
 		schedule.removeFirst();
-		
-		assertNull(schedule.getNextScheduledTask());
+
+		nextScheduledTask = schedule.getNextScheduledTask();
+		assertEquals(new Date(1, 2, 00, 0), nextScheduledTask.getStart());
+		assertEquals(new Date(1, 2, 50, 0), nextScheduledTask.getEnd());
+		assertEquals("order-001", nextScheduledTask.getTask().getOrderId());
+		assertEquals("Bread", nextScheduledTask.getTask().getProductId());
+
+		schedule.removeFirst();
+
+		nextScheduledTask = schedule.getNextScheduledTask();
+		assertEquals(new Date(1, 2, 50, 0), nextScheduledTask.getStart());
+		assertEquals(new Date(1, 3, 14, 0), nextScheduledTask.getEnd());
+		assertEquals("order-002", nextScheduledTask.getTask().getOrderId());
+		assertEquals("Pie", nextScheduledTask.getTask().getProductId());
+
+		schedule.removeFirst();
+
+		nextScheduledTask = schedule.getNextScheduledTask();
+		assertNull(nextScheduledTask);
+
 	}
-	
 
 }
