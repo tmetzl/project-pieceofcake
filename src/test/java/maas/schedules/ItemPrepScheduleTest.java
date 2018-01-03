@@ -54,12 +54,25 @@ public class ItemPrepScheduleTest {
 
 	@Test
 	public void testGetEarliestCompletionTime() {
+		// Test with empty schedule first
 		Date completionTimeTask0 = schedule.getEarliestCompletionTime(tasks.get(0));
 		Date completionTimeTask1 = schedule.getEarliestCompletionTime(tasks.get(1));
 		Date completionTimeTask2 = schedule.getEarliestCompletionTime(tasks.get(2));
 		assertEquals(new Date(1, 2, 50, 0), completionTimeTask0);
 		assertEquals(new Date(1, 1, 42, 0), completionTimeTask1);
 		assertEquals(new Date(1, 1, 36, 0), completionTimeTask2);
+		
+		// Test after inserting task 0
+		schedule.insert(tasks.get(0));
+		completionTimeTask1 = schedule.getEarliestCompletionTime(tasks.get(1));
+		completionTimeTask2 = schedule.getEarliestCompletionTime(tasks.get(2));
+		assertEquals(new Date(1, 1, 42, 0), completionTimeTask1);
+		assertEquals(new Date(1, 1, 36, 0), completionTimeTask2);	
+		
+		// Test after inserting task 1
+		schedule.insert(tasks.get(1));
+		completionTimeTask2 = schedule.getEarliestCompletionTime(tasks.get(2));
+		assertEquals(new Date(1, 3, 14, 0), completionTimeTask2);	
 	}
 
 	@Test
@@ -70,6 +83,7 @@ public class ItemPrepScheduleTest {
 		schedule.insert(tasks.get(1));
 		Date completionTimeTask0 = schedule.getEarliestCompletionTime(tasks.get(0));
 		assertEquals(new Date(1, 3, 8, 0), completionTimeTask0);
+		schedule.insert(tasks.get(0));
 	}
 
 	@Test
@@ -121,7 +135,8 @@ public class ItemPrepScheduleTest {
 
 		nextScheduledTask = schedule.getNextScheduledTask();
 		assertNull(nextScheduledTask);
-
+		
+		schedule.removeFirst();
 	}
 
 }
