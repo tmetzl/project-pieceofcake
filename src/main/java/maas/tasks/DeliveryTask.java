@@ -2,56 +2,54 @@ package maas.tasks;
 
 import org.json.JSONObject;
 
+import maas.objects.Location;
+
 public class DeliveryTask extends Task {
 
-	private int numOfBoxes;
-	private String customerId;
+	private int itemPerBox;
+	private Location location;
+	private int numOfItems;
 
-	public DeliveryTask() {
-
+	public int getItemPerBox() {
+		return itemPerBox;
 	}
 
-	public DeliveryTask(int day, int numOfBoxes, String customerId, long dueDate, long releaseDate, String orderId,
-			String productId) {
-		this.numOfBoxes = numOfBoxes;
-		this.customerId = customerId;
-		setProductId(productId);
-		setDueDate(dueDate);
-		setReleaseDate(releaseDate);
-		setOrderId(orderId);
-		setDay(day);
+	public void setItemPerBox(int itemPerBox) {
+		this.itemPerBox = itemPerBox;
 	}
 
-	public int getNumOfBoxes() {
-		return numOfBoxes;
+	public Location getLocation() {
+		return location;
 	}
 
-	public String getCustomerId() {
-		return customerId;
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
+	public int getNumOfItems() {
+		return numOfItems;
+	}
+
+	public void setNumOfItems(int numOfItems) {
+		this.numOfItems = numOfItems;
 	}
 
 	@Override
 	public JSONObject toJSONObject() {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("product_id", getProductId());
-		jsonObject.put("release_date", getReleaseDate());
-		jsonObject.put("due_date", getDueDate());
-		jsonObject.put("order_id", getOrderId());
-		jsonObject.put("num_of_boxes", numOfBoxes);
-		jsonObject.put("customer_id", customerId);
-		jsonObject.put("day", getDay());
+		JSONObject jsonObject = super.toJSONObject();
+		jsonObject.put("item_per_box", itemPerBox);
+		jsonObject.put("location", location.toJSONObject());
+		jsonObject.put("num_of_items", numOfItems);
 		return jsonObject;
 	}
 
 	@Override
 	public void fromJSONObject(JSONObject jsonObject) {
-		setProductId(jsonObject.getString("product_id"));
-		setReleaseDate(jsonObject.getLong("release_date"));
-		setDueDate(jsonObject.getLong("due_date"));
-		setOrderId(jsonObject.getString("order_id"));
-		numOfBoxes = jsonObject.getInt("num_of_boxes");
-		customerId = jsonObject.getString("customer_id");
-		setDay(jsonObject.getInt("day"));
+		super.fromJSONObject(jsonObject);
+		setItemPerBox(jsonObject.getInt("item_per_box"));
+		setNumOfItems(jsonObject.getInt("num_of_items"));
+		Location location = new Location();
+		location.fromJSONObject(jsonObject.getJSONObject("location"));
+		setLocation(location);
 	}
-
 }
