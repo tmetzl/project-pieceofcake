@@ -67,6 +67,9 @@ public class KneadingScheduleTest {
 		Date completionTimeTask1 = schedule.getEarliestCompletionTime(tasks.get(1));
 		assertEquals(new Date(1, 2, 20, 0), completionTimeTask1);
 		schedule.insert(tasks.get(1));
+		completionTimeTask1 = schedule.getEarliestCompletionTime(tasks.get(1));
+		assertEquals(new Date(1, 2, 20, 0), completionTimeTask1);
+		schedule.insert(tasks.get(1));
 		Date completionTimeTask0 = schedule.getEarliestCompletionTime(tasks.get(0));
 		assertEquals(new Date(1, 3, 10, 0), completionTimeTask0);
 	}
