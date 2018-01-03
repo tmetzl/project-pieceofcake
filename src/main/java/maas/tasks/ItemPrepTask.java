@@ -7,52 +7,34 @@ public class ItemPrepTask extends Task {
 	private int numOfItems;
 	private long itemPrepTime;
 
-	public ItemPrepTask() {
-
-	}
-
-	public ItemPrepTask(int day, int numOfItems, long itemPrepTime, long dueDate, long releaseDate, String orderId,
-			String productId) {
-		this.numOfItems = numOfItems;
-		this.itemPrepTime = itemPrepTime;
-		setProductId(productId);
-		setDueDate(dueDate);
-		setReleaseDate(releaseDate);
-		setOrderId(orderId);
-		setDay(day);
-	}
-
 	public int getNumOfItems() {
 		return numOfItems;
+	}
+
+	public void setNumOfItems(int numOfItems) {
+		this.numOfItems = numOfItems;
 	}
 
 	public long getItemPrepTime() {
 		return itemPrepTime;
 	}
 
+	public void setItemPrepTime(long itemPrepTime) {
+		this.itemPrepTime = itemPrepTime;
+	}
+
 	@Override
 	public JSONObject toJSONObject() {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("product_id", getProductId());
+		JSONObject jsonObject = super.toJSONObject();
 		jsonObject.put("num_of_items", numOfItems);
 		jsonObject.put("item_prep_time", itemPrepTime);
-		jsonObject.put("order_id", getOrderId());
-		jsonObject.put("due_date", getDueDate());
-		jsonObject.put("release_date", getReleaseDate());
-		jsonObject.put("day", getDay());
 		return jsonObject;
 	}
 
 	@Override
 	public void fromJSONObject(JSONObject jsonObject) {
-		setProductId(jsonObject.getString("product_id"));
-		numOfItems = jsonObject.getInt("num_of_items");
-		itemPrepTime = jsonObject.getLong("item_prep_time");
-		setDueDate(jsonObject.getLong("due_date"));
-		setReleaseDate(jsonObject.getLong("release_date"));
-		setOrderId(jsonObject.getString("order_id"));
-		setDay(jsonObject.getInt("day"));
-
+		super.fromJSONObject(jsonObject);
+		setNumOfItems(jsonObject.getInt("num_of_items"));
+		setItemPrepTime(jsonObject.getLong("item_prep_time"));
 	}
-
 }
