@@ -30,7 +30,6 @@ public class KneadingSchedule implements Schedule<KneadingTask> {
 			// The completion time is the end time of the task plus the resting
 			// time
 			long completionTimeInSeconds = existingTask.getEnd().toSeconds() + task.getRestingTime();
-			;
 			return new Date(completionTimeInSeconds);
 		}
 		Date startDate = task.getReleaseDate();

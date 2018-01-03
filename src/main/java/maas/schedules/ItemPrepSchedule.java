@@ -19,7 +19,7 @@ public class ItemPrepSchedule implements Schedule<ItemPrepTask> {
 
 	@Override
 	public Date getEarliestCompletionTime(ItemPrepTask task) {
-		long completionTimeInSeconds = 0l;
+		long completionTimeInSeconds;
 		if (schedule.isEmpty()) {
 			completionTimeInSeconds = task.getReleaseDate().toSeconds() + task.getNumOfItems() * task.getItemPrepTime();
 			return new Date(completionTimeInSeconds);
