@@ -41,6 +41,11 @@ public class Date {
 		}
 		return false;
 	}
+	
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
 
 	public int getDay() {
 		return day;

@@ -19,7 +19,7 @@ public class Location implements Serializable {
 	public Location() {
 
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Location) {
@@ -27,6 +27,11 @@ public class Location implements Serializable {
 			return (x == location.getX() && y == location.getY());
 		}
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return (x + "" + y).hashCode();
 	}
 
 	public double getX() {
@@ -51,7 +56,7 @@ public class Location implements Serializable {
 		jsonObject.put("y", y);
 		return jsonObject;
 	}
-	
+
 	public void fromJSONObject(JSONObject jsonObject) {
 		setX(jsonObject.getDouble("x"));
 		setY(jsonObject.getDouble("y"));
