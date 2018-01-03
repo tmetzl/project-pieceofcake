@@ -11,9 +11,7 @@ public class ScheduledTaskTest {
 
 	@Test
 	public void testGetters() {
-		KneadingTask kneadingTask = new KneadingTask();// 7, 40, 20, 400, 100,
-														// "order-001",
-														// "product-001");
+		KneadingTask kneadingTask = new KneadingTask();
 		kneadingTask.setOrderId("order-001");
 		kneadingTask.setProductId("Bread");
 		kneadingTask.setReleaseDate(new Date(1, 2, 0, 0));
