@@ -5,26 +5,37 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import maas.objects.Date;
+
 public class ScheduledTaskTest {
 
 	@Test
 	public void testGetters() {
-		KneadingTask kneadingTask = new KneadingTask(7, 40, 20, 400, 100, "order-001", "product-001");
-		ScheduledTask<KneadingTask> scheduledTask = new ScheduledTask<>(100l, 350l, kneadingTask);
-		assertEquals(100l, scheduledTask.getStart());
-		assertEquals(350l, scheduledTask.getEnd());
+		KneadingTask kneadingTask = new KneadingTask();// 7, 40, 20, 400, 100,
+														// "order-001",
+														// "product-001");
+		kneadingTask.setOrderId("order-001");
+		kneadingTask.setProductId("Bread");
+		kneadingTask.setReleaseDate(new Date(1, 2, 0, 0));
+		kneadingTask.setDueDate(new Date(1, 7, 30, 0));
+		kneadingTask.setKneadingTime(2400);
+		kneadingTask.setRestingTime(1200);
+
+		ScheduledTask<KneadingTask> scheduledTask = new ScheduledTask<>(new Date(1, 1, 15, 0), new Date(1, 1, 55, 0),
+				kneadingTask);
+		assertEquals(new Date(1, 1, 15, 0), scheduledTask.getStart());
+		assertEquals(new Date(1, 1, 55, 0), scheduledTask.getEnd());
 
 		Task taskFromScheduledTask = scheduledTask.getTask();
 		assertTrue(taskFromScheduledTask instanceof KneadingTask);
 
 		KneadingTask kneadingTaskFromScheduledTask = (KneadingTask) taskFromScheduledTask;
-		assertEquals(7, kneadingTaskFromScheduledTask.getDay());
-		assertEquals(40l, kneadingTaskFromScheduledTask.getKneadingTime());
-		assertEquals(20l, kneadingTaskFromScheduledTask.getRestingTime());
-		assertEquals(400l, kneadingTaskFromScheduledTask.getDueDate());
-		assertEquals(100l, kneadingTaskFromScheduledTask.getReleaseDate());
+		assertEquals(2400l, kneadingTaskFromScheduledTask.getKneadingTime());
+		assertEquals(1200l, kneadingTaskFromScheduledTask.getRestingTime());
+		assertEquals(new Date(1, 7, 30, 0), kneadingTaskFromScheduledTask.getDueDate());
+		assertEquals(new Date(1, 2, 0, 0), kneadingTaskFromScheduledTask.getReleaseDate());
 		assertEquals("order-001", kneadingTaskFromScheduledTask.getOrderId());
-		assertEquals("product-001", kneadingTaskFromScheduledTask.getProductId());
+		assertEquals("Bread", kneadingTaskFromScheduledTask.getProductId());
 	}
 
 }
