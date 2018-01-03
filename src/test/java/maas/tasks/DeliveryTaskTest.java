@@ -35,6 +35,7 @@ public class DeliveryTaskTest {
 		assertEquals("order-001", deliveryTask.getOrderId());
 		assertEquals(5, deliveryTask.getItemPerBox());
 		assertEquals(10, deliveryTask.getNumOfItems());
+		assertEquals(location, deliveryTask.getLocation());
 
 		JSONObject jsonObjectFromDeliveryTask = deliveryTask.toJSONObject();
 		DeliveryTask anotherDeliveryTask = new DeliveryTask();
