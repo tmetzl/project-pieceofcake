@@ -43,5 +43,11 @@ public class ScenarioClock {
 			return new Date(0, 0, 0, 0);
 		}
 	}
+	
+	public static long millisFromScenarioSeconds(long scenarioSeconds) {
+		double factor = SECONDS_PER_SCENARIO_DAY / 86400d;
+		double millis = scenarioSeconds * factor;
+		return (long) millis;
+	}
 
 }
