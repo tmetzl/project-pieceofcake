@@ -34,10 +34,14 @@ public class Date {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return toString().hashCode();
+	}
+
+	public long toSeconds() {
+		return second + 60l * (minute + 60l * (hour + 24l * day));
 	}
 
 	public int getDay() {
