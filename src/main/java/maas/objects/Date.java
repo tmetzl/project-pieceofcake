@@ -1,9 +1,13 @@
 package maas.objects;
 
+import java.io.Serializable;
+
 import org.json.JSONObject;
 
-public class Date {
+public class Date implements Serializable {
 
+	private static final long serialVersionUID = 6613519611127982058L;
+	
 	private int day;
 	private int hour;
 	private int minute;

@@ -1,8 +1,11 @@
 package maas.objects;
 
-public class ScenarioClock {
+import java.io.Serializable;
 
-	private static final long SECONDS_PER_SCENARIO_DAY = 24;
+public class ScenarioClock implements Serializable {
+
+	private static final long serialVersionUID = 4923509163246771424L;
+	public static final long SECONDS_PER_SCENARIO_DAY = 24;
 
 	private boolean started;
 	private long startingTime;
