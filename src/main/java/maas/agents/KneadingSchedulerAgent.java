@@ -17,6 +17,8 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import maas.behaviours.SynchronizeClock;
+import maas.behaviours.WaitForStart;
 import maas.config.Protocols;
 import maas.config.Topic;
 import maas.interfaces.BakeryObserver;
@@ -64,8 +66,8 @@ public class KneadingSchedulerAgent extends SynchronizedAgent implements BakeryO
 
 		SequentialBehaviour seq = new SequentialBehaviour();
 
-		seq.addSubBehaviour(new SynchronizeClock());
-		seq.addSubBehaviour(new WaitForStart());
+		seq.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
+		seq.addSubBehaviour(new WaitForStart(getScenarioClock()));
 
 		addBehaviour(seq);
 		addBehaviour(new ReceiveKneadedDough());
@@ -79,16 +81,8 @@ public class KneadingSchedulerAgent extends SynchronizedAgent implements BakeryO
 
 	@Override
 	public void notifyObserver(String topic) {
-		logger.log(Logger.INFO, "KneadingSchedulerAgent notified.");
-		int day = getDay();
+		int day = getScenarioClock().getDate().getDay();
 		List<Order> currentOrders = myBakery.getOrdersOfDay(day);
-		if (currentOrders != null) {
-			String message = String.format("Day %d order size %d", day, currentOrders.size());
-			logger.log(Logger.INFO, message);
-		} else {
-			logger.log(Logger.INFO, "Current order is null");
-		}
-
 		if (currentOrders != null && currentOrders.size() != ordersOfDay.size()) {
 			ordersOfDay = currentOrders;
 			updateDoughQueue();

@@ -1,8 +1,11 @@
 package maas.objects;
 
-public class ScenarioClock {
+import java.io.Serializable;
 
-	private static final long SECONDS_PER_SCENARIO_DAY = 24;
+public class ScenarioClock implements Serializable {
+
+	private static final long serialVersionUID = 4923509163246771424L;
+	public static final long SECONDS_PER_SCENARIO_DAY = 6;
 
 	private boolean started;
 	private long startingTime;
@@ -20,7 +23,7 @@ public class ScenarioClock {
 	}
 	
 	public void setTimeOffset(long timeOffset) {
-		this.timeOffset = timeOffset;
+		this.timeOffset += timeOffset;
 	}
 	
 	public long getSynchronizedTime() {
@@ -29,8 +32,8 @@ public class ScenarioClock {
 
 	public Date getDate() {
 		if (started) {
-			long secondsSinceStartUp = (getSynchronizedTime() - startingTime) / 1000l;
-			long time = secondsSinceStartUp * 24*60*60 / SECONDS_PER_SCENARIO_DAY;
+			long millisSinceStartUp = (getSynchronizedTime() - startingTime);
+			long time = millisSinceStartUp * 86400l / (SECONDS_PER_SCENARIO_DAY * 1000l);
 			int second = (int) (time % 60);
 			time /= 60;
 			int minute = (int) (time % 60);
@@ -42,6 +45,10 @@ public class ScenarioClock {
 		} else {
 			return new Date(0, 0, 0, 0);
 		}
+	}
+	
+	public static long millisFromScenarioSeconds(long scenarioSeconds) {
+		return (scenarioSeconds * SECONDS_PER_SCENARIO_DAY * 1000l) / 86400;
 	}
 
 }

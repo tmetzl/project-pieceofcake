@@ -1,9 +1,13 @@
 package maas.objects;
 
+import java.io.Serializable;
+
 import org.json.JSONObject;
 
-public class Date {
+public class Date implements Serializable {
 
+	private static final long serialVersionUID = 6613519611127982058L;
+	
 	private int day;
 	private int hour;
 	private int minute;
@@ -34,10 +38,14 @@ public class Date {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return toString().hashCode();
+	}
+
+	public long toSeconds() {
+		return second + 60l * (minute + 60l * (hour + 24l * day));
 	}
 
 	public int getDay() {
