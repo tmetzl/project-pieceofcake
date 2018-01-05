@@ -15,7 +15,7 @@ import maas.interfaces.BakeryObserver;
 import maas.objects.Order;
 
 public class BakeryTest {
-		
+
 	public List<Order> prepareOrderListForTests() {
 		List<Order> orders = new LinkedList<Order>();
 		String jsonOrder1 = "{\"order_date\": {\"day\": 1,\"hour\": 6},"
@@ -33,7 +33,7 @@ public class BakeryTest {
 		orders.add(new Order(jsonOrder3));
 		return orders;
 	}
-	
+
 	public List<Product> prepareProductListForTests() {
 		List<Product> products = new LinkedList<Product>();
 		String jsonProduct1 = "{\"boxing_temp\": 6,\"sales_price\": 14.1,\"breads_per_oven\": 6,"
@@ -52,7 +52,7 @@ public class BakeryTest {
 				+ "\"breads_per_box\": 6,\"item_prep_time\": 11,\"dough_prep_time\": 1,"
 				+ "\"baking_temp\": 94,\"cooling_rate\": 1,\"guid\": \"Donut\","
 				+ "\"baking_time\": 11,\"resting_time\": 9,\"production_cost\": 7.1}";
-		
+
 		products.add(new Product(jsonProduct1));
 		products.add(new Product(jsonProduct2));
 		products.add(new Product(jsonProduct3));
@@ -60,13 +60,12 @@ public class BakeryTest {
 		return products;
 	}
 
-	
 	@Test
 	public void bakeryTest() {
-		Bakery bakery = new Bakery("bakery-001", "TestBakery", 10, 17);
+		Bakery bakery = new Bakery("bakery-001", "TestBakery", new Location(10, 17));
 		List<Order> orders = prepareOrderListForTests();
 		List<Product> products = prepareProductListForTests();
-		
+
 		assertNull(bakery.getOrdersOfDay(1));
 		assertNull(bakery.getProductByName("testProduct"));
 		assertNull(bakery.getPrice(orders.get(0)));
@@ -86,35 +85,33 @@ public class BakeryTest {
 		assertNull(bakery.getPrice(orders.get(0)));
 		assertEquals(new Double(282.8), bakery.getPrice(orders.get(1)));
 		assertEquals(new Double(134.1), bakery.getPrice(orders.get(2)));
-		
-		
-		
+
 	}
-	
+
 	@Test
 	public void bakeryDoughListTest() {
-		Bakery bakery = new Bakery("bakery-002", "TestBakery2", 12, 12);
+		Bakery bakery = new Bakery("bakery-002", "TestBakery2", new Location(12, 12));
 		assertFalse(bakery.isDoughInStock("Bread"));
 		bakery.updateDoughList("Bread");
 		assertTrue(bakery.isDoughInStock("Bread"));
 		bakery.newDay();
 		assertFalse(bakery.isDoughInStock("Bread"));
 	}
-	
+
 	@Test
 	public void bakeryGetterTest() {
-		Bakery bakery = new Bakery("bakery-001", "TestBakery", 10.1, 17.2);
+		Bakery bakery = new Bakery("bakery-001", "TestBakery", new Location(10.1, 17.2));
 		assertEquals("bakery-001", bakery.getGuiId());
 		assertEquals("TestBakery", bakery.getName());
-		assertEquals(10.1, bakery.getLocationX(), 1e-10);
-		assertEquals(17.2, bakery.getLocationY(), 1e-10);
+		assertEquals(10.1, bakery.getLocation().getX(), 1e-10);
+		assertEquals(17.2, bakery.getLocation().getY(), 1e-10);
 	}
-	
+
 	@Test
 	public void bakeryObserverTest() {
 		TestObserver doughListObserver1 = new TestObserver();
 		TestObserver doughListObserver2 = new TestObserver();
-		Bakery bakery = new Bakery("bakery-001", "TestBakery", 10.1, 17.2);
+		Bakery bakery = new Bakery("bakery-001", "TestBakery", new Location(10.1, 17.2));
 		bakery.registerObserver(doughListObserver1, Topic.DOUGH);
 		bakery.registerObserver(doughListObserver2, Topic.DOUGH);
 		assertFalse(doughListObserver1.notified);
@@ -123,19 +120,16 @@ public class BakeryTest {
 		assertTrue(doughListObserver1.notified);
 		assertTrue(doughListObserver2.notified);
 	}
-	
-	
+
 	private class TestObserver implements BakeryObserver {
-		
+
 		boolean notified = false;
 
 		@Override
 		public void notifyObserver(String topic) {
-			notified = true;			
+			notified = true;
 		}
-		
+
 	}
-	
-	
 
 }

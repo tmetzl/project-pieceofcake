@@ -18,6 +18,7 @@ import jade.domain.JADEAgentManagement.ShutdownPlatform;
 import jade.lang.acl.ACLMessage;
 import jade.util.Logger;
 import maas.config.Protocols;
+import maas.objects.ScenarioClock;
 
 @SuppressWarnings("serial")
 public class StartUpAgent extends Agent {
@@ -26,7 +27,7 @@ public class StartUpAgent extends Agent {
 	private long startUpTime;
 	private long shutDownTime;
 	private int durationDays = 5;
-	
+
 	public StartUpAgent(int durationDays) {
 		this.durationDays = durationDays + 1;
 	}
@@ -104,18 +105,17 @@ public class StartUpAgent extends Agent {
 				for (int i = 0; i < agents.length; i++) {
 					msg.addReceiver(agents[i]);
 				}
-				msg.setLanguage("English");
 				msg.setProtocol(Protocols.STARTUP);
 				startUpTime = System.currentTimeMillis() + startUpDelay;
-				shutDownTime = startUpTime + (durationDays * 24000l);
+				shutDownTime = startUpTime + (durationDays * ScenarioClock.SECONDS_PER_SCENARIO_DAY * 1000l);
 				msg.setContent(String.valueOf(startUpTime));
 				myAgent.send(msg);
 			}
 
 		}
-		
+
 		private class WaitForShutDown extends Behaviour {
-			
+
 			private boolean waitingFinished = false;
 
 			@Override
@@ -136,9 +136,9 @@ public class StartUpAgent extends Agent {
 			public boolean done() {
 				return waitingFinished;
 			}
-			
+
 		}
-		
+
 		// Taken from
 		// http://www.rickyvanrijn.nl/2017/08/29/how-to-shutdown-jade-agent-platform-programmatically/
 		private class Shutdown extends OneShotBehaviour {
@@ -162,7 +162,5 @@ public class StartUpAgent extends Agent {
 		}
 
 	}
-
-	
 
 }

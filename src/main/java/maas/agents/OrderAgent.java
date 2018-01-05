@@ -8,6 +8,8 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
+import maas.behaviours.SynchronizeClock;
+import maas.behaviours.WaitForStart;
 import maas.config.Protocols;
 import maas.objects.Bakery;
 import maas.objects.Order;
@@ -42,8 +44,8 @@ public class OrderAgent extends SynchronizedAgent {
 		registerService(sd);
 		
 		SequentialBehaviour seq = new SequentialBehaviour();
-		seq.addSubBehaviour(new SynchronizeClock());
-		seq.addSubBehaviour(new WaitForStart());
+		seq.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
+		seq.addSubBehaviour(new WaitForStart(getScenarioClock()));
 		addBehaviour(seq);
 		addBehaviour(new OrderService());
 	}
@@ -59,8 +61,8 @@ public class OrderAgent extends SynchronizedAgent {
 		logger.log(Logger.INFO, getAID().getLocalName() + ": Terminating.");
 	}
 
-	// Cyclic order receiving behavior
 	private class OrderService extends CyclicBehaviour {
+		
 		public void action() {
 			MessageTemplate msgTemplate = MessageTemplate.MatchProtocol(Protocols.ORDER);
 			ACLMessage msg = myAgent.receive(msgTemplate);
@@ -93,9 +95,9 @@ public class OrderAgent extends SynchronizedAgent {
 				}
 			} else {
 				block();
-
 			}
-
 		}
+		
 	}
+	
 }

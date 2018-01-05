@@ -3,6 +3,8 @@ package maas.agents;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.util.Logger;
+import maas.behaviours.SynchronizeClock;
+import maas.behaviours.WaitForStart;
 import maas.objects.Bakery;
 
 public class BakeryClockAgent extends SynchronizedAgent {
@@ -24,8 +26,8 @@ public class BakeryClockAgent extends SynchronizedAgent {
 
 		SequentialBehaviour seq = new SequentialBehaviour();
 
-		seq.addSubBehaviour(new SynchronizeClock());
-		seq.addSubBehaviour(new WaitForStart());
+		seq.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
+		seq.addSubBehaviour(new WaitForStart(getScenarioClock()));
 		seq.addSubBehaviour(new MonitorTime());
 
 		addBehaviour(seq);
@@ -40,19 +42,19 @@ public class BakeryClockAgent extends SynchronizedAgent {
 
 		@Override
 		public void onStart() {
-			currentDay = getDay();
+			currentDay = getScenarioClock().getDate().getDay();
 			myBakery.newDay();
 		}
 
 		@Override
 		public void action() {
-			if (getDay() != currentDay) {
-				currentDay = getDay();
+			if (getScenarioClock().getDate().getDay() != currentDay) {
+				currentDay = getScenarioClock().getDate().getDay();
 				myBakery.newDay();
 				String message = String.format("Day is now %d.", currentDay);
 				logger.log(Logger.INFO, message);
 			} else {
-				block(1000);
+				block(100);
 			}
 		}
 

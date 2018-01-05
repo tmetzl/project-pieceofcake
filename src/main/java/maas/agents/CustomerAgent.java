@@ -5,7 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import jade.core.AID;
-import jade.core.behaviours.*;
+import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.SequentialBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -13,7 +15,12 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
+import maas.behaviours.DelayUntilDate;
+import maas.behaviours.SynchronizeClock;
+import maas.behaviours.WaitForStart;
 import maas.config.Protocols;
+import maas.objects.Date;
+import maas.objects.Location;
 import maas.objects.Order;
 import maas.utils.OrderDateComparator;
 
@@ -23,23 +30,19 @@ public class CustomerAgent extends SynchronizedAgent {
 
 	private String guiId;
 	private int type;
-	private double locationX;
-	private double locationY;
 	private List<Order> orders;
 	private List<Order> placedOrders;
 	private List<Order> failedOrders;
 
-	public CustomerAgent(String guiId, int type, double locationX, double locationY, List<Order> orders) {
+	public CustomerAgent(String guiId, int type, Location location, List<Order> orders) {
 		this.guiId = guiId;
 		this.type = type;
-		this.locationX = locationX;
-		this.locationY = locationY;
+		this.location = location;
 
 		Collections.sort(orders, new OrderDateComparator());
 		this.orders = orders;
 		this.placedOrders = new LinkedList<>();
 		this.failedOrders = new LinkedList<>();
-
 	}
 
 	@Override
@@ -48,13 +51,13 @@ public class CustomerAgent extends SynchronizedAgent {
 
 		// Printout a welcome message
 		String welcomeMessage = String.format("Customer %s of type %d at location (%.2f,%.2f) is ready!",
-				getAID().getLocalName(), type, locationX, locationY);
+				getAID().getLocalName(), type, getLocation().getX(), getLocation().getY());
 		logger.log(Logger.INFO, welcomeMessage);
 
 		SequentialBehaviour seq = new SequentialBehaviour();
 
-		seq.addSubBehaviour(new SynchronizeClock());
-		seq.addSubBehaviour(new WaitForStart());
+		seq.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
+		seq.addSubBehaviour(new WaitForStart(getScenarioClock()));
 		seq.addSubBehaviour(new PlaceOrder(orders.get(0)));
 
 		addBehaviour(seq);
@@ -73,8 +76,10 @@ public class CustomerAgent extends SynchronizedAgent {
 
 		public PlaceOrder(Order order) {
 			this.order = order;
-			this.addSubBehaviour(new SynchronizeClock());
-			this.addSubBehaviour(new DelayUntilNextOrder());
+			int orderHours = order.getOrderDate();
+			this.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
+			this.addSubBehaviour(
+					new DelayUntilDate(getScenarioClock(), new Date(orderHours / 24, orderHours % 24, 0, 0)));
 			this.addSubBehaviour(new UpdateBakeries());
 			this.addSubBehaviour(new RequestOffers());
 			this.addSubBehaviour(new ReceiveOffers());
@@ -88,32 +93,6 @@ public class CustomerAgent extends SynchronizedAgent {
 				myAgent.addBehaviour(new PlaceOrder(orders.get(0)));
 			}
 			return 0;
-		}
-
-		private class DelayUntilNextOrder extends Behaviour {
-
-			private static final long serialVersionUID = -2913887133905014293L;
-
-			private boolean waitingFinished = false;
-
-			@Override
-			public void action() {
-				long currentTime = getScenarioTime();
-				long remainingTime = order.getOrderDate() - currentTime;
-
-				if (currentTime >= order.getOrderDate()) {
-					waitingFinished = true;
-				} else {
-					block(remainingTime * 1000l);
-				}
-
-			}
-
-			@Override
-			public boolean done() {
-				return waitingFinished;
-			}
-
 		}
 
 		private class UpdateBakeries extends OneShotBehaviour {
@@ -145,9 +124,9 @@ public class CustomerAgent extends SynchronizedAgent {
 
 			@Override
 			public void action() {
-				long time = getScenarioTime();
-
-				String output = String.format("%nDay %d Hour %d%n%s", time / 24, time % 24, order);
+				Date currentDate = getScenarioClock().getDate();
+				String output = String.format("%nDay %d %02d:%02d:%02d%n%s", currentDate.getDay(),
+						currentDate.getHour(), currentDate.getMinute(), currentDate.getSecond(), order);
 				logger.log(Logger.INFO, output);
 
 				ACLMessage msg = new ACLMessage(ACLMessage.CFP);
@@ -243,14 +222,6 @@ public class CustomerAgent extends SynchronizedAgent {
 
 	public int getType() {
 		return type;
-	}
-
-	public double getLocationX() {
-		return locationX;
-	}
-
-	public double getLocationY() {
-		return locationY;
 	}
 
 	public List<Order> getOrders() {
