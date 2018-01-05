@@ -64,4 +64,10 @@ public class DateTest {
 		Date date = new Date(1, 2, 3, 4);
 		assertEquals(dateString, date.toString());
 	}
+	
+	@Test
+	public void testToSeconds() {
+		Date date = new Date(1, 2, 3, 4);
+		assertEquals(93784l, date.toSeconds());
+	}
 }
