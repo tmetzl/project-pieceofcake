@@ -103,6 +103,8 @@ public class Scenario {
 
 			try {
 				container.acceptNewAgent("Timer", TimerAgent.getInstance()).start();
+				int duration = jsonScenario.getJSONObject("meta").getInt("duration_days");
+				container.acceptNewAgent("StartUp", new StartUpAgent(duration)).start();
 
 				for (Map.Entry<String, Agent> entry : tierOneAgents.entrySet()) {
 					String name = entry.getKey();
@@ -115,8 +117,7 @@ public class Scenario {
 					container.acceptNewAgent(name, agent).start();
 				}
 
-				int duration = jsonScenario.getJSONObject("meta").getInt("duration_days");
-				container.acceptNewAgent("StartUp", new StartUpAgent(duration)).start();
+				
 			} catch (StaleProxyException s) {
 				logger.log(Logger.WARNING, s.getMessage(), s);
 			}
