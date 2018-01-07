@@ -4,7 +4,7 @@ import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.util.Logger;
 import maas.behaviours.SynchronizeClock;
-import maas.behaviours.WaitForStart;
+import maas.behaviours.ReceiveStartingTime;
 import maas.objects.Bakery;
 
 public class BakeryClockAgent extends SynchronizedAgent {
@@ -15,11 +15,11 @@ public class BakeryClockAgent extends SynchronizedAgent {
 
 	public BakeryClockAgent(Bakery bakery) {
 		this.myBakery = bakery;
+		this.location = bakery.getLocation();
 	}
 
 	@Override
 	protected void setup() {
-		super.setup();
 		// Printout a welcome message
 		String welcomeMessage = String.format("Bakery-Clock-Agent %s is ready!", getAID().getLocalName());
 		logger.log(Logger.INFO, welcomeMessage);
@@ -27,7 +27,7 @@ public class BakeryClockAgent extends SynchronizedAgent {
 		SequentialBehaviour seq = new SequentialBehaviour();
 
 		seq.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
-		seq.addSubBehaviour(new WaitForStart(getScenarioClock()));
+		seq.addSubBehaviour(new ReceiveStartingTime(getScenarioClock()));
 		seq.addSubBehaviour(new MonitorTime());
 
 		addBehaviour(seq);

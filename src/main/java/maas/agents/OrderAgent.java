@@ -4,12 +4,13 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
 import maas.behaviours.SynchronizeClock;
-import maas.behaviours.WaitForStart;
+import maas.behaviours.ReceiveStartingTime;
 import maas.config.Protocols;
 import maas.objects.Bakery;
 import maas.objects.Order;
@@ -21,11 +22,11 @@ public class OrderAgent extends SynchronizedAgent {
 
 	public OrderAgent(Bakery bakery) {
 		this.myBakery = bakery;
+		this.location = bakery.getLocation();
 	}
 
 	@Override
 	protected void setup() {
-		super.setup();
 		// Printout a welcome message
 		String welcomeMessage = String.format("Bakery %s is ready!", getAID().getLocalName());
 		logger.log(Logger.INFO, welcomeMessage);
@@ -38,14 +39,22 @@ public class OrderAgent extends SynchronizedAgent {
 		}
 		
 		// Register the bakery service in the yellow pages
+		DFAgentDescription dfd = new DFAgentDescription();
+		dfd.setName(getAID());
 		ServiceDescription sd = new ServiceDescription();
 		sd.setType("bakery");
 		sd.setName("Bakery-ordering");		
-		registerService(sd);
+		sd.addProtocols(Protocols.ORDER);
+		dfd.addServices(sd);
+		try {
+			DFService.register(this, dfd);
+		} catch (FIPAException fe) {
+			logger.log(Logger.WARNING, fe.getMessage(), fe);
+		}
 		
 		SequentialBehaviour seq = new SequentialBehaviour();
 		seq.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
-		seq.addSubBehaviour(new WaitForStart(getScenarioClock()));
+		seq.addSubBehaviour(new ReceiveStartingTime(getScenarioClock()));
 		addBehaviour(seq);
 		addBehaviour(new OrderService());
 	}
