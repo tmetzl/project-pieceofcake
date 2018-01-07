@@ -18,7 +18,7 @@ import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import maas.behaviours.SynchronizeClock;
-import maas.behaviours.WaitForStart;
+import maas.behaviours.ReceiveStartingTime;
 import maas.config.Protocols;
 import maas.config.Topic;
 import maas.interfaces.BakeryObserver;
@@ -45,6 +45,7 @@ public class KneadingSchedulerAgent extends SynchronizedAgent implements BakeryO
 		this.kneadingMachineFree = new boolean[kneadingAgents.length];
 		Arrays.fill(kneadingMachineFree, true);
 		this.myBakery = bakery;
+		this.location = bakery.getLocation();
 		this.doughQueue = new LinkedList<>();
 		this.doughInProcess = new HashSet<>();
 		this.requestKneadingRunning = false;
@@ -55,7 +56,6 @@ public class KneadingSchedulerAgent extends SynchronizedAgent implements BakeryO
 
 	@Override
 	protected void setup() {
-		super.setup();
 		this.kneadingAgents = new AID[kneadingAgentNames.length];
 		for (int i = 0; i < kneadingAgentNames.length; i++) {
 			this.kneadingAgents[i] = new AID(kneadingAgentNames[i], AID.ISLOCALNAME);
@@ -67,7 +67,7 @@ public class KneadingSchedulerAgent extends SynchronizedAgent implements BakeryO
 		SequentialBehaviour seq = new SequentialBehaviour();
 
 		seq.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
-		seq.addSubBehaviour(new WaitForStart(getScenarioClock()));
+		seq.addSubBehaviour(new ReceiveStartingTime(getScenarioClock()));
 
 		addBehaviour(seq);
 		addBehaviour(new ReceiveKneadedDough());

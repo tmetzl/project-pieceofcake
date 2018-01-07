@@ -17,7 +17,7 @@ import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
 import maas.behaviours.DelayUntilDate;
 import maas.behaviours.SynchronizeClock;
-import maas.behaviours.WaitForStart;
+import maas.behaviours.ReceiveStartingTime;
 import maas.config.Protocols;
 import maas.objects.Date;
 import maas.objects.Location;
@@ -47,8 +47,6 @@ public class CustomerAgent extends SynchronizedAgent {
 
 	@Override
 	protected void setup() {
-		super.setup();
-
 		// Printout a welcome message
 		String welcomeMessage = String.format("Customer %s of type %d at location (%.2f,%.2f) is ready!",
 				getAID().getLocalName(), type, getLocation().getX(), getLocation().getY());
@@ -57,7 +55,7 @@ public class CustomerAgent extends SynchronizedAgent {
 		SequentialBehaviour seq = new SequentialBehaviour();
 
 		seq.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
-		seq.addSubBehaviour(new WaitForStart(getScenarioClock()));
+		seq.addSubBehaviour(new ReceiveStartingTime(getScenarioClock()));
 		seq.addSubBehaviour(new PlaceOrder(orders.get(0)));
 
 		addBehaviour(seq);

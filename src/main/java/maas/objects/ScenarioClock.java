@@ -7,19 +7,15 @@ public class ScenarioClock implements Serializable {
 	private static final long serialVersionUID = 4923509163246771424L;
 	public static final long SECONDS_PER_SCENARIO_DAY = 6;
 
-	private boolean started;
 	private long startingTime;
 	private long timeOffset;
 
 	public ScenarioClock() {
-		this.started = false;
+		this.startingTime = Long.MAX_VALUE;
 	}
 	
-	public void start() {
-		if (!started) {
-			startingTime = getSynchronizedTime();
-			started = true;
-		}
+	public void setStartingTime(long startingTime) {
+		this.startingTime = startingTime;		
 	}
 	
 	public void setTimeOffset(long timeOffset) {
@@ -29,22 +25,18 @@ public class ScenarioClock implements Serializable {
 	public long getSynchronizedTime() {
 		return System.currentTimeMillis() + timeOffset;
 	}
-
+	
 	public Date getDate() {
-		if (started) {
-			long millisSinceStartUp = (getSynchronizedTime() - startingTime);
-			long time = millisSinceStartUp * 86400l / (SECONDS_PER_SCENARIO_DAY * 1000l);
-			int second = (int) (time % 60);
-			time /= 60;
-			int minute = (int) (time % 60);
-			time /= 60;
-			int hour = (int) (time % 24);
-			time /= 24;
-			int day = (int) time;
-			return new Date(day, hour, minute, second);
-		} else {
-			return new Date(0, 0, 0, 0);
-		}
+		long millisSinceStartUp = Math.max(0, getSynchronizedTime() - startingTime);
+		long time = millisSinceStartUp * 86400l / (SECONDS_PER_SCENARIO_DAY * 1000l);
+		int second = (int) (time % 60);
+		time /= 60;
+		int minute = (int) (time % 60);
+		time /= 60;
+		int hour = (int) (time % 24);
+		time /= 24;
+		int day = (int) time;
+		return new Date(day, hour, minute, second);
 	}
 	
 	public static long millisFromScenarioSeconds(long scenarioSeconds) {
