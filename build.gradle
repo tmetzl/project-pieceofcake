@@ -11,7 +11,7 @@ apply plugin: 'jacoco'
 
 
 
-mainClassName = 'maas.gui.main.StartGUI'
+mainClassName = 'org.pieceofcake.gui.main.StartGUI'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
