@@ -1,4 +1,4 @@
-package maas.schedules;
+package org.pieceofcake.schedules;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -8,10 +8,11 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.pieceofcake.schedules.KneadingSchedule;
+import org.pieceofcake.tasks.ScheduledTask;
 
-import maas.objects.Date;
-import maas.tasks.KneadingTask;
-import maas.tasks.ScheduledTask;
+import org.pieceofcake.objects.Date;
+import org.pieceofcake.tasks.KneadingTask;
 
 public class KneadingScheduleTest {
 

@@ -1,8 +1,8 @@
-package maas.interfaces;
+package org.pieceofcake.interfaces;
 
-import maas.objects.Date;
-import maas.tasks.ScheduledTask;
-import maas.tasks.Task;
+import org.pieceofcake.objects.Date;
+import org.pieceofcake.tasks.ScheduledTask;
+import org.pieceofcake.tasks.Task;
 
 public interface Schedule<T extends Task>{
 	

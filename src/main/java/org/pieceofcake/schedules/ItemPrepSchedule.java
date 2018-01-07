@@ -1,13 +1,13 @@
-package maas.schedules;
+package org.pieceofcake.schedules;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import maas.interfaces.Schedule;
-import maas.objects.Date;
-import maas.tasks.ItemPrepTask;
-import maas.tasks.ScheduledTask;
+import org.pieceofcake.interfaces.Schedule;
+import org.pieceofcake.objects.Date;
+import org.pieceofcake.tasks.ItemPrepTask;
+import org.pieceofcake.tasks.ScheduledTask;
 
 public class ItemPrepSchedule implements Schedule<ItemPrepTask> {
 

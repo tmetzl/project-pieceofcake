@@ -1,6 +1,6 @@
-package maas.tasks;
+package org.pieceofcake.tasks;
 
-import maas.objects.Date;
+import org.pieceofcake.objects.Date;
 
 public class ScheduledTask<T extends Task> implements Comparable<ScheduledTask<T>> {
 

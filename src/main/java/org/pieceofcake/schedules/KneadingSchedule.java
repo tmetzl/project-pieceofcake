@@ -1,13 +1,14 @@
-package maas.schedules;
+package org.pieceofcake.schedules;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import maas.interfaces.Schedule;
-import maas.objects.Date;
-import maas.tasks.KneadingTask;
-import maas.tasks.ScheduledTask;
+import org.pieceofcake.interfaces.Schedule;
+import org.pieceofcake.tasks.ScheduledTask;
+
+import org.pieceofcake.objects.Date;
+import org.pieceofcake.tasks.KneadingTask;
 
 public class KneadingSchedule implements Schedule<KneadingTask> {
 

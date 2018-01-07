@@ -1,11 +1,13 @@
-package maas.tasks;
+package org.pieceofcake.tasks;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.pieceofcake.objects.Date;
+import org.pieceofcake.tasks.ScheduledTask;
 
-import maas.objects.Date;
+
 
 public class ScheduledTaskTest {
 
