@@ -8,11 +8,10 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pieceofcake.schedules.ItemPrepSchedule;
-import org.pieceofcake.tasks.ScheduledTask;
-
 import org.pieceofcake.objects.Date;
+import org.pieceofcake.schedules.ItemPrepSchedule;
 import org.pieceofcake.tasks.ItemPrepTask;
+import org.pieceofcake.tasks.ScheduledTask;
 
 public class ItemPrepScheduleTest {
 

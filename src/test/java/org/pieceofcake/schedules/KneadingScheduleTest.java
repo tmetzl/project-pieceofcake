@@ -8,11 +8,10 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pieceofcake.schedules.KneadingSchedule;
-import org.pieceofcake.tasks.ScheduledTask;
-
 import org.pieceofcake.objects.Date;
+import org.pieceofcake.schedules.KneadingSchedule;
 import org.pieceofcake.tasks.KneadingTask;
+import org.pieceofcake.tasks.ScheduledTask;
 
 public class KneadingScheduleTest {
 
@@ -30,7 +29,7 @@ public class KneadingScheduleTest {
 		task0.setDueDate(new Date(1, 7, 30, 0));
 		task0.setKneadingTime(3000);
 		task0.setRestingTime(1200);
-		
+
 		KneadingTask task1 = new KneadingTask();
 		task1.setOrderId("order-001");
 		task1.setProductId("Pie");
@@ -38,7 +37,7 @@ public class KneadingScheduleTest {
 		task1.setDueDate(new Date(1, 5, 30, 0));
 		task1.setKneadingTime(1800);
 		task1.setRestingTime(2400);
-		
+
 		KneadingTask task2 = new KneadingTask();
 		task2.setOrderId("order-002");
 		task2.setProductId("Donut");
@@ -57,9 +56,9 @@ public class KneadingScheduleTest {
 		Date completionTimeTask0 = schedule.getEarliestCompletionTime(tasks.get(0));
 		Date completionTimeTask1 = schedule.getEarliestCompletionTime(tasks.get(1));
 		Date completionTimeTask2 = schedule.getEarliestCompletionTime(tasks.get(2));
-		assertEquals(new Date(1,3,10,0), completionTimeTask0);
-		assertEquals(new Date(1,2,10,0), completionTimeTask1);
-		assertEquals(new Date(1,1,25,0), completionTimeTask2);
+		assertEquals(new Date(1, 3, 10, 0), completionTimeTask0);
+		assertEquals(new Date(1, 2, 10, 0), completionTimeTask1);
+		assertEquals(new Date(1, 1, 25, 0), completionTimeTask2);
 	}
 
 	@Test
@@ -81,7 +80,7 @@ public class KneadingScheduleTest {
 		schedule.insert(tasks.get(1));
 		schedule.insert(tasks.get(2));
 		// Order of tasks is now 1-0-2
-		
+
 		String task0Id = tasks.get(0).getOrderId() + tasks.get(0).getProductId();
 		String task1Id = tasks.get(1).getOrderId() + tasks.get(1).getProductId();
 		String task2Id = tasks.get(2).getOrderId() + tasks.get(2).getProductId();
@@ -89,20 +88,20 @@ public class KneadingScheduleTest {
 		ScheduledTask<KneadingTask> nextScheduledTask;
 
 		nextScheduledTask = schedule.getNextScheduledTask();
-		taskId = nextScheduledTask.getTask().getOrderId() + nextScheduledTask.getTask().getProductId();		
+		taskId = nextScheduledTask.getTask().getOrderId() + nextScheduledTask.getTask().getProductId();
 		assertEquals(task1Id, taskId);
 		schedule.removeFirst();
-		
+
 		nextScheduledTask = schedule.getNextScheduledTask();
-		taskId = nextScheduledTask.getTask().getOrderId() + nextScheduledTask.getTask().getProductId();		
+		taskId = nextScheduledTask.getTask().getOrderId() + nextScheduledTask.getTask().getProductId();
 		assertEquals(task0Id, taskId);
 		schedule.removeFirst();
-		
+
 		nextScheduledTask = schedule.getNextScheduledTask();
-		taskId = nextScheduledTask.getTask().getOrderId() + nextScheduledTask.getTask().getProductId();		
+		taskId = nextScheduledTask.getTask().getOrderId() + nextScheduledTask.getTask().getProductId();
 		assertEquals(task2Id, taskId);
 		schedule.removeFirst();
-		
+
 		nextScheduledTask = schedule.getNextScheduledTask();
 		assertNull(nextScheduledTask);
 		schedule.removeFirst();

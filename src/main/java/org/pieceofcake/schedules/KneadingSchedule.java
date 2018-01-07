@@ -5,10 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.pieceofcake.interfaces.Schedule;
-import org.pieceofcake.tasks.ScheduledTask;
-
 import org.pieceofcake.objects.Date;
 import org.pieceofcake.tasks.KneadingTask;
+import org.pieceofcake.tasks.ScheduledTask;
 
 public class KneadingSchedule implements Schedule<KneadingTask> {
 
