@@ -33,6 +33,10 @@ public class Date implements Serializable, Comparable<Date> {
 		this.minute = minute;
 		this.second = second;
 	}
+	
+	public Date(JSONObject jsonDate) {
+		fromJSONObject(jsonDate);
+	}
 
 	@Override
 	public String toString() {
