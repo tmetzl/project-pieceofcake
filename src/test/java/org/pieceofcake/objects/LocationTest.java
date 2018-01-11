@@ -26,7 +26,13 @@ public class LocationTest {
 		assertNotEquals(location, anotherLocation);
 
 		Location sameLocation = new Location(2.5, 8.7);
-		assertEquals(location, sameLocation);
+		assertEquals(location, sameLocation);		
+		
+		Location sameXLocation = new Location(2.5, 11.2);
+		assertNotEquals(location, sameXLocation);
+		
+		Location sameYLocation = new Location(3.2, 8.7);
+		assertNotEquals(location, sameYLocation);
 	}
 
 	@Test

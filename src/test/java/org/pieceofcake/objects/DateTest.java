@@ -70,5 +70,16 @@ public class DateTest {
 	public void testToSeconds() {
 		Date date = new Date(1, 2, 3, 4);
 		assertEquals(93784l, date.toSeconds());
+		Date otherDate = new Date(93784l);
+		assertEquals(date, otherDate);
+	}
+	
+	@Test
+	public void testCompareTo() {
+		Date earlyDate = new Date(0, 1, 2, 3);
+		Date lateDate = new Date(17, 2, 18, 5);
+		assertEquals(-1, earlyDate.compareTo(lateDate));
+		assertEquals(1, lateDate.compareTo(earlyDate));
+		assertEquals(0, earlyDate.compareTo(earlyDate));
 	}
 }
