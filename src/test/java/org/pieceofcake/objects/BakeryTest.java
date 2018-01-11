@@ -8,6 +8,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.pieceofcake.config.Topic;
 import org.pieceofcake.interfaces.BakeryObserver;
@@ -18,22 +20,50 @@ import org.pieceofcake.objects.Product;
 
 public class BakeryTest {
 
-	public List<Order> prepareOrderListForTests() {
-		List<Order> orders = new LinkedList<Order>();
-		String jsonOrder1 = "{\"order_date\": {\"day\": 1,\"hour\": 6},"
-				+ "\"guid\": \"order-003\",\"products\": {\"Brezel\": 5,\"Bread\": 11},"
-				+ "\"customer_id\": \"customer-001\"," + "\"delivery_date\": {\"day\": 2,\"hour\": 19}}";
-		String jsonOrder2 = "{\"order_date\": {\"day\": 1,\"hour\": 4},"
-				+ "\"guid\": \"order-002\",\"products\": {\"Donut\": 11,\"Bread\": 16},"
-				+ "\"customer_id\": \"customer-003\"," + "\"delivery_date\": {\"day\": 1,\"hour\": 17}}";
-		String jsonOrder3 = "{\"order_date\": {\"day\": 0,\"hour\": 17},"
-				+ "\"guid\": \"order-001\",\"products\": {\"Cake\": 6,\"Pie\": 3},"
-				+ "\"customer_id\": \"customer-002\"," + "\"delivery_date\": {\"day\": 2,\"hour\": 14}}";
+	private List<Order> orders;
 
+	@Before
+	public void prepareOrder() {
+		JSONObject jsonOrder1 = new JSONObject();
+		Date orderDate1 = new Date(1, 6, 0, 0);
+		Date dueDate1 = new Date(2, 19, 0, 0);
+		jsonOrder1.put("order_date", orderDate1.toJSONObject());
+		jsonOrder1.put("delivery_date", dueDate1.toJSONObject());
+		jsonOrder1.put("guid", "order-003");
+		jsonOrder1.put("customer_id", "customer-001");
+		JSONObject products1 = new JSONObject();
+		products1.put("Brezel", 5);
+		products1.put("Bread", 11);
+		jsonOrder1.put("products", products1);
+
+		JSONObject jsonOrder2 = new JSONObject();
+		Date orderDate2 = new Date(1, 4, 0, 0);
+		Date dueDate2 = new Date(1, 17, 0, 0);
+		jsonOrder2.put("order_date", orderDate2.toJSONObject());
+		jsonOrder2.put("delivery_date", dueDate2.toJSONObject());
+		jsonOrder2.put("guid", "order-002");
+		jsonOrder2.put("customer_id", "customer-003");
+		JSONObject products2 = new JSONObject();
+		products2.put("Donut", 11);
+		products2.put("Bread", 16);
+		jsonOrder2.put("products", products2);
+
+		JSONObject jsonOrder3 = new JSONObject();
+		Date orderDate3 = new Date(0, 17, 0, 0);
+		Date dueDate3 = new Date(2, 14, 0, 0);
+		jsonOrder3.put("order_date", orderDate3.toJSONObject());
+		jsonOrder3.put("delivery_date", dueDate3.toJSONObject());
+		jsonOrder3.put("guid", "order-001");
+		jsonOrder3.put("customer_id", "customer-002");
+		JSONObject products3 = new JSONObject();
+		products3.put("Cake", 6);
+		products3.put("Pie", 3);
+		jsonOrder3.put("products", products3);
+
+		orders = new LinkedList<>();
 		orders.add(new Order(jsonOrder1));
 		orders.add(new Order(jsonOrder2));
 		orders.add(new Order(jsonOrder3));
-		return orders;
 	}
 
 	public List<Product> prepareProductListForTests() {
@@ -65,7 +95,6 @@ public class BakeryTest {
 	@Test
 	public void bakeryTest() {
 		Bakery bakery = new Bakery("bakery-001", "TestBakery", new Location(10, 17));
-		List<Order> orders = prepareOrderListForTests();
 		List<Product> products = prepareProductListForTests();
 
 		assertNull(bakery.getOrdersOfDay(1));
