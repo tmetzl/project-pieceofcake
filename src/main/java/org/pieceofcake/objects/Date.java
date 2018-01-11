@@ -47,8 +47,7 @@ public class Date implements Serializable, Comparable<Date> {
 	public boolean equals(Object o) {
 		if (o instanceof Date) {
 			Date date = (Date) o;
-			return (day == date.getDay() && hour == date.getHour() && minute == date.getMinute()
-					&& second == date.getSecond());
+			return toSeconds() == date.toSeconds();
 		}
 		return false;
 	}
