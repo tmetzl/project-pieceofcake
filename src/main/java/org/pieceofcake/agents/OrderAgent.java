@@ -1,5 +1,6 @@
 package org.pieceofcake.agents;
 
+import org.json.JSONObject;
 import org.pieceofcake.behaviours.ReceiveStartingTime;
 import org.pieceofcake.behaviours.SynchronizeClock;
 import org.pieceofcake.config.Protocols;
@@ -81,7 +82,7 @@ public class OrderAgent extends SynchronizedAgent {
 					// Customer wants an offer
 
 					String jsonOrder = msg.getContent();
-					Order order = new Order(jsonOrder);
+					Order order = new Order(new JSONObject(jsonOrder));
 
 					// Get the price of the order
 					Double price = myBakery.getPrice(order);
@@ -99,7 +100,7 @@ public class OrderAgent extends SynchronizedAgent {
 					// Customer accepted an offer
 
 					String jsonOrder = msg.getContent();
-					Order order = new Order(jsonOrder);
+					Order order = new Order(new JSONObject(jsonOrder));
 					// Add to active orders
 					myBakery.addOrder(order);
 				}
