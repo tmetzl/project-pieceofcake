@@ -94,10 +94,8 @@ public class Order implements Serializable {
 		jsonObject.put("order_date", getOrderDate().toJSONObject());
 		jsonObject.put("delivery_date", getDueDate().toJSONObject());
 		JSONObject products = new JSONObject();
-		String[] productId = getProductIds();
-		int[] productAmounts = getProductAmounts();
-		for (int i = 0; i < productId.length; i++) {
-			products.put(productId[i], productAmounts[i]);
+		for (int i = 0; i < productIds.length; i++) {
+			products.put(productIds[i], productAmounts[i]);
 		}
 		jsonObject.put("products", products);
 		return jsonObject;
@@ -106,20 +104,16 @@ public class Order implements Serializable {
 	public void fromJSONObject(JSONObject jsonObject) {
 		setGuiId(jsonObject.getString("guid"));
 		setCustomerId(jsonObject.getString("customer_id"));
-		Date orderDate = new Date();
-		orderDate.fromJSONObject(jsonObject.getJSONObject("order_date"));
-		setOrderDate(orderDate);
-		Date dueDate = new Date();
-		dueDate.fromJSONObject(jsonObject.getJSONObject("delivery_date"));
-		setDueDate(dueDate);
+		setOrderDate(new Date(jsonObject.getJSONObject("order_date")));
+		setDueDate(new Date(jsonObject.getJSONObject("delivery_date")));
 		JSONObject products = jsonObject.getJSONObject("products");
 		setProductIds(JSONObject.getNames(products));
 		int numOfProducts = productIds.length;
-		int[] productAmounts = new int[numOfProducts];
+		int[] productAmountsFromJSON = new int[numOfProducts];
 		for (int i = 0; i < numOfProducts; i++) {
-			productAmounts[i] = products.getInt(productIds[i]);
+			productAmountsFromJSON[i] = products.getInt(productIds[i]);
 		}
-		setProductAmounts(productAmounts);
+		setProductAmounts(productAmountsFromJSON);
 	}
 
 }
