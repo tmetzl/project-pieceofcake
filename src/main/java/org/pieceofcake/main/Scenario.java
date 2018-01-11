@@ -158,7 +158,14 @@ public class Scenario {
 		for (int i = 0; i < orders.length(); i++) {
 			// Convert each order to a JSONObject
 			JSONObject order = orders.getJSONObject(i);
-			Order orderObject = new Order(order.toString());
+			// Adding minute and second to comply with date format
+			JSONObject orderDate = order.getJSONObject("order_date");
+			orderDate.put("minute", 0);
+			orderDate.put("second", 0);
+			JSONObject dueDate = order.getJSONObject("delivery_date");
+			dueDate.put("minute", 0);
+			dueDate.put("second", 0);
+			Order orderObject = new Order(order);
 			String customerId = orderObject.getCustomerId();
 
 			// Check whether the customer already has orders
