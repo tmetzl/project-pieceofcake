@@ -7,58 +7,65 @@ import org.json.JSONObject;
 public class Order implements Serializable {
 
 	private static final long serialVersionUID = -2137246400449003684L;
-	
+
 	private String guiId;
 	private String customerId;
-	private int orderDate;
-	private int dueDate;
+	private Date orderDate;
+	private Date dueDate;
 	private String[] productIds;
 	private int[] productAmounts;
-	private String jsonOrder;
 
-	public Order(String jsonOrder) {
+	public Order(JSONObject jsonOrder) {
 		// Parse the jsonOrder
-		JSONObject order = new JSONObject(jsonOrder);
-		this.jsonOrder = jsonOrder;
-		this.guiId = order.getString("guid");
-		this.customerId = order.getString("customer_id");
-		JSONObject orderDateJSON = order.getJSONObject("order_date");
-		this.orderDate = orderDateJSON.getInt("day") * 24 + orderDateJSON.getInt("hour");
-		JSONObject dueDateJSON = order.getJSONObject("delivery_date");
-		this.dueDate = dueDateJSON.getInt("day") * 24 + dueDateJSON.getInt("hour");
-		// Get the products
-		JSONObject products = order.getJSONObject("products");
-		this.productIds = JSONObject.getNames(products);
-		int numOfProducts = productIds.length;
-		this.productAmounts = new int[numOfProducts];
-		for (int i = 0; i < numOfProducts; i++) {
-			this.productAmounts[i] = products.getInt(this.productIds[i]);
-		}
-
+		fromJSONObject(jsonOrder);
 	}
 
 	public String getGuiId() {
 		return guiId;
 	}
 
+	public void setGuiId(String guiId) {
+		this.guiId = guiId;
+	}
+
 	public String getCustomerId() {
 		return customerId;
 	}
 
-	public int getOrderDate() {
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
+
+	public Date getOrderDate() {
 		return orderDate;
 	}
 
-	public int getDueDate() {
+	public void setOrderDate(Date orderDate) {
+		this.orderDate = orderDate;
+	}
+
+	public Date getDueDate() {
 		return dueDate;
+	}
+
+	public void setDueDate(Date dueDate) {
+		this.dueDate = dueDate;
 	}
 
 	public String[] getProductIds() {
 		return productIds;
 	}
 
+	public void setProductIds(String[] productIds) {
+		this.productIds = productIds;
+	}
+
 	public int[] getProductAmounts() {
 		return productAmounts;
+	}
+
+	public void setProductAmounts(int[] productAmounts) {
+		this.productAmounts = productAmounts;
 	}
 
 	/**
@@ -71,7 +78,7 @@ public class Order implements Serializable {
 		bld.append("\nOrderDate (in hours): " + getOrderDate());
 		bld.append("\nDueDate (in hours): " + getDueDate());
 		bld.append("\nProducts: ");
-		
+
 		for (int i = 0; i < this.productIds.length - 1; i++) {
 			bld.append("(" + this.productIds[i] + ", " + this.productAmounts[i] + "), ");
 		}
@@ -79,14 +86,40 @@ public class Order implements Serializable {
 				+ this.productAmounts[this.productIds.length - 1] + ")");
 		return bld.toString();
 	}
-	
-	/**
-	 * Return the JSON representation of the order
-	 * @return
-	 */
-	public String toJSONString() {
-		return this.jsonOrder;
+
+	public JSONObject toJSONObject() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("guid", getGuiId());
+		jsonObject.put("customer_id", getCustomerId());
+		jsonObject.put("order_date", getOrderDate().toJSONObject());
+		jsonObject.put("delivery_date", getDueDate().toJSONObject());
+		JSONObject products = new JSONObject();
+		String[] productId = getProductIds();
+		int[] productAmounts = getProductAmounts();
+		for (int i = 0; i < productId.length; i++) {
+			products.put(productId[i], productAmounts[i]);
+		}
+		jsonObject.put("products", products);
+		return jsonObject;
 	}
 
+	public void fromJSONObject(JSONObject jsonObject) {
+		setGuiId(jsonObject.getString("guid"));
+		setCustomerId(jsonObject.getString("customer_id"));
+		Date orderDate = new Date();
+		orderDate.fromJSONObject(jsonObject.getJSONObject("order_date"));
+		setOrderDate(orderDate);
+		Date dueDate = new Date();
+		dueDate.fromJSONObject(jsonObject.getJSONObject("delivery_date"));
+		setDueDate(dueDate);
+		JSONObject products = jsonObject.getJSONObject("products");
+		setProductIds(JSONObject.getNames(products));
+		int numOfProducts = productIds.length;
+		int[] productAmounts = new int[numOfProducts];
+		for (int i = 0; i < numOfProducts; i++) {
+			productAmounts[i] = products.getInt(productIds[i]);
+		}
+		setProductAmounts(productAmounts);
+	}
 
 }
