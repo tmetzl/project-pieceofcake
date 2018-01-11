@@ -75,10 +75,9 @@ public class CustomerAgent extends SynchronizedAgent {
 
 		public PlaceOrder(Order order) {
 			this.order = order;
-			int orderHours = order.getOrderDate();
 			this.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
 			this.addSubBehaviour(
-					new DelayUntilDate(getScenarioClock(), new Date(orderHours / 24, orderHours % 24, 0, 0)));
+					new DelayUntilDate(getScenarioClock(), order.getOrderDate()));
 			this.addSubBehaviour(new UpdateBakeries());
 			this.addSubBehaviour(new RequestOffers());
 			this.addSubBehaviour(new ReceiveOffers());
@@ -137,7 +136,7 @@ public class CustomerAgent extends SynchronizedAgent {
 				msg.setOntology("Bakery-order-ontology");
 				msg.setProtocol(Protocols.ORDER);
 				msg.setReplyWith("offer-request-" + System.currentTimeMillis());
-				String content = order.toJSONString();
+				String content = order.toJSONObject().toString();
 				msg.setContent(content);
 				myAgent.send(msg);
 			}
@@ -201,7 +200,7 @@ public class CustomerAgent extends SynchronizedAgent {
 					msg.setOntology("Bakery-order-ontology");
 					msg.setProtocol(Protocols.ORDER);
 					msg.setReplyWith("offer-confirm-" + System.currentTimeMillis());
-					String content = order.toJSONString();
+					String content = order.toJSONObject().toString();
 					msg.setContent(content);
 					myAgent.send(msg);
 					placedOrders.add(order);
