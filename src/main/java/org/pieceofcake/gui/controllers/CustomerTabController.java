@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.pieceofcake.agents.CustomerAgent;
 import org.pieceofcake.gui.utils.ShoppingListEntry;
+import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.Location;
 import org.pieceofcake.objects.Order;
 
@@ -109,15 +110,15 @@ public class CustomerTabController {
 		updateCustomer(customer);
 	}
 
-	public String toDate(int hours) {
-		return String.format("Day %d Hour %d", hours / 24, hours % 24);
+	public String toDateString(Date date) {
+		return String.format("Day %d %02d:%02d:%02d", date.getDay(), date.getHour(), date.getMinute(), date.getSecond());
 	}
 
 	public void orderSelected(Order order) {
 		if (order != null) {
 			orderId.setText(order.getGuiId());
-			orderDate.setText(toDate(order.getOrderDate()));
-			orderDueDate.setText(toDate(order.getDueDate()));
+			orderDate.setText(toDateString(order.getOrderDate()));
+			orderDueDate.setText(toDateString(order.getDueDate()));
 			String[] productIds = order.getProductIds();
 			int[] productAmounts = order.getProductAmounts();
 			ArrayList<ShoppingListEntry> products = new ArrayList<>();

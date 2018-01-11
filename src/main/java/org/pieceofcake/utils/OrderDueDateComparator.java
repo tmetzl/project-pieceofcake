@@ -8,11 +8,7 @@ public class OrderDueDateComparator implements Comparator<Order>{
 
 	@Override
 	public int compare(Order order1, Order order2) {
-		int dueDate1 = order1.getDueDate();
-		int dueDate2 = order2.getDueDate();
-		
-		return dueDate1 - dueDate2;
+		return order1.getDueDate().compareTo(order2.getDueDate());
 	}
 	
-
 }

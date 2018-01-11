@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.json.JSONObject;
 
-public class Date implements Serializable {
+public class Date implements Serializable, Comparable<Date> {
 
 	private static final long serialVersionUID = 6613519611127982058L;
 	
@@ -16,12 +16,26 @@ public class Date implements Serializable {
 	public Date() {
 
 	}
+	
+	public Date(long seconds) {
+		this.second = (int) (seconds % 60);
+		seconds /= 60;
+		this.minute = (int) (seconds % 60);
+		seconds /= 60;
+		this.hour = (int) (seconds % 24);
+		seconds /= 24;
+		this.day = (int) seconds;
+	}
 
 	public Date(int day, int hour, int minute, int second) {
 		this.day = day;
 		this.hour = hour;
 		this.minute = minute;
 		this.second = second;
+	}
+	
+	public Date(JSONObject jsonDate) {
+		fromJSONObject(jsonDate);
 	}
 
 	@Override
@@ -39,6 +53,17 @@ public class Date implements Serializable {
 		return false;
 	}
 
+	@Override
+	public int compareTo(Date otherDate) {
+		if (equals(otherDate)) {
+			return 0;
+		}
+		if (toSeconds() < otherDate.toSeconds()) {
+			return -1;
+		}
+		return 1;
+	}
+	
 	@Override
 	public int hashCode() {
 		return toString().hashCode();

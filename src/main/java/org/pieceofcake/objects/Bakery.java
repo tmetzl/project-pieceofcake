@@ -63,7 +63,7 @@ public class Bakery implements Serializable, BakeryObservable, Localizable {
 	}
 
 	public void addOrder(Order order) {
-		int day = order.getDueDate() / 24;
+		int day = order.getDueDate().getDay();
 		List<Order> ordersPerDay = orderDayMap.get(day);
 		if (ordersPerDay == null) {
 			ordersPerDay = new LinkedList<>();
