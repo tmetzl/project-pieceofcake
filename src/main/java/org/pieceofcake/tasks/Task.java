@@ -9,8 +9,8 @@ public abstract class Task {
 	private Date releaseDate;
 	private String orderId;
 	private String productId;
+	private int numOfItems;
 	
-
 	public String getProductId() {
 		return productId;
 	}
@@ -42,6 +42,14 @@ public abstract class Task {
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
 	}
+	
+	public int getNumOfItems() {
+		return numOfItems;
+	}
+
+	public void setNumOfItems(int numOfItems) {
+		this.numOfItems = numOfItems;
+	}
 
 	public JSONObject toJSONObject() {
 		JSONObject jsonObject = new JSONObject();
@@ -49,6 +57,7 @@ public abstract class Task {
 		jsonObject.put("release_date", getReleaseDate().toJSONObject());
 		jsonObject.put("due_date", getDueDate().toJSONObject());
 		jsonObject.put("order_id", getOrderId());
+		jsonObject.put("num_of_items", getNumOfItems());
 		return jsonObject;
 	}
 
@@ -60,6 +69,7 @@ public abstract class Task {
 		Date dueDateFromJson = new Date();
 		dueDateFromJson.fromJSONObject(jsonObject.getJSONObject("due_date"));
 		setDueDate(dueDateFromJson);
+		setNumOfItems(jsonObject.getInt("num_of_items"));
 		setOrderId(jsonObject.getString("order_id"));
 	}
 
