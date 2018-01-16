@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.pieceofcake.interfaces.Schedule;
 import org.pieceofcake.objects.Date;
-import org.pieceofcake.tasks.Job;
+import org.pieceofcake.objects.Job;
 import org.pieceofcake.tasks.Task;
 
 public abstract class ProductionSchedule<T extends Task> implements Schedule<T> {
