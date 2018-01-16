@@ -9,9 +9,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.pieceofcake.objects.Date;
+import org.pieceofcake.objects.Job;
 import org.pieceofcake.schedules.KneadingSchedule;
 import org.pieceofcake.tasks.KneadingTask;
-import org.pieceofcake.tasks.ScheduledTask;
 
 public class KneadingScheduleTest {
 
@@ -28,7 +28,7 @@ public class KneadingScheduleTest {
 		task0.setReleaseDate(new Date(1, 2, 0, 0));
 		task0.setDueDate(new Date(1, 7, 30, 0));
 		task0.setKneadingTime(3000);
-		task0.setRestingTime(1200);
+		task0.setNumOfItems(1);
 
 		KneadingTask task1 = new KneadingTask();
 		task1.setOrderId("order-001");
@@ -36,7 +36,7 @@ public class KneadingScheduleTest {
 		task1.setReleaseDate(new Date(1, 1, 0, 0));
 		task1.setDueDate(new Date(1, 5, 30, 0));
 		task1.setKneadingTime(1800);
-		task1.setRestingTime(2400);
+		task1.setNumOfItems(1);
 
 		KneadingTask task2 = new KneadingTask();
 		task2.setOrderId("order-002");
@@ -44,7 +44,7 @@ public class KneadingScheduleTest {
 		task2.setReleaseDate(new Date(1, 0, 0, 0));
 		task2.setDueDate(new Date(1, 4, 0, 0));
 		task2.setKneadingTime(4200);
-		task2.setRestingTime(900);
+		task2.setNumOfItems(1);
 
 		tasks.add(task0);
 		tasks.add(task1);
@@ -56,22 +56,22 @@ public class KneadingScheduleTest {
 		Date completionTimeTask0 = schedule.getEarliestCompletionTime(tasks.get(0));
 		Date completionTimeTask1 = schedule.getEarliestCompletionTime(tasks.get(1));
 		Date completionTimeTask2 = schedule.getEarliestCompletionTime(tasks.get(2));
-		assertEquals(new Date(1, 3, 10, 0), completionTimeTask0);
-		assertEquals(new Date(1, 2, 10, 0), completionTimeTask1);
-		assertEquals(new Date(1, 1, 25, 0), completionTimeTask2);
+		assertEquals(new Date(1, 2, 50, 0), completionTimeTask0);
+		assertEquals(new Date(1, 1, 30, 0), completionTimeTask1);
+		assertEquals(new Date(1, 1, 10, 0), completionTimeTask2);
 	}
 
 	@Test
 	public void testInsert() {
 		schedule.insert(tasks.get(2));
 		Date completionTimeTask1 = schedule.getEarliestCompletionTime(tasks.get(1));
-		assertEquals(new Date(1, 2, 20, 0), completionTimeTask1);
+		assertEquals(new Date(1, 1, 40, 0), completionTimeTask1);
 		schedule.insert(tasks.get(1));
 		completionTimeTask1 = schedule.getEarliestCompletionTime(tasks.get(1));
-		assertEquals(new Date(1, 2, 20, 0), completionTimeTask1);
+		assertEquals(new Date(1, 1, 40, 0), completionTimeTask1);
 		schedule.insert(tasks.get(1));
 		Date completionTimeTask0 = schedule.getEarliestCompletionTime(tasks.get(0));
-		assertEquals(new Date(1, 3, 10, 0), completionTimeTask0);
+		assertEquals(new Date(1, 2, 50, 0), completionTimeTask0);
 	}
 
 	@Test
@@ -85,25 +85,25 @@ public class KneadingScheduleTest {
 		String task1Id = tasks.get(1).getOrderId() + tasks.get(1).getProductId();
 		String task2Id = tasks.get(2).getOrderId() + tasks.get(2).getProductId();
 		String taskId;
-		ScheduledTask<KneadingTask> nextScheduledTask;
+		Job<KneadingTask> nextScheduledJob;
 
-		nextScheduledTask = schedule.getNextScheduledTask();
-		taskId = nextScheduledTask.getTask().getOrderId() + nextScheduledTask.getTask().getProductId();
+		nextScheduledJob = schedule.getNextScheduledJob();
+		taskId = nextScheduledJob.getTask().getOrderId() + nextScheduledJob.getTask().getProductId();
 		assertEquals(task1Id, taskId);
 		schedule.removeFirst();
 
-		nextScheduledTask = schedule.getNextScheduledTask();
-		taskId = nextScheduledTask.getTask().getOrderId() + nextScheduledTask.getTask().getProductId();
+		nextScheduledJob = schedule.getNextScheduledJob();
+		taskId = nextScheduledJob.getTask().getOrderId() + nextScheduledJob.getTask().getProductId();
 		assertEquals(task0Id, taskId);
 		schedule.removeFirst();
 
-		nextScheduledTask = schedule.getNextScheduledTask();
-		taskId = nextScheduledTask.getTask().getOrderId() + nextScheduledTask.getTask().getProductId();
+		nextScheduledJob = schedule.getNextScheduledJob();
+		taskId = nextScheduledJob.getTask().getOrderId() + nextScheduledJob.getTask().getProductId();
 		assertEquals(task2Id, taskId);
 		schedule.removeFirst();
 
-		nextScheduledTask = schedule.getNextScheduledTask();
-		assertNull(nextScheduledTask);
+		nextScheduledJob = schedule.getNextScheduledJob();
+		assertNull(nextScheduledJob);
 		schedule.removeFirst();
 	}
 
