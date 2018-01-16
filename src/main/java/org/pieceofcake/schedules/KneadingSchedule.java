@@ -1,95 +1,47 @@
 package org.pieceofcake.schedules;
 
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
-import org.pieceofcake.interfaces.Schedule;
 import org.pieceofcake.objects.Date;
+import org.pieceofcake.objects.Job;
 import org.pieceofcake.tasks.KneadingTask;
-import org.pieceofcake.tasks.ScheduledTask;
 
-public class KneadingSchedule implements Schedule<KneadingTask> {
+public class KneadingSchedule extends ProductionSchedule<KneadingTask> {
 
-	private List<ScheduledTask<KneadingTask>> schedule;
-
-	public KneadingSchedule() {
-		schedule = new LinkedList<>();
+	@Override
+	public long getProductionTime(Job<KneadingTask> prevJob, Job<KneadingTask> nextJob, KneadingTask task) {
+		return task.getKneadingTime();
 	}
 
 	@Override
-	public Date getEarliestCompletionTime(KneadingTask task) {
-		long releaseDateInSeconds = task.getReleaseDate().toSeconds();
-		if (schedule.isEmpty()) {
-			long completionTimeInSeconds = releaseDateInSeconds + task.getKneadingTime() + task.getRestingTime();
-			return new Date(completionTimeInSeconds);
-		}
-		// Check if the task already exists
-		ScheduledTask<KneadingTask> existingTask = getScheduledTask(task.getProductId());
-		if (existingTask != null) {
-			// The completion time is the end time of the task plus the resting
-			// time
-			long completionTimeInSeconds = existingTask.getEnd().toSeconds() + task.getRestingTime();
-			return new Date(completionTimeInSeconds);
-		}
+	public KneadingTask addToJob(Job<KneadingTask> job, KneadingTask task) {
+		return null;
+	}
+
+	@Override
+	public KneadingTask addBetweenJobs(Job<KneadingTask> prevJob, Job<KneadingTask> nextJob, KneadingTask task) {
 		Date startDate = task.getReleaseDate();
-		for (ScheduledTask<KneadingTask> scheduledTask : schedule) {
-			// Check whether we can schedule the task before the scheduled task
-			long availableTime = scheduledTask.getStart().toSeconds() - startDate.toSeconds();
-			if (task.getKneadingTime() <= availableTime) {
-				long completionTimeInSeconds = startDate.toSeconds() + task.getKneadingTime() + task.getRestingTime();
-				return new Date(completionTimeInSeconds);
-			}
-			if (startDate.compareTo(scheduledTask.getEnd()) < 0) {
-				startDate = scheduledTask.getEnd();
-			}
+		if (prevJob != null && startDate.compareTo(prevJob.getEnd()) < 0) {
+			startDate = prevJob.getEnd();
 		}
-		// The task can only be scheduled after all existing tasks
-		long completionTimeInSeconds = startDate.toSeconds() + task.getKneadingTime() + task.getRestingTime();
-		return new Date(completionTimeInSeconds);
-	}
-
-	@Override
-	public void insert(KneadingTask task) {
-		// Check if the task already exists
-		if (getScheduledTask(task.getProductId()) != null) {
-			return;
+		long availableTime = Long.MAX_VALUE;
+		if (nextJob != null) {
+			availableTime = nextJob.getStart().toSeconds() - startDate.toSeconds();
 		}
-		// Get the completion time
-		Date endDate = getEarliestCompletionTime(task);
-		long completionTime = endDate.toSeconds() - task.getRestingTime();
-		long startTime = completionTime - task.getKneadingTime();
-		ScheduledTask<KneadingTask> newTask = new ScheduledTask<>(new Date(startTime), new Date(completionTime), task);
-		// Insert task and sort
-		schedule.add(newTask);
-		Collections.sort(schedule);
-	}
-
-	@Override
-	public ScheduledTask<KneadingTask> getNextScheduledTask() {
-		if (!schedule.isEmpty()) {
-			return schedule.get(0);
+		if (availableTime >= task.getKneadingTime()) {
+			return task.copy();
 		}
 		return null;
 	}
 
 	@Override
-	public void removeFirst() {
-		if (!schedule.isEmpty()) {
-			schedule.remove(0);
-		}
-	}
-
-	/**
-	 * Search for a scheduled task producing the item with productId
-	 * 
-	 * @param productId
-	 * @return scheduled task or null if not exists
-	 */
-	public ScheduledTask<KneadingTask> getScheduledTask(String productId) {
-		for (ScheduledTask<KneadingTask> scheduledTask : schedule) {
-			if (scheduledTask.getTask().getProductId().equals(productId)) {
-				return scheduledTask;
+	public Job<KneadingTask> getJob(String productId) {
+		for (Job<KneadingTask> job : schedule) {
+			List<KneadingTask> associatedTasks = job.getAssociatedTasks();
+			for (KneadingTask task : associatedTasks) {
+				if (task.getProductId().equals(productId)) {
+					return job;
+				}
 			}
 		}
 		return null;
