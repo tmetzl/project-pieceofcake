@@ -1,7 +1,7 @@
 package org.pieceofcake.interfaces;
 
 import org.pieceofcake.objects.Date;
-import org.pieceofcake.tasks.Job;
+import org.pieceofcake.objects.Job;
 import org.pieceofcake.tasks.Task;
 
 public interface Schedule<T extends Task>{
