@@ -9,9 +9,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.pieceofcake.objects.Date;
+import org.pieceofcake.objects.Job;
 import org.pieceofcake.schedules.ItemPrepSchedule;
 import org.pieceofcake.tasks.ItemPrepTask;
-import org.pieceofcake.tasks.ScheduledTask;
 
 public class ItemPrepScheduleTest {
 
@@ -91,9 +91,9 @@ public class ItemPrepScheduleTest {
 		schedule.insert(tasks.get(0));
 		schedule.insert(tasks.get(1));
 		schedule.insert(tasks.get(2));
-		ScheduledTask<ItemPrepTask> nextScheduledTask;
+		Job<ItemPrepTask> nextScheduledTask;
 
-		nextScheduledTask = schedule.getNextScheduledTask();
+		nextScheduledTask = schedule.getNextScheduledJob();
 		assertEquals(new Date(1, 0, 0, 0), nextScheduledTask.getStart());
 		assertEquals(new Date(1, 1, 0, 0), nextScheduledTask.getEnd());
 		assertEquals("order-002", nextScheduledTask.getTask().getOrderId());
@@ -101,7 +101,7 @@ public class ItemPrepScheduleTest {
 
 		schedule.removeFirst();
 
-		nextScheduledTask = schedule.getNextScheduledTask();
+		nextScheduledTask = schedule.getNextScheduledJob();
 		assertEquals(new Date(1, 1, 0, 0), nextScheduledTask.getStart());
 		assertEquals(new Date(1, 1, 42, 0), nextScheduledTask.getEnd());
 		assertEquals("order-001", nextScheduledTask.getTask().getOrderId());
@@ -109,7 +109,7 @@ public class ItemPrepScheduleTest {
 
 		schedule.removeFirst();
 
-		nextScheduledTask = schedule.getNextScheduledTask();
+		nextScheduledTask = schedule.getNextScheduledJob();
 		assertEquals(new Date(1, 1, 42, 0), nextScheduledTask.getStart());
 		assertEquals(new Date(1, 1, 54, 0), nextScheduledTask.getEnd());
 		assertEquals("order-002", nextScheduledTask.getTask().getOrderId());
@@ -117,7 +117,7 @@ public class ItemPrepScheduleTest {
 
 		schedule.removeFirst();
 
-		nextScheduledTask = schedule.getNextScheduledTask();
+		nextScheduledTask = schedule.getNextScheduledJob();
 		assertEquals(new Date(1, 2, 00, 0), nextScheduledTask.getStart());
 		assertEquals(new Date(1, 2, 50, 0), nextScheduledTask.getEnd());
 		assertEquals("order-001", nextScheduledTask.getTask().getOrderId());
@@ -125,7 +125,7 @@ public class ItemPrepScheduleTest {
 
 		schedule.removeFirst();
 
-		nextScheduledTask = schedule.getNextScheduledTask();
+		nextScheduledTask = schedule.getNextScheduledJob();
 		assertEquals(new Date(1, 2, 50, 0), nextScheduledTask.getStart());
 		assertEquals(new Date(1, 3, 14, 0), nextScheduledTask.getEnd());
 		assertEquals("order-002", nextScheduledTask.getTask().getOrderId());
@@ -133,7 +133,7 @@ public class ItemPrepScheduleTest {
 
 		schedule.removeFirst();
 
-		nextScheduledTask = schedule.getNextScheduledTask();
+		nextScheduledTask = schedule.getNextScheduledJob();
 		assertNull(nextScheduledTask);
 		
 		schedule.removeFirst();
