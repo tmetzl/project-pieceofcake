@@ -37,7 +37,7 @@ public class Bakery implements Serializable, BakeryObservable, Localizable {
 		this.doughInStock = new HashMap<>();
 		this.observers = new HashMap<>();
 	}
-
+	
 	public Product getProductByName(String productName) {
 		if (this.cookBook.containsKey(productName)) {
 			return this.cookBook.get(productName);
