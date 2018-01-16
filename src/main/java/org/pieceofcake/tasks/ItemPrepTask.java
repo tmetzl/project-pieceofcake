@@ -26,4 +26,11 @@ public class ItemPrepTask extends Task {
 		super.fromJSONObject(jsonObject);
 		setItemPrepTime(jsonObject.getLong("item_prep_time"));
 	}
+	
+	@Override
+	public ItemPrepTask copy() {
+		ItemPrepTask task = new ItemPrepTask();
+		task.fromJSONObject(this.toJSONObject());
+		return task;
+	}
 }

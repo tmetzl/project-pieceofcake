@@ -72,5 +72,7 @@ public abstract class Task {
 		setNumOfItems(jsonObject.getInt("num_of_items"));
 		setOrderId(jsonObject.getString("order_id"));
 	}
+	
+	public abstract Task copy();
 
 }

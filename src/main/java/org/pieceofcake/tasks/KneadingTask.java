@@ -38,4 +38,11 @@ public class KneadingTask extends Task {
 		setRestingTime(jsonObject.getLong("resting_time"));
 	}
 
+	@Override
+	public KneadingTask copy() {
+		KneadingTask task = new KneadingTask();
+		task.fromJSONObject(this.toJSONObject());
+		return task;
+	}
+
 }

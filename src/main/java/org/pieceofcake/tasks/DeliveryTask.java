@@ -40,4 +40,11 @@ public class DeliveryTask extends Task {
 		locationFromJson.fromJSONObject(jsonObject.getJSONObject("location"));
 		setLocation(locationFromJson);
 	}
+	
+	@Override
+	public DeliveryTask copy() {
+		DeliveryTask task = new DeliveryTask();
+		task.fromJSONObject(this.toJSONObject());
+		return task;
+	}
 }

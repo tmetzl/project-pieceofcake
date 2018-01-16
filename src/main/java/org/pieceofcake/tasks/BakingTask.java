@@ -50,4 +50,11 @@ public class BakingTask extends Task {
 
 	}
 
+	@Override
+	public BakingTask copy() {
+		BakingTask task = new BakingTask();
+		task.fromJSONObject(this.toJSONObject());
+		return task;
+	}
+
 }
