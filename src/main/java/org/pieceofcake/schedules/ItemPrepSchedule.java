@@ -22,7 +22,7 @@ public class ItemPrepSchedule extends ProductionSchedule<ItemPrepTask> {
 		if (prevJob != null && startDate.compareTo(prevJob.getEnd()) < 0) {
 			startDate = prevJob.getEnd();
 		}
-		long availableTime = 12*60*60;
+		long availableTime = 12*60*60l;
 		if (nextJob != null) {
 			availableTime = nextJob.getStart().toSeconds() - startDate.toSeconds();
 		}
@@ -32,6 +32,11 @@ public class ItemPrepSchedule extends ProductionSchedule<ItemPrepTask> {
 			subtask.setNumOfItems(items);
 			return subtask;
 		}
+		return null;
+	}
+
+	@Override
+	public Job<ItemPrepTask> getJob(String productId) {
 		return null;
 	}
 
