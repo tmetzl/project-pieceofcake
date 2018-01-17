@@ -6,7 +6,6 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.Location;
-import org.pieceofcake.tasks.DeliveryTask;
 
 public class DeliveryTaskTest {
 

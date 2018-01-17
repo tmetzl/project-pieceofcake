@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
-import org.pieceofcake.objects.Date;
 import org.pieceofcake.tasks.BakingTask;
 import org.pieceofcake.tasks.KneadingTask;
 import org.pieceofcake.tasks.Task;

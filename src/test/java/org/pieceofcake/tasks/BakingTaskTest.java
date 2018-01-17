@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.pieceofcake.objects.Date;
-import org.pieceofcake.tasks.BakingTask;
 
 public class BakingTaskTest {
 

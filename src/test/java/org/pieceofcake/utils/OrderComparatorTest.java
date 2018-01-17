@@ -11,10 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.Order;
-import org.pieceofcake.utils.OrderCustomerIdComparator;
-import org.pieceofcake.utils.OrderDateComparator;
-import org.pieceofcake.utils.OrderDueDateComparator;
-import org.pieceofcake.utils.OrderGuiIdComparator;
 
 public class OrderComparatorTest {
 

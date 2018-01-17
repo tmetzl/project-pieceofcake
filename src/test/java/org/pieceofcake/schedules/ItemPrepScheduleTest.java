@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.Job;
-import org.pieceofcake.schedules.ItemPrepSchedule;
 import org.pieceofcake.tasks.ItemPrepTask;
 
 public class ItemPrepScheduleTest {

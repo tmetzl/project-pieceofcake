@@ -5,8 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 import org.pieceofcake.objects.Location;
-import org.pieceofcake.streetnetwork.Edge;
-import org.pieceofcake.streetnetwork.Node;
 
 public class EdgeTest {
 	

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotEquals;
 
 import org.json.JSONObject;
 import org.junit.Test;
-import org.pieceofcake.objects.Date;
 
 public class DateTest {
 

@@ -13,10 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pieceofcake.config.Topic;
 import org.pieceofcake.interfaces.BakeryObserver;
-import org.pieceofcake.objects.Bakery;
-import org.pieceofcake.objects.Location;
-import org.pieceofcake.objects.Order;
-import org.pieceofcake.objects.Product;
 
 public class BakeryTest {
 

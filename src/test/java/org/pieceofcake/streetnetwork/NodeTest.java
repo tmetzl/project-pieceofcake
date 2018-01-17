@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.pieceofcake.objects.Location;
-import org.pieceofcake.streetnetwork.Node;
 
 public class NodeTest {
 
