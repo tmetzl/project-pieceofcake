@@ -6,17 +6,15 @@ import java.util.List;
 
 import org.pieceofcake.tasks.Task;
 
-public class Job<T extends Task> implements Comparable<Job<T>> {
+public class Job<T extends Task> {
 
 	private Date start;
 	private Date end;
-	private T task;
 	private List<T> associatedTasks;
 
 	public Job(Date start, Date end, T task) {
 		this.start = start;
 		this.end = end;
-		this.task = task;
 		this.associatedTasks = new LinkedList<>();
 		this.associatedTasks.add(task);
 	}
@@ -47,18 +45,9 @@ public class Job<T extends Task> implements Comparable<Job<T>> {
 		}
 	}
 
-	public T getTask() {
-		return task;
-	}
-
 	@Override
 	public String toString() {
-		return String.format("(%s, %s, %s)", start.toString(), end.toString(), task);
-	}
-
-	@Override
-	public int compareTo(Job<T> otherTask) {
-		return start.compareTo(otherTask.start);
+		return String.format("(%s, %s, %s)", start.toString(), end.toString(), associatedTasks);
 	}
 
 }
