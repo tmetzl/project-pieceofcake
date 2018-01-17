@@ -15,6 +15,7 @@ public class KneadingTaskTest {
 		Date dueDate = new Date(1, 2, 3, 4);
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("product_id", "Bread");
+		jsonObject.put("num_of_items", 1);
 		jsonObject.put("kneading_time", 10);
 		jsonObject.put("resting_time", 2);
 		jsonObject.put("release_date", releaseDate.toJSONObject());
