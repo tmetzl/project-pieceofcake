@@ -9,6 +9,7 @@ import org.pieceofcake.interfaces.Schedule;
 import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.Job;
 import org.pieceofcake.tasks.Task;
+import org.pieceofcake.utils.JobStartDateComparator;
 
 public abstract class ProductionSchedule<T extends Task> implements Schedule<T> {
 
@@ -24,119 +25,76 @@ public abstract class ProductionSchedule<T extends Task> implements Schedule<T> 
 
 	public abstract T addBetweenJobs(Job<T> prevJob, Job<T> nextJob, T task);
 
-	public Job<T> getJob(String productId) {
+	public abstract Job<T> getJob(String productId);
+
+	public Job<T> createJobBetween(Job<T> prevJob, Job<T> currentJob, T task) {
+		T addableTask = addBetweenJobs(prevJob, currentJob, task);
+		if (addableTask != null) {
+			int items = addableTask.getNumOfItems();
+			task.setNumOfItems(task.getNumOfItems() - items);
+			Date startDate = addableTask.getReleaseDate();
+			if (prevJob != null && startDate.compareTo(prevJob.getEnd()) < 0) {
+				startDate = prevJob.getEnd();
+			}
+			Date endDate = new Date(startDate.toSeconds() + getProductionTime(prevJob, currentJob, addableTask));
+			return new Job<>(startDate, endDate, addableTask);
+		}
 		return null;
 	}
 
-	@Override
-	public Date getEarliestCompletionTime(T task) {
-		if (schedule.isEmpty()) {
-			return new Date(task.getReleaseDate().toSeconds() + getProductionTime(null, null, task));
-		}
-
-		Job<T> existingJob = getJob(task.getProductId());
-		if (existingJob != null) {
-			return existingJob.getEnd();
-		}
-
-		T remainingTask = (T) task.copy();
-		Job<T> prevJob = null;
-		for (int i = 0; i < schedule.size(); i++) {
-			Job<T> currentJob = schedule.get(i);
-			// Check if and how much we can add between the previous and current
-			// job
-			T addableTask = addBetweenJobs(prevJob, currentJob, remainingTask);
-			if (addableTask != null) {
-				int items = addableTask.getNumOfItems();
-				remainingTask.setNumOfItems(remainingTask.getNumOfItems() - items);
-				if (remainingTask.getNumOfItems() <= 0) {
-					Date startDate = task.getReleaseDate();
-					if (prevJob != null && startDate.compareTo(prevJob.getEnd()) < 0) {
-						startDate = prevJob.getEnd();
-					}
-					return new Date(startDate.toSeconds() + getProductionTime(prevJob, currentJob, addableTask));
-				}
-			}
-			// Check if and how much we can add to an existing job
-			addableTask = addToJob(currentJob, remainingTask);
-			if (addableTask != null) {
-				int items = addableTask.getNumOfItems();
-				remainingTask.setNumOfItems(remainingTask.getNumOfItems() - items);
-				if (remainingTask.getNumOfItems() <= 0) {
-					return currentJob.getEnd();
-				}
-			}
-
-			prevJob = currentJob;
-		}
-		// Schedule remaining task at the end
-		Date startDate = remainingTask.getReleaseDate();
-		if (prevJob.getEnd().compareTo(startDate) > 0) {
-			startDate = prevJob.getEnd();
-		}
-		return new Date(startDate.toSeconds() + getProductionTime(prevJob, null, remainingTask));
-	}
-
-	@Override
-	public void insert(T task) {
-		if (schedule.isEmpty()) {
-			Job<T> job = new Job<>(task.getReleaseDate(),
-					new Date(task.getReleaseDate().toSeconds() + getProductionTime(null, null, task)), task);
-			schedule.add(job);
-			return;
-		}
-		Job<T> existingJob = getJob(task.getProductId());
-		if (existingJob != null) {
-			return;
-		}
+	public List<Job<T>> createJobs(T task) {
 		List<Job<T>> newJobs = new LinkedList<>();
 
+		Job<T> existingJob = getJob(task.getProductId());
+		if (existingJob != null) {
+			return newJobs;
+		}
+
 		T remainingTask = (T) task.copy();
 		Job<T> prevJob = null;
 		for (int i = 0; i < schedule.size(); i++) {
 			Job<T> currentJob = schedule.get(i);
 			// Check if and how much we can add between the previous and current
 			// job
-			T addableTask = addBetweenJobs(prevJob, currentJob, remainingTask);
-			if (addableTask != null) {
-				int items = addableTask.getNumOfItems();
-				remainingTask.setNumOfItems(remainingTask.getNumOfItems() - items);
-				Date startDate = task.getReleaseDate();
-				if (prevJob != null && startDate.compareTo(prevJob.getEnd()) < 0) {
-					startDate = prevJob.getEnd();
-				}
-				Date endDate = new Date(startDate.toSeconds() + getProductionTime(prevJob, currentJob, addableTask));
-				Job<T> job = new Job<>(startDate, endDate, addableTask);
+			Job<T> job = createJobBetween(prevJob, currentJob, remainingTask);
+			if (job != null) {
 				newJobs.add(job);
-				if (remainingTask.getNumOfItems() <= 0) {
-					break;
-				}
+			}
+			if (remainingTask.getNumOfItems() <= 0) {
+				return newJobs;
 			}
 			// Check if and how much we can add to an existing job
-			addableTask = addToJob(currentJob, remainingTask);
+			T addableTask = addToJob(currentJob, remainingTask);
 			if (addableTask != null) {
 				int items = addableTask.getNumOfItems();
 				remainingTask.setNumOfItems(remainingTask.getNumOfItems() - items);
 				currentJob.addTask(addableTask);
 				if (remainingTask.getNumOfItems() <= 0) {
-					break;
+					return newJobs;
 				}
 			}
 
 			prevJob = currentJob;
 		}
 		// Schedule remaining task at the end
-		if (remainingTask.getNumOfItems() > 0) {
-			Date startDate = remainingTask.getReleaseDate();
-			if (prevJob.getEnd().compareTo(startDate) > 0) {
-				startDate = prevJob.getEnd();
-			}
-			Date endDate = new Date(startDate.toSeconds() + getProductionTime(prevJob, null, remainingTask));
-			Job<T> job = new Job<>(startDate, endDate, remainingTask);
-			newJobs.add(job);
+		Job<T> job = createJobBetween(prevJob, null, remainingTask);
+		newJobs.add(job);
+		return newJobs;
+	}
+
+	@Override
+	public Date getEarliestCompletionTime(T task) {
+		List<Job<T>> jobs = createJobs(task);
+		if (jobs.isEmpty()) {
+			return getJob(task.getProductId()).getEnd();
 		}
-		schedule.addAll(newJobs);
-		Collections.sort(schedule);
+		return jobs.get(jobs.size() - 1).getEnd();
+	}
+
+	@Override
+	public void insert(T task) {
+		schedule.addAll(createJobs(task));
+		Collections.sort(schedule, new JobStartDateComparator());
 	}
 
 	@Override
