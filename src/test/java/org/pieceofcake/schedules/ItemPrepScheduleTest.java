@@ -91,52 +91,75 @@ public class ItemPrepScheduleTest {
 		schedule.insert(tasks.get(0));
 		schedule.insert(tasks.get(1));
 		schedule.insert(tasks.get(2));
-		Job<ItemPrepTask> nextScheduledTask;
+		Job<ItemPrepTask> nextScheduledJob;
 
-		nextScheduledTask = schedule.getNextScheduledJob();
-		assertEquals(new Date(1, 0, 0, 0), nextScheduledTask.getStart());
-		assertEquals(new Date(1, 1, 0, 0), nextScheduledTask.getEnd());
-		assertEquals("order-002", nextScheduledTask.getTask().getOrderId());
-		assertEquals("Pie", nextScheduledTask.getTask().getProductId());
-
-		schedule.removeFirst();
-
-		nextScheduledTask = schedule.getNextScheduledJob();
-		assertEquals(new Date(1, 1, 0, 0), nextScheduledTask.getStart());
-		assertEquals(new Date(1, 1, 42, 0), nextScheduledTask.getEnd());
-		assertEquals("order-001", nextScheduledTask.getTask().getOrderId());
-		assertEquals("Cake", nextScheduledTask.getTask().getProductId());
+		nextScheduledJob = schedule.getNextScheduledJob();
+		ItemPrepTask task = nextScheduledJob.getAssociatedTasks().get(0);
+		assertEquals(new Date(1, 0, 0, 0), nextScheduledJob.getStart());
+		assertEquals(new Date(1, 1, 0, 0), nextScheduledJob.getEnd());
+		
+		assertEquals("order-002", task.getOrderId());
+		assertEquals("Pie", task.getProductId());
 
 		schedule.removeFirst();
 
-		nextScheduledTask = schedule.getNextScheduledJob();
-		assertEquals(new Date(1, 1, 42, 0), nextScheduledTask.getStart());
-		assertEquals(new Date(1, 1, 54, 0), nextScheduledTask.getEnd());
-		assertEquals("order-002", nextScheduledTask.getTask().getOrderId());
-		assertEquals("Pie", nextScheduledTask.getTask().getProductId());
+		nextScheduledJob = schedule.getNextScheduledJob();
+		task = nextScheduledJob.getAssociatedTasks().get(0);
+		assertEquals(new Date(1, 1, 0, 0), nextScheduledJob.getStart());
+		assertEquals(new Date(1, 1, 42, 0), nextScheduledJob.getEnd());
+		assertEquals("order-001", task.getOrderId());
+		assertEquals("Cake", task.getProductId());
 
 		schedule.removeFirst();
 
-		nextScheduledTask = schedule.getNextScheduledJob();
-		assertEquals(new Date(1, 2, 00, 0), nextScheduledTask.getStart());
-		assertEquals(new Date(1, 2, 50, 0), nextScheduledTask.getEnd());
-		assertEquals("order-001", nextScheduledTask.getTask().getOrderId());
-		assertEquals("Bread", nextScheduledTask.getTask().getProductId());
+		nextScheduledJob = schedule.getNextScheduledJob();
+		task = nextScheduledJob.getAssociatedTasks().get(0);
+		assertEquals(new Date(1, 1, 42, 0), nextScheduledJob.getStart());
+		assertEquals(new Date(1, 1, 54, 0), nextScheduledJob.getEnd());
+		assertEquals("order-002",task.getOrderId());
+		assertEquals("Pie",task.getProductId());
 
 		schedule.removeFirst();
 
-		nextScheduledTask = schedule.getNextScheduledJob();
-		assertEquals(new Date(1, 2, 50, 0), nextScheduledTask.getStart());
-		assertEquals(new Date(1, 3, 14, 0), nextScheduledTask.getEnd());
-		assertEquals("order-002", nextScheduledTask.getTask().getOrderId());
-		assertEquals("Pie", nextScheduledTask.getTask().getProductId());
+		nextScheduledJob = schedule.getNextScheduledJob();
+		task = nextScheduledJob.getAssociatedTasks().get(0);
+		assertEquals(new Date(1, 2, 00, 0), nextScheduledJob.getStart());
+		assertEquals(new Date(1, 2, 50, 0), nextScheduledJob.getEnd());
+		assertEquals("order-001", task.getOrderId());
+		assertEquals("Bread", task.getProductId());
 
 		schedule.removeFirst();
 
-		nextScheduledTask = schedule.getNextScheduledJob();
-		assertNull(nextScheduledTask);
+		nextScheduledJob = schedule.getNextScheduledJob();
+		task = nextScheduledJob.getAssociatedTasks().get(0);
+		assertEquals(new Date(1, 2, 50, 0), nextScheduledJob.getStart());
+		assertEquals(new Date(1, 3, 14, 0), nextScheduledJob.getEnd());
+		assertEquals("order-002", task.getOrderId());
+		assertEquals("Pie", task.getProductId());
+
+		schedule.removeFirst();
+
+		nextScheduledJob = schedule.getNextScheduledJob();
+		assertNull(nextScheduledJob);
 		
 		schedule.removeFirst();
+	}
+	
+	@Test
+	public void testRemoveTasksFromOrder() {
+		schedule.insert(tasks.get(0));
+		schedule.insert(tasks.get(1));
+		schedule.insert(tasks.get(2));
+		schedule.removeTasksFromOrder("order-001");
+		
+		Job<ItemPrepTask> nextScheduledJob;
+		while (schedule.getNextScheduledJob() != null) {
+			nextScheduledJob = schedule.getNextScheduledJob();
+			ItemPrepTask task = nextScheduledJob.getAssociatedTasks().get(0);
+			assertEquals("order-002" , task.getOrderId());
+			schedule.removeFirst();
+		}
+	
 	}
 
 }

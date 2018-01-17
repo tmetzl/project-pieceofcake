@@ -86,19 +86,23 @@ public class KneadingScheduleTest {
 		String task2Id = tasks.get(2).getOrderId() + tasks.get(2).getProductId();
 		String taskId;
 		Job<KneadingTask> nextScheduledJob;
+		KneadingTask task;
 
 		nextScheduledJob = schedule.getNextScheduledJob();
-		taskId = nextScheduledJob.getTask().getOrderId() + nextScheduledJob.getTask().getProductId();
+		task = nextScheduledJob.getAssociatedTasks().get(0);
+		taskId = task.getOrderId() + task.getProductId();
 		assertEquals(task1Id, taskId);
 		schedule.removeFirst();
 
 		nextScheduledJob = schedule.getNextScheduledJob();
-		taskId = nextScheduledJob.getTask().getOrderId() + nextScheduledJob.getTask().getProductId();
+		task = nextScheduledJob.getAssociatedTasks().get(0);
+		taskId = task.getOrderId() + task.getProductId();
 		assertEquals(task0Id, taskId);
 		schedule.removeFirst();
 
 		nextScheduledJob = schedule.getNextScheduledJob();
-		taskId = nextScheduledJob.getTask().getOrderId() + nextScheduledJob.getTask().getProductId();
+		task = nextScheduledJob.getAssociatedTasks().get(0);
+		taskId = task.getOrderId() + task.getProductId();
 		assertEquals(task2Id, taskId);
 		schedule.removeFirst();
 
