@@ -1,5 +1,7 @@
 package org.pieceofcake.behaviours;
 
+import java.util.List;
+
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.domain.DFService;
@@ -15,16 +17,17 @@ public class FindAgents extends Behaviour {
 	private Logger logger;
 	private boolean foundAgent;
 	private ServiceDescription sd;
-	private AID[] listOfAgents;
+	private List<AID> agentList;
 
-	public FindAgents(String service, String bakeryName, AID[] emptyList) {
+	public FindAgents(String serviceType, String serviceName, List<AID> emptyList) {
 		this.logger = Logger.getJADELogger(this.getClass().getName());
 		foundAgent = false;
 		sd = new ServiceDescription();
 		// e.g. service = Services.BAKE
-		sd.setType(service);
-		sd.setName(bakeryName);
-		this.listOfAgents = emptyList;
+		sd.setType(serviceType);
+		// bakery name as serviceName
+		sd.setName(serviceName);
+		this.agentList = emptyList;
 	}
 
 	@Override
@@ -35,7 +38,7 @@ public class FindAgents extends Behaviour {
 			DFAgentDescription[] result = DFService.search(myAgent, template);
 			if (result.length > 0) {
 				for (int i = 0; i < result.length; i++) {
-					listOfAgents[i] = result[i].getName();
+					agentList.add(result[i].getName());
 				}
 				foundAgent = true;
 			}
