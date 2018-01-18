@@ -20,7 +20,6 @@ public class JobTest {
 		kneadingTask.setReleaseDate(new Date(1, 2, 0, 0));
 		kneadingTask.setDueDate(new Date(1, 7, 30, 0));
 		kneadingTask.setKneadingTime(2400);
-		kneadingTask.setRestingTime(1200);
 
 		Job<KneadingTask> job = new Job<>(new Date(1, 1, 15, 0), new Date(1, 1, 55, 0), kneadingTask);
 		assertEquals(new Date(1, 1, 15, 0), job.getStart());
@@ -31,7 +30,6 @@ public class JobTest {
 
 		KneadingTask kneadingTaskFromScheduledTask = (KneadingTask) taskFromScheduledTask;
 		assertEquals(2400l, kneadingTaskFromScheduledTask.getKneadingTime());
-		assertEquals(1200l, kneadingTaskFromScheduledTask.getRestingTime());
 		assertEquals(new Date(1, 7, 30, 0), kneadingTaskFromScheduledTask.getDueDate());
 		assertEquals(new Date(1, 2, 0, 0), kneadingTaskFromScheduledTask.getReleaseDate());
 		assertEquals("order-001", kneadingTaskFromScheduledTask.getOrderId());
@@ -48,6 +46,7 @@ public class JobTest {
 		bakingTask.setBakingTemperature(200);
 		bakingTask.setBakingTime(3000);
 		bakingTask.setNumOfItems(10);
+		bakingTask.setItemPerTray(5);
 
 		Job<BakingTask> job = new Job<>(new Date(1, 3, 0, 0), new Date(1, 3, 50, 0), bakingTask);
 
@@ -59,6 +58,7 @@ public class JobTest {
 		bakingTask2.setBakingTemperature(200);
 		bakingTask2.setBakingTime(3000);
 		bakingTask2.setNumOfItems(10);
+		bakingTask2.setItemPerTray(5);
 
 		job.addTask(bakingTask2);
 
