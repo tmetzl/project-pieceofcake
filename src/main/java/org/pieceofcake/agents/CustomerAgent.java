@@ -5,9 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.pieceofcake.behaviours.DelayUntilDate;
+import org.pieceofcake.behaviours.FindAgents;
 import org.pieceofcake.behaviours.ReceiveStartingTime;
 import org.pieceofcake.behaviours.SynchronizeClock;
 import org.pieceofcake.config.Protocols;
+import org.pieceofcake.config.Services;
 import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.Location;
 import org.pieceofcake.objects.Order;
@@ -17,10 +19,6 @@ import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
-import jade.domain.DFService;
-import jade.domain.FIPAException;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
@@ -70,15 +68,16 @@ public class CustomerAgent extends SynchronizedAgent {
 		private int numOfReplies = 0;
 		private double bestPrice = 0;
 		private AID bestSeller;
-		private AID[] bakeries;
+		private List<AID> bakeries;
 		private Order order;
 
 		public PlaceOrder(Order order) {
 			this.order = order;
+			this.bakeries = new LinkedList<>();
 			this.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
 			this.addSubBehaviour(
 					new DelayUntilDate(getScenarioClock(), order.getOrderDate()));
-			this.addSubBehaviour(new UpdateBakeries());
+			this.addSubBehaviour(new FindAgents(Services.ORDER, Services.ORDER_NAME, bakeries));
 			this.addSubBehaviour(new RequestOffers());
 			this.addSubBehaviour(new ReceiveOffers());
 			this.addSubBehaviour(new OrderFromBestSeller());
@@ -91,29 +90,6 @@ public class CustomerAgent extends SynchronizedAgent {
 				myAgent.addBehaviour(new PlaceOrder(orders.get(0)));
 			}
 			return 0;
-		}
-
-		private class UpdateBakeries extends OneShotBehaviour {
-
-			private static final long serialVersionUID = 8365966822569563888L;
-
-			@Override
-			public void action() {
-				DFAgentDescription template = new DFAgentDescription();
-				ServiceDescription sd = new ServiceDescription();
-				sd.setType("bakery");
-				template.addServices(sd);
-				try {
-					DFAgentDescription[] result = DFService.search(myAgent, template);
-					bakeries = new AID[result.length];
-					for (int i = 0; i < result.length; i++) {
-						bakeries[i] = result[i].getName();
-					}
-				} catch (FIPAException fe) {
-					logger.log(Logger.WARNING, fe.getMessage(), fe);
-				}
-			}
-
 		}
 
 		private class RequestOffers extends OneShotBehaviour {
@@ -129,8 +105,8 @@ public class CustomerAgent extends SynchronizedAgent {
 
 				ACLMessage msg = new ACLMessage(ACLMessage.CFP);
 				// Add all known bakeries as receivers
-				for (int i = 0; i < bakeries.length; i++) {
-					msg.addReceiver(bakeries[i]);
+				for (AID bakery : bakeries) {
+					msg.addReceiver(bakery);
 				}
 				msg.setLanguage("English");
 				msg.setOntology("Bakery-order-ontology");
@@ -166,7 +142,7 @@ public class CustomerAgent extends SynchronizedAgent {
 						}
 					}
 					numOfReplies++;
-					if (numOfReplies >= bakeries.length) {
+					if (numOfReplies >= bakeries.size()) {
 						// All replies received, terminate behavior
 						allOffersReceived = true;
 					}
