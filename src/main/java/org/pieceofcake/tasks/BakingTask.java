@@ -7,6 +7,7 @@ public class BakingTask extends Task {
 	private long bakingTime;
 	private long bakingTemperature;
 	private double coolingTimeFactor;
+	private int itemPerTray;
 
 	public long getBakingTime() {
 		return bakingTime;
@@ -32,12 +33,21 @@ public class BakingTask extends Task {
 		this.coolingTimeFactor = coolingTimeFactor;
 	}
 
+	public int getItemPerTray() {
+		return itemPerTray;
+	}
+
+	public void setItemPerTray(int itemPerTray) {
+		this.itemPerTray = itemPerTray;
+	}
+
 	@Override
 	public JSONObject toJSONObject() {
 		JSONObject jsonObject = super.toJSONObject();
 		jsonObject.put("baking_time", bakingTime);
 		jsonObject.put("baking_temp", bakingTemperature);
 		jsonObject.put("cooling_time_factor", coolingTimeFactor);
+		jsonObject.put("item_per_tray", itemPerTray);
 		return jsonObject;
 	}
 
@@ -47,7 +57,7 @@ public class BakingTask extends Task {
 		setBakingTime(jsonObject.getLong("baking_time"));
 		setBakingTemperature(jsonObject.getLong("baking_temp"));
 		setCoolingTimeFactor(jsonObject.getDouble("cooling_time_factor"));
-
+		setItemPerTray(jsonObject.getInt("item_per_tray"));
 	}
 
 	@Override
