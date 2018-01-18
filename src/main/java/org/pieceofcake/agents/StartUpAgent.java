@@ -3,6 +3,7 @@ package org.pieceofcake.agents;
 import org.pieceofcake.behaviours.DelayUntilDate;
 import org.pieceofcake.behaviours.SynchronizeClock;
 import org.pieceofcake.config.Protocols;
+import org.pieceofcake.config.Services;
 import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.ScenarioClock;
 
@@ -47,8 +48,8 @@ public class StartUpAgent extends Agent {
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType("startup");
-		sd.setName("startup-service");
+		sd.setType(Services.STARTUP);
+		sd.setName(Services.STARTUP_NAME);
 		sd.addProtocols(Protocols.STARTUP);
 		dfd.addServices(sd);
 		try {

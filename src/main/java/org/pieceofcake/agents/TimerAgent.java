@@ -1,6 +1,7 @@
 package org.pieceofcake.agents;
 
 import org.pieceofcake.config.Protocols;
+import org.pieceofcake.config.Services;
 
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -49,8 +50,8 @@ public class TimerAgent extends Agent {
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType("time");
-		sd.setName("time-service");
+		sd.setType(Services.TIME);
+		sd.setName(Services.TIME_NAME);
 		sd.addProtocols(Protocols.TIME);
 		dfd.addServices(sd);
 		try {
