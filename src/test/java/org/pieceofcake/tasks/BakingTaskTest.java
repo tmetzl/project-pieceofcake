@@ -20,7 +20,6 @@ public class BakingTaskTest {
 		jsonObject.put("order_id", "order-001");
 		jsonObject.put("baking_temp", 100);
 		jsonObject.put("num_of_items", 5);
-		jsonObject.put("cooling_time_factor", 1.2);
 		jsonObject.put("item_per_tray", 10);
 
 		BakingTask bakingTask = new BakingTask();
@@ -33,7 +32,6 @@ public class BakingTaskTest {
 		assertEquals("order-001", bakingTask.getOrderId());
 		assertEquals(100, bakingTask.getBakingTemperature());
 		assertEquals(5, bakingTask.getNumOfItems());
-		assertEquals(1.2, bakingTask.getCoolingTimeFactor(), 0.01);
 		assertEquals(10, bakingTask.getItemPerTray());
 
 		JSONObject jsonObjectFromBakingTask = bakingTask.toJSONObject();
@@ -47,7 +45,6 @@ public class BakingTaskTest {
 		assertEquals("order-001", anotherBakingTask.getOrderId());
 		assertEquals(100, anotherBakingTask.getBakingTemperature());
 		assertEquals(5, anotherBakingTask.getNumOfItems());
-		assertEquals(1.2, anotherBakingTask.getCoolingTimeFactor(), 0.01);
 		assertEquals(10, anotherBakingTask.getItemPerTray());
 	}
 
