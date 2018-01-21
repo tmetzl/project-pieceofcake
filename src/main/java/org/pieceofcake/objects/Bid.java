@@ -1,9 +1,13 @@
 package org.pieceofcake.objects;
 
+import java.io.Serializable;
+
 import jade.core.AID;
 
-public class Bid {
+public class Bid implements Serializable {
 
+	private static final long serialVersionUID = 8217916051757483752L;
+	
 	private Date completionTime;
 	private AID agentId;
 
