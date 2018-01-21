@@ -4,9 +4,10 @@ import org.json.JSONObject;
 
 public class BakingTask extends Task {
 
+	private static final long serialVersionUID = -5071207234146128199L;
+	
 	private long bakingTime;
 	private long bakingTemperature;
-	private double coolingTimeFactor;
 	private int itemPerTray;
 
 	public long getBakingTime() {
@@ -25,14 +26,6 @@ public class BakingTask extends Task {
 		this.bakingTemperature = bakingTemperature;
 	}
 
-	public double getCoolingTimeFactor() {
-		return coolingTimeFactor;
-	}
-
-	public void setCoolingTimeFactor(double coolingTimeFactor) {
-		this.coolingTimeFactor = coolingTimeFactor;
-	}
-
 	public int getItemPerTray() {
 		return itemPerTray;
 	}
@@ -46,7 +39,6 @@ public class BakingTask extends Task {
 		JSONObject jsonObject = super.toJSONObject();
 		jsonObject.put("baking_time", bakingTime);
 		jsonObject.put("baking_temp", bakingTemperature);
-		jsonObject.put("cooling_time_factor", coolingTimeFactor);
 		jsonObject.put("item_per_tray", itemPerTray);
 		return jsonObject;
 	}
@@ -56,7 +48,6 @@ public class BakingTask extends Task {
 		super.fromJSONObject(jsonObject);
 		setBakingTime(jsonObject.getLong("baking_time"));
 		setBakingTemperature(jsonObject.getLong("baking_temp"));
-		setCoolingTimeFactor(jsonObject.getDouble("cooling_time_factor"));
 		setItemPerTray(jsonObject.getInt("item_per_tray"));
 	}
 

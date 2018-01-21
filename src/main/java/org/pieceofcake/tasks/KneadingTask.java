@@ -4,6 +4,8 @@ import org.json.JSONObject;
 
 public class KneadingTask extends Task {
 
+	private static final long serialVersionUID = 1037416424420325389L;
+	
 	private long kneadingTime;
 
 	public long getKneadingTime() {

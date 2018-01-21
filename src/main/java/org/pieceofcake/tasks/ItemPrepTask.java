@@ -4,6 +4,8 @@ import org.json.JSONObject;
 
 public class ItemPrepTask extends Task {
 
+	private static final long serialVersionUID = 4649370483138488377L;
+	
 	private long itemPrepTime;
 
 	public long getItemPrepTime() {

@@ -5,6 +5,8 @@ import org.pieceofcake.objects.Location;
 
 public class DeliveryTask extends Task {
 
+	private static final long serialVersionUID = 1951480863418113600L;
+	
 	private int itemPerBox;
 	private Location location;
 

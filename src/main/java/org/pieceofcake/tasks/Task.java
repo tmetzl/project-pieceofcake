@@ -1,9 +1,13 @@
 package org.pieceofcake.tasks;
 
+import java.io.Serializable;
+
 import org.json.JSONObject;
 import org.pieceofcake.objects.Date;
 
-public abstract class Task {
+public abstract class Task implements Serializable {
+	
+	private static final long serialVersionUID = 2386458692759876186L;
 	
 	private Date dueDate;
 	private Date releaseDate;

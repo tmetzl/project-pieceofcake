@@ -4,6 +4,8 @@ import org.json.JSONObject;
 
 public class RestingTask extends Task {
 
+	private static final long serialVersionUID = 5746383628733720536L;
+	
 	private long restingTime;
 
 	public long getRestingTime() {
