@@ -13,9 +13,7 @@ import org.pieceofcake.objects.OrderContract;
 import org.pieceofcake.tasks.*;
 
 import jade.core.AID;
-import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
-import jade.lang.acl.ACLMessage;
 
 public class ScheduleOrder extends SequentialBehaviour {
 
@@ -30,24 +28,6 @@ public class ScheduleOrder extends SequentialBehaviour {
 		this.cookBook = cookBook;
 		this.bakeryName = bakeryName;
 		this.addSubBehaviour(new HandleKneadingTasks());
-
-	}
-
-	private class CancelOrderContract extends OneShotBehaviour {
-
-		private static final long serialVersionUID = -5994674106161575658L;
-
-		@Override
-		public void action() {
-			ACLMessage msg = new ACLMessage(ACLMessage.CANCEL);
-			msg.setProtocol(Protocols.CANCEL_ORDER);
-			msg.setContent(contract.getOrder().toJSONObject().toString());
-			for (AID agent : contract.getAgents()) {
-				msg.addReceiver(agent);
-			}
-			myAgent.send(msg);
-			contract = null;
-		}
 
 	}
 
@@ -113,7 +93,7 @@ public class ScheduleOrder extends SequentialBehaviour {
 					}
 				}
 				if (!offerDatesOk) {
-					ScheduleOrder.this.addSubBehaviour(new CancelOrderContract());
+					ScheduleOrder.this.addSubBehaviour(new CancelOrderContract(contract));
 				} else {
 					for (Map.Entry<AID, KneadingTask> entry : bestTaskOffers.entrySet()) {
 						contract.addKneadingTask(entry.getKey(), entry.getValue());
