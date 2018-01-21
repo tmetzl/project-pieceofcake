@@ -11,6 +11,7 @@ public class Protocols {
 	public static final String TIME = "time-protocol";
 	public static final String KNEAD = "knead-protocol";
 	public static final String DOUGH = "dough-protocol";
+	public static final String CANCEL_ORDER = "cancel-order-protocol";
 
 }
 
