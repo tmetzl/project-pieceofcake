@@ -10,46 +10,78 @@ import org.pieceofcake.config.Services;
 import org.pieceofcake.objects.CookBook;
 import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.OrderContract;
-import org.pieceofcake.tasks.*;
+import org.pieceofcake.tasks.BakingTask;
+import org.pieceofcake.tasks.CoolingTask;
+import org.pieceofcake.tasks.DeliveryTask;
+import org.pieceofcake.tasks.ItemPrepTask;
+import org.pieceofcake.tasks.KneadingTask;
+import org.pieceofcake.tasks.RestingTask;
 
 import jade.core.AID;
+import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 
 public class ScheduleOrder extends SequentialBehaviour {
 
-	private static final long serialVersionUID = -7230607737265077273L;
+	private static final long serialVersionUID = -2844996881242194690L;
 
 	private OrderContract contract;
 	private CookBook cookBook;
+	private List<Behaviour> taskHandlers;
 	private String bakeryName;
 
 	public ScheduleOrder(OrderContract contract, CookBook cookBook, String bakeryName) {
 		this.contract = contract;
 		this.cookBook = cookBook;
 		this.bakeryName = bakeryName;
-		this.addSubBehaviour(new HandleKneadingTasks());
+		this.taskHandlers = new LinkedList<>();
+		this.taskHandlers.add(new HandleKneadingTasks(contract));
+		this.taskHandlers.add(new HandleRestingTasks(contract));
+		this.taskHandlers.add(new HandleItemPrepTasks(contract));
+		this.taskHandlers.add(new HandleBakingTasks(contract));
+		this.taskHandlers.add(new HandleCoolingTasks(contract));
+		this.taskHandlers.add(new HandleDeliveryTasks(contract));
 
+		this.addSubBehaviour(new Controller());
 	}
 
-	private class HandleKneadingTasks extends SequentialBehaviour {
+	public Date getProductionDueDate() {
+		Date dueDate = contract.getOrder().getDueDate();
+		if (dueDate.compareTo(new Date(dueDate.getDay(), 12, 0, 0)) > 0) {
+			dueDate = new Date(dueDate.getDay(), 12, 0, 0);
+		}
+		return dueDate;
+	}
 
-		private static final long serialVersionUID = -1122790881400098267L;
+	private class Controller extends OneShotBehaviour {
 
-		private Date dueDate;
-		private List<KneadingTask> kneadingTasks;
+		private static final long serialVersionUID = 8177316770094605092L;
 
-		public HandleKneadingTasks() {
-			prepareKneadingTasks();
-			dueDate = contract.getOrder().getDueDate();
-			if (dueDate.compareTo(new Date(dueDate.getDay(), 12, 0, 0)) > 0) {
-				dueDate = new Date(dueDate.getDay(), 12, 0, 0);
+		@Override
+		public void action() {
+			if (contract.hasFailed()) {
+				ScheduleOrder.this.addSubBehaviour(new CancelOrderContract(contract));
+			} else if (!taskHandlers.isEmpty()) {
+				ScheduleOrder.this.addSubBehaviour(taskHandlers.remove(0));
+				ScheduleOrder.this.addSubBehaviour(new Controller());
 			}
-			this.addSubBehaviour(new AdvertiseAndCheckKneadingTask());
 
 		}
 
-		private void prepareKneadingTasks() {
-			kneadingTasks = new LinkedList<>();
+	}
+
+	private class HandleKneadingTasks extends HandleTasks<KneadingTask> {
+
+		private static final long serialVersionUID = -5810953260411341064L;
+
+		public HandleKneadingTasks(OrderContract contract) {
+			super(contract, Services.KNEAD, bakeryName, Protocols.KNEAD);
+		}
+
+		@Override
+		public List<KneadingTask> prepareTasks() {
+			List<KneadingTask> kneadingTasks = new LinkedList<>();
 			for (String product : contract.getOrder().getProductIds()) {
 				KneadingTask task = new KneadingTask();
 				task.setOrderId(contract.getOrder().getGuiId());
@@ -64,52 +96,217 @@ public class ScheduleOrder extends SequentialBehaviour {
 				}
 				kneadingTasks.add(task);
 			}
+			return kneadingTasks;
 		}
 
-		private class AdvertiseAndCheckKneadingTask extends SequentialBehaviour {
+		@Override
+		public Date getDueDate() {
+			return getProductionDueDate();
+		}
 
-			private static final long serialVersionUID = 3052021260601546757L;
+		@Override
+		public void addTaskToOrder(AID agentId, KneadingTask task) {
+			contract.addKneadingTask(agentId, task);
+		}
 
-			private Map<AID, KneadingTask> bestTaskOffers;
+	}
 
-			public AdvertiseAndCheckKneadingTask() {
+	private class HandleRestingTasks extends HandleTasks<RestingTask> {
 
-				KneadingTask task = kneadingTasks.remove(0);
-				this.bestTaskOffers = new HashMap<>();
-				this.addSubBehaviour(new AdvertiseTask<KneadingTask>(task, Services.KNEAD, bakeryName, Protocols.KNEAD,
-						bestTaskOffers));
+		private static final long serialVersionUID = -4291064769030512996L;
 
+		public HandleRestingTasks(OrderContract contract) {
+			super(contract, Services.REST, bakeryName, Protocols.REST);
+		}
+
+		@Override
+		public List<RestingTask> prepareTasks() {
+			List<RestingTask> restingTasks = new LinkedList<>();
+			List<KneadingTask> scheduledKneadingTasks = contract.getKneadingTasks();
+			for (KneadingTask kneadingTask : scheduledKneadingTasks) {
+				RestingTask task = new RestingTask();
+				task.setOrderId(kneadingTask.getOrderId());
+				task.setNumOfItems(1);
+				task.setProductId(kneadingTask.getProductId());
+				task.setDueDate(contract.getOrder().getDueDate());
+				task.setRestingTime(cookBook.getProduct(task.getProductId()).getDoughRestingTime());
+				task.setReleaseDate(kneadingTask.getDueDate());
+				restingTasks.add(task);
 			}
+			return restingTasks;
+		}
 
-			@Override
-			public int onEnd() {
+		@Override
+		public Date getDueDate() {
+			return getProductionDueDate();
+		}
 
-				boolean offerDatesOk = true;
+		@Override
+		public void addTaskToOrder(AID agentId, RestingTask task) {
+			contract.addRestingTask(agentId, task);
 
-				for (Task task : bestTaskOffers.values()) {
-					if (task.getDueDate().compareTo(dueDate) > 0) {
-						offerDatesOk = false;
-						break;
-					}
-				}
-				if (!offerDatesOk) {
-					ScheduleOrder.this.addSubBehaviour(new CancelOrderContract(contract));
-				} else {
-					for (Map.Entry<AID, KneadingTask> entry : bestTaskOffers.entrySet()) {
-						contract.addKneadingTask(entry.getKey(), entry.getValue());
-					}
+		}
 
-					if (!kneadingTasks.isEmpty()) {
-						HandleKneadingTasks.this.addSubBehaviour(new AdvertiseAndCheckKneadingTask());
-					} else {
-						// TODO ScheduleOrder.this.addSubBehaviour(new
-						// HandleRestingTasks());
-					}
+	}
 
-				}
-				return 0;
+	private class HandleItemPrepTasks extends HandleTasks<ItemPrepTask> {
 
+		private static final long serialVersionUID = -7640934465607940240L;
+
+		public HandleItemPrepTasks(OrderContract contract) {
+			super(contract, Services.PREP, bakeryName, Protocols.PREP);
+		}
+
+		@Override
+		public List<ItemPrepTask> prepareTasks() {
+			List<ItemPrepTask> itemPrepTasks = new LinkedList<>();
+			Map<String, Integer> productAmounts = new HashMap<>();
+			for (int i = 0; i < contract.getOrder().getProductIds().length; i++) {
+				productAmounts.put(contract.getOrder().getProductIds()[i], contract.getOrder().getProductAmounts()[i]);
 			}
+			List<RestingTask> scheduledRestingTasks = contract.getRestingTasks();
+			for (RestingTask restingTask : scheduledRestingTasks) {
+				ItemPrepTask task = new ItemPrepTask();
+				task.setOrderId(restingTask.getOrderId());
+				task.setProductId(restingTask.getProductId());
+				task.setNumOfItems(productAmounts.get(task.getProductId()));
+				task.setDueDate(contract.getOrder().getDueDate());
+				task.setItemPrepTime(cookBook.getProduct(task.getProductId()).getItemPrepTime());
+				task.setReleaseDate(restingTask.getDueDate());
+				itemPrepTasks.add(task);
+			}
+			return itemPrepTasks;
+		}
+
+		@Override
+		public Date getDueDate() {
+			return getProductionDueDate();
+		}
+
+		@Override
+		public void addTaskToOrder(AID agentId, ItemPrepTask task) {
+			contract.addItemPrepTask(agentId, task);
+
+		}
+
+	}
+
+	private class HandleBakingTasks extends HandleTasks<BakingTask> {
+
+		private static final long serialVersionUID = -9203853513681591829L;
+
+		public HandleBakingTasks(OrderContract contract) {
+			super(contract, Services.BAKE, bakeryName, Protocols.BAKE);
+
+		}
+
+		@Override
+		public List<BakingTask> prepareTasks() {
+			List<BakingTask> bakingTasks = new LinkedList<>();
+			List<ItemPrepTask> scheduledItemPrepTasks = contract.getItemPrepTasks();
+			for (ItemPrepTask itemPrepTask : scheduledItemPrepTasks) {
+				BakingTask task = new BakingTask();
+				task.setOrderId(itemPrepTask.getOrderId());
+				task.setProductId(itemPrepTask.getProductId());
+				task.setDueDate(contract.getOrder().getDueDate());
+				task.setReleaseDate(itemPrepTask.getDueDate());
+				task.setNumOfItems(itemPrepTask.getNumOfItems());
+				task.setBakingTemperature(cookBook.getProduct(task.getProductId()).getBakingTemp());
+				task.setBakingTime(cookBook.getProduct(task.getProductId()).getBakingTime());
+				task.setItemPerTray(cookBook.getProduct(task.getProductId()).getBreadsPerOven());
+				bakingTasks.add(task);
+			}
+			return bakingTasks;
+		}
+
+		@Override
+		public Date getDueDate() {
+			return getProductionDueDate();
+		}
+
+		@Override
+		public void addTaskToOrder(AID agentId, BakingTask task) {
+			contract.addBakingTask(agentId, task);
+
+		}
+
+	}
+
+	private class HandleCoolingTasks extends HandleTasks<CoolingTask> {
+
+		private static final long serialVersionUID = -1476933508291283837L;
+
+		public HandleCoolingTasks(OrderContract contract) {
+			super(contract, Services.COOL, bakeryName, Protocols.COOL);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public List<CoolingTask> prepareTasks() {
+			List<CoolingTask> coolingTasks = new LinkedList<>();
+			List<BakingTask> scheduledBakingTasks = contract.getBakingTasks();
+			for (BakingTask bakingTask : scheduledBakingTasks) {
+				CoolingTask task = new CoolingTask();
+				task.setOrderId(bakingTask.getOrderId());
+				task.setProductId(bakingTask.getProductId());
+				task.setDueDate(contract.getOrder().getDueDate());
+				task.setReleaseDate(bakingTask.getDueDate());
+				task.setNumOfItems(bakingTask.getNumOfItems());
+				task.setBakingTemperature(bakingTask.getBakingTemperature());
+				task.setCoolingTimeFactor(cookBook.getProduct(task.getProductId()).getCoolingRate());
+				coolingTasks.add(task);
+			}
+			return coolingTasks;
+		}
+
+		@Override
+		public Date getDueDate() {
+			return getProductionDueDate();
+		}
+
+		@Override
+		public void addTaskToOrder(AID agentId, CoolingTask task) {
+			contract.addCoolingTask(agentId, task);
+
+		}
+
+	}
+
+	private class HandleDeliveryTasks extends HandleTasks<DeliveryTask> {
+
+		private static final long serialVersionUID = -2012773224825103351L;
+
+		public HandleDeliveryTasks(OrderContract contract) {
+			super(contract, Services.DELIVERY, bakeryName, Protocols.DELIVERY);
+		}
+
+		@Override
+		public List<DeliveryTask> prepareTasks() {
+			List<DeliveryTask> deliveryTasks = new LinkedList<>();
+			List<CoolingTask> scheduledCoolingTasks = contract.getCoolingTasks();
+			for (CoolingTask coolingTask : scheduledCoolingTasks) {
+				DeliveryTask task = new DeliveryTask();
+				task.setOrderId(coolingTask.getOrderId());
+				task.setProductId(coolingTask.getProductId());
+				task.setDueDate(contract.getOrder().getDueDate());
+				task.setReleaseDate(coolingTask.getDueDate());
+				task.setNumOfItems(coolingTask.getNumOfItems());
+				task.setLocation(contract.getOrder().getLocation());
+				task.setItemPerBox(cookBook.getProduct(task.getProductId()).getBreadsPerBox());
+				deliveryTasks.add(task);
+			}
+			return deliveryTasks;
+		}
+
+		@Override
+		public Date getDueDate() {
+			Date dueDate = contract.getOrder().getDueDate();
+			return dueDate;
+		}
+
+		@Override
+		public void addTaskToOrder(AID agentId, DeliveryTask task) {
+			contract.addDeliveryTask(agentId, task);
 
 		}
 
