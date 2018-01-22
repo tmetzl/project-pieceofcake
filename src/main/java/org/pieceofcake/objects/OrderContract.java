@@ -21,8 +21,10 @@ public class OrderContract implements Serializable {
 	private Map<AID, List<BakingTask>> bakingTaskMap;
 	private Map<AID, List<CoolingTask>> coolingTaskMap;
 	private Map<AID, List<DeliveryTask>> deliveryTaskMap;
+	private boolean hasFailed;
+	private AID customerAgentId;
 
-	public OrderContract(Order order) {
+	public OrderContract(Order order, AID customerAgentId) {
 		this.order = order;
 		this.kneadingTaskMap = new HashMap<>();
 		this.restingTaskMap = new HashMap<>();
@@ -30,10 +32,20 @@ public class OrderContract implements Serializable {
 		this.bakingTaskMap = new HashMap<>();
 		this.coolingTaskMap = new HashMap<>();
 		this.deliveryTaskMap = new HashMap<>();
+		this.hasFailed = false;
+		this.customerAgentId = customerAgentId;
 	}
 
 	public Order getOrder() {
 		return order;
+	}
+	
+	public boolean hasFailed() {
+		return hasFailed;
+	}
+	
+	public void setFailed(boolean hasFailed) {
+		this.hasFailed = hasFailed;
 	}
 
 	private <T extends Task> void addTask(AID agentId, T task, Map<AID, List<T>> taskMap) {
@@ -134,6 +146,14 @@ public class OrderContract implements Serializable {
 
 	public void addDeliveryTask(AID agentId, DeliveryTask task) {
 		addTask(agentId, task, deliveryTaskMap);
+	}
+	
+	public AID getCustomerAgentId() {
+		return customerAgentId;
+	}
+
+	public void setCustomerAgentId(AID customerAgentId) {
+		this.customerAgentId = customerAgentId;
 	}
 
 }
