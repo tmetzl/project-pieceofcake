@@ -24,6 +24,8 @@ public class OrderTest {
 		products.put("Brezel", 7);
 		products.put("Bread", 16);
 		jsonOrder.put("products", products);
+		Location location = new Location(1, 2);
+		jsonOrder.put("location", location.toJSONObject());
 		order = new Order(jsonOrder);
 	}
 
@@ -41,6 +43,7 @@ public class OrderTest {
 		assertEquals(2, productAmounts.length);
 		assertEquals(7, productAmounts[0]);
 		assertEquals(16, productAmounts[1]);
+		assertEquals(new Location(1, 2), order.getLocation());
 	}
 
 	@Test
@@ -56,6 +59,9 @@ public class OrderTest {
 		assertEquals(7, products.getInt("Brezel"));
 		assertTrue(products.has("Bread"));
 		assertEquals(16, products.getInt("Bread"));
+		Location location = new Location();
+		location.fromJSONObject(jsonOrder.getJSONObject("location"));
+		assertEquals(new Location(1, 2), new Location(location.getX(), location.getY()));
 	}
 
 	@Test
