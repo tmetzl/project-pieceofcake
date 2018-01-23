@@ -63,10 +63,6 @@ public class ResourceHandler extends CyclicBehaviour {
 	public void notifyRequesters(Resource resource) {
 		String resourceKey = resource.getResourceType() + resource.getProductId();
 		Queue<ResourceRequest> resourceQueue = resourceRequests.computeIfAbsent(resourceKey, k -> new LinkedList<>());
-		if (resourceQueue == null) {
-			resourceQueue = new LinkedList<>();
-			resourceRequests.put(resourceKey, resourceQueue);
-		}
 		ResourceRequest request = resourceQueue.peek();
 		while (request != null && warehouse.hasResource(request.getResource())) {
 			if (!resource.getResourceType().equals(Resources.FRESH_DOUGH) && !resource.getResourceType().equals(Resources.RESTED_DOUGH)) {
