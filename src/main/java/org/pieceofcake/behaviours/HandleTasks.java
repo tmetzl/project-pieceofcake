@@ -39,7 +39,7 @@ public class HandleTasks<T extends Task> extends SequentialBehaviour {
 		public AdvertiseAndCheckTask() {
 			T task = tasks.remove(0);
 			this.bestTaskOffers = new HashMap<>();
-			this.addSubBehaviour(new AdvertiseTask<>(task, taskDescriptor.getServiceName(),
+			this.addSubBehaviour(new AdvertiseTask<>(task, taskDescriptor.getServiceType(),
 					taskDescriptor.getBakeryName(), taskDescriptor.getProtocol(), bestTaskOffers));
 		}
 

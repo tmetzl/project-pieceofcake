@@ -107,7 +107,7 @@ public class ScheduleOrder extends SequentialBehaviour {
 		}
 
 		@Override
-		public String getServiceName() {
+		public String getServiceType() {
 			return Services.KNEAD;
 		}
 
@@ -156,7 +156,7 @@ public class ScheduleOrder extends SequentialBehaviour {
 		}
 
 		@Override
-		public String getServiceName() {
+		public String getServiceType() {
 			return Services.REST;
 		}
 
@@ -209,7 +209,7 @@ public class ScheduleOrder extends SequentialBehaviour {
 		}
 
 		@Override
-		public String getServiceName() {
+		public String getServiceType() {
 			return Services.PREP;
 		}
 
@@ -260,7 +260,7 @@ public class ScheduleOrder extends SequentialBehaviour {
 		}
 
 		@Override
-		public String getServiceName() {
+		public String getServiceType() {
 			return Services.BAKE;
 		}
 
@@ -310,7 +310,7 @@ public class ScheduleOrder extends SequentialBehaviour {
 		}
 
 		@Override
-		public String getServiceName() {
+		public String getServiceType() {
 			return Services.COOL;
 		}
 
@@ -360,7 +360,7 @@ public class ScheduleOrder extends SequentialBehaviour {
 		}
 
 		@Override
-		public String getServiceName() {
+		public String getServiceType() {
 			return Services.DELIVERY;
 		}
 

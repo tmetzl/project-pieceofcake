@@ -17,7 +17,7 @@ public interface TaskDescriptor<T extends Task> extends Serializable {
 
 	public void addTaskToOrder(AID agentId, T task, OrderContract contract);
 
-	public String getServiceName();
+	public String getServiceType();
 
 	public String getBakeryName();
 
