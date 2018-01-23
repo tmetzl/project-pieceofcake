@@ -1,5 +1,6 @@
 package org.pieceofcake.behaviours;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import org.pieceofcake.config.Protocols;
 import org.pieceofcake.config.Services;
+import org.pieceofcake.interfaces.TaskDescriptor;
 import org.pieceofcake.objects.CookBook;
 import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.OrderContract;
@@ -36,12 +38,12 @@ public class ScheduleOrder extends SequentialBehaviour {
 		this.cookBook = cookBook;
 		this.bakeryName = bakeryName;
 		this.taskHandlers = new LinkedList<>();
-		this.taskHandlers.add(new HandleKneadingTasks(contract));
-		this.taskHandlers.add(new HandleRestingTasks(contract));
-		this.taskHandlers.add(new HandleItemPrepTasks(contract));
-		this.taskHandlers.add(new HandleBakingTasks(contract));
-		this.taskHandlers.add(new HandleCoolingTasks(contract));
-		this.taskHandlers.add(new HandleDeliveryTasks(contract));
+		this.taskHandlers.add(new HandleTasks<>(contract, new KneadingTaskDescriptor()));
+		this.taskHandlers.add(new HandleTasks<>(contract, new RestingTaskDescriptor()));
+		this.taskHandlers.add(new HandleTasks<>(contract, new ItemPrepTaskDescriptor()));
+		this.taskHandlers.add(new HandleTasks<>(contract, new BakingTaskDescriptor()));
+		this.taskHandlers.add(new HandleTasks<>(contract, new CoolingTaskDescriptor()));
+		this.taskHandlers.add(new HandleTasks<>(contract, new DeliveryTaskDescriptor()));
 
 		this.addSubBehaviour(new Controller());
 	}
@@ -71,13 +73,9 @@ public class ScheduleOrder extends SequentialBehaviour {
 
 	}
 
-	private class HandleKneadingTasks extends HandleTasks<KneadingTask> {
+	private class KneadingTaskDescriptor implements TaskDescriptor<KneadingTask>, Serializable {
 
-		private static final long serialVersionUID = -5810953260411341064L;
-
-		public HandleKneadingTasks(OrderContract contract) {
-			super(contract, Services.KNEAD, bakeryName, Protocols.KNEAD);
-		}
+		private static final long serialVersionUID = 2539302258065744071L;
 
 		@Override
 		public List<KneadingTask> prepareTasks() {
@@ -105,19 +103,30 @@ public class ScheduleOrder extends SequentialBehaviour {
 		}
 
 		@Override
-		public void addTaskToOrder(AID agentId, KneadingTask task) {
+		public void addTaskToOrder(AID agentId, KneadingTask task, OrderContract contract) {
 			contract.addKneadingTask(agentId, task);
+		}
+
+		@Override
+		public String getServiceName() {
+			return Services.KNEAD;
+		}
+
+		@Override
+		public String getBakeryName() {
+			return bakeryName;
+		}
+
+		@Override
+		public String getProtocol() {
+			return Protocols.KNEAD;
 		}
 
 	}
 
-	private class HandleRestingTasks extends HandleTasks<RestingTask> {
+	private class RestingTaskDescriptor implements TaskDescriptor<RestingTask>, Serializable {
 
-		private static final long serialVersionUID = -4291064769030512996L;
-
-		public HandleRestingTasks(OrderContract contract) {
-			super(contract, Services.REST, bakeryName, Protocols.REST);
-		}
+		private static final long serialVersionUID = 8517411323531517287L;
 
 		@Override
 		public List<RestingTask> prepareTasks() {
@@ -142,20 +151,31 @@ public class ScheduleOrder extends SequentialBehaviour {
 		}
 
 		@Override
-		public void addTaskToOrder(AID agentId, RestingTask task) {
+		public void addTaskToOrder(AID agentId, RestingTask task, OrderContract contract) {
 			contract.addRestingTask(agentId, task);
 
 		}
 
+		@Override
+		public String getServiceName() {
+			return Services.REST;
+		}
+
+		@Override
+		public String getBakeryName() {
+			return bakeryName;
+		}
+
+		@Override
+		public String getProtocol() {
+			return Protocols.REST;
+		}
+
 	}
 
-	private class HandleItemPrepTasks extends HandleTasks<ItemPrepTask> {
+	private class ItemPrepTaskDescriptor implements TaskDescriptor<ItemPrepTask>, Serializable {
 
 		private static final long serialVersionUID = -7640934465607940240L;
-
-		public HandleItemPrepTasks(OrderContract contract) {
-			super(contract, Services.PREP, bakeryName, Protocols.PREP);
-		}
 
 		@Override
 		public List<ItemPrepTask> prepareTasks() {
@@ -184,21 +204,31 @@ public class ScheduleOrder extends SequentialBehaviour {
 		}
 
 		@Override
-		public void addTaskToOrder(AID agentId, ItemPrepTask task) {
+		public void addTaskToOrder(AID agentId, ItemPrepTask task, OrderContract contract) {
 			contract.addItemPrepTask(agentId, task);
 
 		}
 
+		@Override
+		public String getServiceName() {
+			return Services.PREP;
+		}
+
+		@Override
+		public String getBakeryName() {
+			return bakeryName;
+		}
+
+		@Override
+		public String getProtocol() {
+			return Protocols.PREP;
+		}
+
 	}
 
-	private class HandleBakingTasks extends HandleTasks<BakingTask> {
+	private class BakingTaskDescriptor implements TaskDescriptor<BakingTask>, Serializable {
 
 		private static final long serialVersionUID = -9203853513681591829L;
-
-		public HandleBakingTasks(OrderContract contract) {
-			super(contract, Services.BAKE, bakeryName, Protocols.BAKE);
-
-		}
 
 		@Override
 		public List<BakingTask> prepareTasks() {
@@ -225,21 +255,31 @@ public class ScheduleOrder extends SequentialBehaviour {
 		}
 
 		@Override
-		public void addTaskToOrder(AID agentId, BakingTask task) {
+		public void addTaskToOrder(AID agentId, BakingTask task, OrderContract contract) {
 			contract.addBakingTask(agentId, task);
 
 		}
 
+		@Override
+		public String getServiceName() {
+			return Services.BAKE;
+		}
+
+		@Override
+		public String getBakeryName() {
+			return bakeryName;
+		}
+
+		@Override
+		public String getProtocol() {
+			return Protocols.BAKE;
+		}
+
 	}
 
-	private class HandleCoolingTasks extends HandleTasks<CoolingTask> {
+	private class CoolingTaskDescriptor implements TaskDescriptor<CoolingTask>, Serializable {
 
 		private static final long serialVersionUID = -1476933508291283837L;
-
-		public HandleCoolingTasks(OrderContract contract) {
-			super(contract, Services.COOL, bakeryName, Protocols.COOL);
-			// TODO Auto-generated constructor stub
-		}
 
 		@Override
 		public List<CoolingTask> prepareTasks() {
@@ -265,20 +305,31 @@ public class ScheduleOrder extends SequentialBehaviour {
 		}
 
 		@Override
-		public void addTaskToOrder(AID agentId, CoolingTask task) {
+		public void addTaskToOrder(AID agentId, CoolingTask task, OrderContract contract) {
 			contract.addCoolingTask(agentId, task);
 
 		}
 
+		@Override
+		public String getServiceName() {
+			return Services.COOL;
+		}
+
+		@Override
+		public String getBakeryName() {
+			return bakeryName;
+		}
+
+		@Override
+		public String getProtocol() {
+			return Protocols.COOL;
+		}
+
 	}
 
-	private class HandleDeliveryTasks extends HandleTasks<DeliveryTask> {
+	private class DeliveryTaskDescriptor implements TaskDescriptor<DeliveryTask>, Serializable {
 
 		private static final long serialVersionUID = -2012773224825103351L;
-
-		public HandleDeliveryTasks(OrderContract contract) {
-			super(contract, Services.DELIVERY, bakeryName, Protocols.DELIVERY);
-		}
 
 		@Override
 		public List<DeliveryTask> prepareTasks() {
@@ -300,14 +351,28 @@ public class ScheduleOrder extends SequentialBehaviour {
 
 		@Override
 		public Date getDueDate() {
-			Date dueDate = contract.getOrder().getDueDate();
-			return dueDate;
+			return contract.getOrder().getDueDate();
 		}
 
 		@Override
-		public void addTaskToOrder(AID agentId, DeliveryTask task) {
+		public void addTaskToOrder(AID agentId, DeliveryTask task, OrderContract contract) {
 			contract.addDeliveryTask(agentId, task);
 
+		}
+
+		@Override
+		public String getServiceName() {
+			return Services.DELIVERY;
+		}
+
+		@Override
+		public String getBakeryName() {
+			return bakeryName;
+		}
+
+		@Override
+		public String getProtocol() {
+			return Protocols.DELIVERY;
 		}
 
 	}
