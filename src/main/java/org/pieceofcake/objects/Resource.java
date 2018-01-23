@@ -1,8 +1,12 @@
 package org.pieceofcake.objects;
 
+import java.io.Serializable;
+
 import org.json.JSONObject;
 
-public class Resource {
+public class Resource implements Serializable {
+	
+	private static final long serialVersionUID = 1734099398446059806L;
 	
 	private String resourceType;
 	private String productId;
