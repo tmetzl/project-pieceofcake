@@ -153,11 +153,21 @@ public class Scenario {
 	}
 
 	private void loadOrders() {
+		Map<String, Location> customerLocations = new HashMap<>();
+		JSONArray jsonCustomers = jsonScenario.getJSONArray("customers");
+
+		for (int i = 0; i < jsonCustomers.length(); i++) {
+			// Extract one customer and its Id
+			JSONObject customer = jsonCustomers.getJSONObject(i);
+			customerLocations.put(customer.getString("guid"), getLocation(customer));
+		}
 		JSONArray orders = jsonScenario.getJSONArray("orders");
 		customerOrderMap = new HashMap<>();
 		for (int i = 0; i < orders.length(); i++) {
 			// Convert each order to a JSONObject
 			JSONObject order = orders.getJSONObject(i);
+			// Add location to order
+			order.put("location", customerLocations.get(order.get("customer_id")).toJSONObject());
 			// Adding minute and second to comply with date format
 			JSONObject orderDate = order.getJSONObject("order_date");
 			orderDate.put("minute", 0);
