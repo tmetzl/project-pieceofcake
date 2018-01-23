@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.pieceofcake.interfaces.TaskDescriptor;
 import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.OrderContract;
 import org.pieceofcake.tasks.Task;
@@ -11,33 +12,23 @@ import org.pieceofcake.tasks.Task;
 import jade.core.AID;
 import jade.core.behaviours.SequentialBehaviour;
 
-public abstract class HandleTasks<T extends Task> extends SequentialBehaviour {
+public class HandleTasks<T extends Task> extends SequentialBehaviour {
 
 	private static final long serialVersionUID = -1122790881400098267L;
 
 	private Date dueDate;
 	private List<T> tasks;
 	private OrderContract contract;
-	private String serviceName;
-	private String bakeryName;
-	private String protocol;
+	private TaskDescriptor<T> taskDescriptor;
 
-	public HandleTasks(OrderContract contract, String serviceName, String bakeryName, String protocol) {
+	public HandleTasks(OrderContract contract, TaskDescriptor<T> taskDescriptor) {
+		this.taskDescriptor = taskDescriptor;
 		this.contract = contract;
-		this.tasks = prepareTasks();
-		this.dueDate = getDueDate();
-		this.serviceName = serviceName;
-		this.bakeryName = bakeryName;
-		this.protocol = protocol;
+		this.tasks = taskDescriptor.prepareTasks();
+		this.dueDate = taskDescriptor.getDueDate();
 		this.addSubBehaviour(new AdvertiseAndCheckTask());
 
 	}
-
-	public abstract List<T> prepareTasks();
-	
-	public abstract Date getDueDate();
-
-	public abstract void addTaskToOrder(AID agentId, T task);
 
 	private class AdvertiseAndCheckTask extends SequentialBehaviour {
 
@@ -48,8 +39,8 @@ public abstract class HandleTasks<T extends Task> extends SequentialBehaviour {
 		public AdvertiseAndCheckTask() {
 			T task = tasks.remove(0);
 			this.bestTaskOffers = new HashMap<>();
-			this.addSubBehaviour(
-					new AdvertiseTask<>(task, serviceName, bakeryName, protocol, bestTaskOffers));
+			this.addSubBehaviour(new AdvertiseTask<>(task, taskDescriptor.getServiceName(),
+					taskDescriptor.getBakeryName(), taskDescriptor.getProtocol(), bestTaskOffers));
 		}
 
 		@Override
@@ -67,7 +58,7 @@ public abstract class HandleTasks<T extends Task> extends SequentialBehaviour {
 				contract.setFailed(true);
 			} else {
 				for (Map.Entry<AID, T> entry : bestTaskOffers.entrySet()) {
-					addTaskToOrder(entry.getKey(), entry.getValue());
+					taskDescriptor.addTaskToOrder(entry.getKey(), entry.getValue(), contract);
 				}
 
 				if (!tasks.isEmpty()) {
