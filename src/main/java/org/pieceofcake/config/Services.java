@@ -20,6 +20,7 @@ public class Services {
 	public static final String BOX = "boxing-service";
 	public static final String DELIVERY = "delivery-service";
 	public static final String COOL = "cooling-service";
+	public static final String RESOURCE = "resource-service";
 	
 	
 
