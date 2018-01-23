@@ -1,6 +1,5 @@
 package org.pieceofcake.behaviours;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,7 +72,7 @@ public class ScheduleOrder extends SequentialBehaviour {
 
 	}
 
-	private class KneadingTaskDescriptor implements TaskDescriptor<KneadingTask>, Serializable {
+	private class KneadingTaskDescriptor implements TaskDescriptor<KneadingTask> {
 
 		private static final long serialVersionUID = 2539302258065744071L;
 
@@ -124,7 +123,7 @@ public class ScheduleOrder extends SequentialBehaviour {
 
 	}
 
-	private class RestingTaskDescriptor implements TaskDescriptor<RestingTask>, Serializable {
+	private class RestingTaskDescriptor implements TaskDescriptor<RestingTask> {
 
 		private static final long serialVersionUID = 8517411323531517287L;
 
@@ -173,7 +172,7 @@ public class ScheduleOrder extends SequentialBehaviour {
 
 	}
 
-	private class ItemPrepTaskDescriptor implements TaskDescriptor<ItemPrepTask>, Serializable {
+	private class ItemPrepTaskDescriptor implements TaskDescriptor<ItemPrepTask> {
 
 		private static final long serialVersionUID = -7640934465607940240L;
 
@@ -226,7 +225,7 @@ public class ScheduleOrder extends SequentialBehaviour {
 
 	}
 
-	private class BakingTaskDescriptor implements TaskDescriptor<BakingTask>, Serializable {
+	private class BakingTaskDescriptor implements TaskDescriptor<BakingTask> {
 
 		private static final long serialVersionUID = -9203853513681591829L;
 
@@ -277,7 +276,7 @@ public class ScheduleOrder extends SequentialBehaviour {
 
 	}
 
-	private class CoolingTaskDescriptor implements TaskDescriptor<CoolingTask>, Serializable {
+	private class CoolingTaskDescriptor implements TaskDescriptor<CoolingTask> {
 
 		private static final long serialVersionUID = -1476933508291283837L;
 
@@ -327,7 +326,7 @@ public class ScheduleOrder extends SequentialBehaviour {
 
 	}
 
-	private class DeliveryTaskDescriptor implements TaskDescriptor<DeliveryTask>, Serializable {
+	private class DeliveryTaskDescriptor implements TaskDescriptor<DeliveryTask> {
 
 		private static final long serialVersionUID = -2012773224825103351L;
 

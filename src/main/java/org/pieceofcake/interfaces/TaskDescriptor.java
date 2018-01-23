@@ -1,5 +1,6 @@
 package org.pieceofcake.interfaces;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.pieceofcake.objects.Date;
@@ -8,7 +9,7 @@ import org.pieceofcake.tasks.Task;
 
 import jade.core.AID;
 
-public interface TaskDescriptor<T extends Task> {
+public interface TaskDescriptor<T extends Task> extends Serializable {
 
 	public List<T> prepareTasks();
 
