@@ -1,5 +1,6 @@
 package org.pieceofcake.behaviours;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -61,7 +62,7 @@ public class ResourceHandler extends CyclicBehaviour {
 	
 	public void notifyRequesters(Resource resource) {
 		String resourceKey = resource.getResourceType() + resource.getProductId();
-		Queue<ResourceRequest> resourceQueue = resourceRequests.get(resourceKey);
+		Queue<ResourceRequest> resourceQueue = resourceRequests.computeIfAbsent(resourceKey, k -> new LinkedList<>());
 		if (resourceQueue == null) {
 			resourceQueue = new LinkedList<>();
 			resourceRequests.put(resourceKey, resourceQueue);
@@ -98,7 +99,9 @@ public class ResourceHandler extends CyclicBehaviour {
 		
 	}	
 	
-	private class ResourceRequest {
+	private class ResourceRequest implements Serializable {
+		
+		private static final long serialVersionUID = 166047585913740613L;
 		
 		private AID requester;
 		private String requestId;
@@ -106,6 +109,7 @@ public class ResourceHandler extends CyclicBehaviour {
 		
 		public ResourceRequest(AID requester, String requestId, Resource resource) {
 			this.requester = requester;
+			this.requestId = requestId;
 			this.resource = resource;
 		}
 		

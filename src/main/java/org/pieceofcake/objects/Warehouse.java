@@ -1,10 +1,13 @@
 package org.pieceofcake.objects;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-public class Warehouse {
+public class Warehouse implements Serializable {
+	
+	private static final long serialVersionUID = 5863327946815774727L;
 	
 	private Map<String, Integer> resourceStorage;
 	
