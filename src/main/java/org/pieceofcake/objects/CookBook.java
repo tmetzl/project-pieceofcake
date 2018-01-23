@@ -1,9 +1,12 @@
 package org.pieceofcake.objects;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CookBook {
+public class CookBook implements Serializable {
+	
+	private static final long serialVersionUID = 2949165791730234316L;
 	
 	private Map<String, Product> products;
 	
