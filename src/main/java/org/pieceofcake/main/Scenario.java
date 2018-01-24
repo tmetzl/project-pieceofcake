@@ -11,20 +11,25 @@ import java.util.Scanner;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.pieceofcake.agents.BakeryClockAgent;
+
 import org.pieceofcake.agents.CustomerAgent;
 import org.pieceofcake.agents.GPSAgent;
-import org.pieceofcake.agents.KneadingAgent;
-import org.pieceofcake.agents.KneadingSchedulerAgent;
 import org.pieceofcake.agents.OrderAgent;
+import org.pieceofcake.agents.ProductionAgent;
 import org.pieceofcake.agents.StartUpAgent;
 import org.pieceofcake.agents.TimerAgent;
+import org.pieceofcake.agents.WarehouseAgent;
+import org.pieceofcake.interfaces.Machine;
+import org.pieceofcake.machines.ItemPrepMachine;
+import org.pieceofcake.machines.KneadingMachine;
 import org.pieceofcake.objects.Bakery;
 import org.pieceofcake.objects.Location;
 import org.pieceofcake.objects.Order;
 import org.pieceofcake.objects.Product;
 import org.pieceofcake.streetnetwork.DiGraph;
 import org.pieceofcake.streetnetwork.Node;
+import org.pieceofcake.tasks.ItemPrepTask;
+import org.pieceofcake.tasks.KneadingTask;
 
 import jade.core.Agent;
 import jade.core.Profile;
@@ -228,18 +233,29 @@ public class Scenario {
 			JSONObject jsonBakery = bakeries.getJSONObject(i);
 			String name = jsonBakery.getString("name");
 			String guiId = jsonBakery.getString("guid");
-
-			JSONArray kneadingMachines = jsonBakery.getJSONArray("kneading_machines");
-			int numberOfKneadingMachines = kneadingMachines.length();
 			Location location = getLocation(jsonBakery);
 			Bakery bakery = new Bakery(guiId, name, location);
-			BakeryClockAgent myBakeryClock = new BakeryClockAgent(bakery);
-
-			String[] kneadingAgentNames = new String[numberOfKneadingMachines];
-			for (int j = 0; j < numberOfKneadingMachines; j++) {
+			
+			JSONArray kneadingMachines = jsonBakery.getJSONArray("kneading_machines");
+			
+			for (int j=0;j<kneadingMachines.length();j++) {
 				JSONObject kneadingMachine = kneadingMachines.getJSONObject(j);
-				kneadingAgentNames[j] = kneadingMachine.getString("guid");
+				String kneadingAgentName = kneadingMachine.getString("guid");
+				Machine<KneadingTask> machine = new KneadingMachine(guiId);
+				tierOneAgents.put(kneadingAgentName, new ProductionAgent<>(location, machine));
 			}
+			
+			JSONArray prepTables = jsonBakery.getJSONArray("dough_prep_tables");
+			
+			for (int j=0;j<prepTables.length();j++) {
+				JSONObject prepTable = prepTables.getJSONObject(j);
+				String prepTableName = prepTable.getString("guid");
+				Machine<ItemPrepTask> machine = new ItemPrepMachine(guiId);
+				tierOneAgents.put(prepTableName, new ProductionAgent<>(location, machine));
+			}
+
+			//BakeryClockAgent myBakeryClock = new BakeryClockAgent(bakery);
+
 
 			JSONArray products = jsonBakery.getJSONArray("products");
 			for (int j = 0; j < products.length(); j++) {
@@ -248,12 +264,10 @@ public class Scenario {
 				bakery.addProduct(product);
 			}
 
-			for (String kneadingAgentName : kneadingAgentNames) {
-				tierOneAgents.put(kneadingAgentName, new KneadingAgent());
-			}
-			tierTwoAgents.put(name + "-kneadingScheduler", new KneadingSchedulerAgent(kneadingAgentNames, bakery));
-			tierTwoAgents.put(name + "-clock", myBakeryClock);
+			//tierTwoAgents.put(name + "-kneadingScheduler", new KneadingSchedulerAgent(kneadingAgentNames, bakery));
+			//tierTwoAgents.put(name + "-clock", myBakeryClock);
 			tierTwoAgents.put(name, new OrderAgent(bakery));
+			tierTwoAgents.put(name+"-warehouse", new WarehouseAgent(location, guiId));
 		}
 
 	}
