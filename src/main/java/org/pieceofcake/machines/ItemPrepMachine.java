@@ -2,7 +2,6 @@ package org.pieceofcake.machines;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Semaphore;
 
 import org.json.JSONObject;
 import org.pieceofcake.behaviours.WaitForDuration;
@@ -10,7 +9,6 @@ import org.pieceofcake.behaviours.WaitForResources;
 import org.pieceofcake.config.Protocols;
 import org.pieceofcake.config.Resources;
 import org.pieceofcake.config.Services;
-import org.pieceofcake.interfaces.Machine;
 import org.pieceofcake.interfaces.Schedule;
 import org.pieceofcake.objects.Job;
 import org.pieceofcake.objects.Resource;
@@ -19,20 +17,17 @@ import org.pieceofcake.tasks.ItemPrepTask;
 
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.SequentialBehaviour;
-import jade.util.Logger;
 
-public class ItemPrepMachine implements Machine<ItemPrepTask> {
+public class ItemPrepMachine extends SingleMachine<ItemPrepTask> {
 
 	private static final long serialVersionUID = -4022008370196820691L;
 
 	private Map<Integer, Schedule<ItemPrepTask>> schedules;
-	private Semaphore semaphore;
 	private String bakeryName;
 
 	public ItemPrepMachine(String bakeryName) {
 		this.bakeryName = bakeryName;
 		this.schedules = new HashMap<>();
-		this.semaphore = new Semaphore(1, true);
 	}
 
 	@Override
@@ -63,21 +58,6 @@ public class ItemPrepMachine implements Machine<ItemPrepTask> {
 		seq.addSubBehaviour(new WaitForResources(resource, bakeryName));		
 		seq.addSubBehaviour(new WaitForDuration(seconds));
 		return seq;
-	}
-
-	@Override
-	public void aquireMachine() {
-		try {
-			semaphore.acquire();
-		} catch (InterruptedException e) {
-			Logger.getJADELogger(this.getClass().getName()).log(Logger.WARNING, e.getMessage(), e);
-			Thread.currentThread().interrupt();
-		}
-	}
-
-	@Override
-	public void releaseMachine() {
-		semaphore.release();
 	}
 
 	@Override
