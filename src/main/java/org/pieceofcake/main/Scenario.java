@@ -22,7 +22,7 @@ import org.pieceofcake.agents.WarehouseAgent;
 import org.pieceofcake.interfaces.Machine;
 import org.pieceofcake.machines.ItemPrepMachine;
 import org.pieceofcake.machines.KneadingMachine;
-import org.pieceofcake.objects.Bakery;
+import org.pieceofcake.objects.CookBook;
 import org.pieceofcake.objects.Location;
 import org.pieceofcake.objects.Order;
 import org.pieceofcake.objects.Product;
@@ -234,7 +234,6 @@ public class Scenario {
 			String name = jsonBakery.getString("name");
 			String guiId = jsonBakery.getString("guid");
 			Location location = getLocation(jsonBakery);
-			Bakery bakery = new Bakery(guiId, name, location);
 			
 			JSONArray kneadingMachines = jsonBakery.getJSONArray("kneading_machines");
 			
@@ -254,14 +253,15 @@ public class Scenario {
 				tierOneAgents.put(prepTableName, new ProductionAgent<>(location, machine));
 			}
 
+			CookBook cookBook = new CookBook();
 			JSONArray products = jsonBakery.getJSONArray("products");
 			for (int j = 0; j < products.length(); j++) {
 				JSONObject jsonProduct = products.getJSONObject(j);
 				Product product = new Product(jsonProduct.toString());
-				bakery.addProduct(product);
+				cookBook.addProduct(product);
 			}
 
-			tierTwoAgents.put(name, new OrderAgent(bakery));
+			tierTwoAgents.put(name, new OrderAgent(location, guiId, cookBook));
 			tierTwoAgents.put(name+"-warehouse", new WarehouseAgent(location, guiId));
 		}
 

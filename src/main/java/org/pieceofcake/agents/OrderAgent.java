@@ -5,7 +5,8 @@ import org.pieceofcake.behaviours.ReceiveStartingTime;
 import org.pieceofcake.behaviours.SynchronizeClock;
 import org.pieceofcake.config.Protocols;
 import org.pieceofcake.config.Services;
-import org.pieceofcake.objects.Bakery;
+import org.pieceofcake.objects.CookBook;
+import org.pieceofcake.objects.Location;
 import org.pieceofcake.objects.Order;
 
 import jade.core.behaviours.CyclicBehaviour;
@@ -21,11 +22,13 @@ import jade.util.Logger;
 @SuppressWarnings("serial")
 public class OrderAgent extends SynchronizedAgent {
 
-	private transient Bakery myBakery;
+	private CookBook cookBook;
+	private String bakeryName;
 
-	public OrderAgent(Bakery bakery) {
-		this.myBakery = bakery;
-		this.location = bakery.getLocation();
+	public OrderAgent(Location location, String bakeryName, CookBook cookBook) {
+		this.cookBook = cookBook;
+		this.bakeryName = bakeryName;
+		this.location = location;
 	}
 
 	@Override
@@ -86,7 +89,7 @@ public class OrderAgent extends SynchronizedAgent {
 					Order order = new Order(new JSONObject(jsonOrder));
 
 					// Get the price of the order
-					Double price = myBakery.getPrice(order);
+					Double price = cookBook.getSalesPrice(order);
 					ACLMessage reply = msg.createReply();
 					if (price != null) {
 						reply.setPerformative(ACLMessage.PROPOSE);
@@ -103,7 +106,7 @@ public class OrderAgent extends SynchronizedAgent {
 					String jsonOrder = msg.getContent();
 					Order order = new Order(new JSONObject(jsonOrder));
 					// Add to active orders
-					myBakery.addOrder(order);
+					//myBakery.addOrder(order);
 				}
 			} else {
 				block();
