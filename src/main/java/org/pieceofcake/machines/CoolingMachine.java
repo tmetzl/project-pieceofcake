@@ -12,7 +12,6 @@ import org.pieceofcake.config.Resources;
 import org.pieceofcake.config.Services;
 import org.pieceofcake.interfaces.Schedule;
 import org.pieceofcake.objects.Job;
-import org.pieceofcake.objects.Resource;
 import org.pieceofcake.schedules.CoolingSchedule;
 import org.pieceofcake.tasks.CoolingTask;
 
@@ -45,24 +44,11 @@ public class CoolingMachine extends InfiniteParallelMachine<CoolingTask> {
 
 	@Override
 	public Behaviour getJobProcessor(Job<CoolingTask> job) {
-		Resource resourceNeeded = new Resource();
-		resourceNeeded.setResourceType(Resources.BAKED_ITEM);
-		resourceNeeded.setProductId(job.getAssociatedTasks().get(0).getProductId());
-		int amount = 0;
-		for (CoolingTask task : job.getAssociatedTasks()) {
-			amount += task.getNumOfItems();
-		}
-		resourceNeeded.setAmount(amount);
-		
-		Resource resourceProduced = new Resource();
-		resourceProduced.setResourceType(Resources.COOLED_ITEM);
-		resourceProduced.setAmount(amount);
-		resourceProduced.setProductId(resourceNeeded.getProductId());
 		long seconds = job.getEnd().toSeconds() - job.getStart().toSeconds();
 		SequentialBehaviour seq = new SequentialBehaviour();
-		seq.addSubBehaviour(new WaitForResources(resourceNeeded, bakeryName));		
+		seq.addSubBehaviour(new WaitForResources(getResource(Resources.BAKED_ITEM, job), bakeryName));		
 		seq.addSubBehaviour(new WaitForDuration(seconds));
-		seq.addSubBehaviour(new UpdateResources(resourceProduced, bakeryName));
+		seq.addSubBehaviour(new UpdateResources(getResource(Resources.COOLED_ITEM, job), bakeryName));
 		return seq;
 	}
 

@@ -12,7 +12,6 @@ import org.pieceofcake.config.Resources;
 import org.pieceofcake.config.Services;
 import org.pieceofcake.interfaces.Schedule;
 import org.pieceofcake.objects.Job;
-import org.pieceofcake.objects.Resource;
 import org.pieceofcake.schedules.BakingSchedule;
 import org.pieceofcake.tasks.BakingTask;
 
@@ -51,25 +50,12 @@ public class BakingMachine extends SingleMachine<BakingTask> {
 
 	@Override
 	public Behaviour getJobProcessor(Job<BakingTask> job) {
-		Resource resourceNeeded = new Resource();
-		resourceNeeded.setResourceType(Resources.PREPPED_ITEM);
-		resourceNeeded.setProductId(job.getAssociatedTasks().get(0).getProductId());
-		int amount = 0;
-		for (BakingTask task : job.getAssociatedTasks()) {
-			amount += task.getNumOfItems();
-		}
-		resourceNeeded.setAmount(amount);
-		
-		Resource resourceProduced = new Resource();
-		resourceProduced.setResourceType(Resources.BAKED_ITEM);
-		resourceProduced.setAmount(amount);
-		resourceProduced.setProductId(resourceNeeded.getProductId());
 		long seconds = job.getEnd().toSeconds() - job.getStart().toSeconds();
 		
 		SequentialBehaviour seq = new SequentialBehaviour();
-		seq.addSubBehaviour(new WaitForResources(resourceNeeded, bakeryName));		
+		seq.addSubBehaviour(new WaitForResources(getResource(Resources.PREPPED_ITEM, job), bakeryName));		
 		seq.addSubBehaviour(new WaitForDuration(seconds));
-		seq.addSubBehaviour(new UpdateResources(resourceProduced, bakeryName));
+		seq.addSubBehaviour(new UpdateResources(getResource(Resources.BAKED_ITEM, job), bakeryName));
 		return seq;
 	}
 

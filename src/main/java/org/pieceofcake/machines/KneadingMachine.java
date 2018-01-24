@@ -11,7 +11,6 @@ import org.pieceofcake.config.Resources;
 import org.pieceofcake.config.Services;
 import org.pieceofcake.interfaces.Schedule;
 import org.pieceofcake.objects.Job;
-import org.pieceofcake.objects.Resource;
 import org.pieceofcake.schedules.KneadingSchedule;
 import org.pieceofcake.tasks.KneadingTask;
 
@@ -45,15 +44,10 @@ public class KneadingMachine extends SingleMachine<KneadingTask> {
 	@Override
 	public Behaviour getJobProcessor(Job<KneadingTask> job) {
 		long seconds = job.getEnd().toSeconds() - job.getStart().toSeconds();
-		KneadingTask task = job.getAssociatedTasks().get(0);
-		Resource resource = new Resource();
-		resource.setResourceType(Resources.FRESH_DOUGH);
-		resource.setProductId(task.getProductId());
-		resource.setAmount(1);
 		
 		SequentialBehaviour seq = new SequentialBehaviour();
 		seq.addSubBehaviour(new WaitForDuration(seconds));
-		seq.addSubBehaviour(new UpdateResources(resource, bakeryName));
+		seq.addSubBehaviour(new UpdateResources(getResource(Resources.FRESH_DOUGH, job), bakeryName));
 		return seq;
 	}
 

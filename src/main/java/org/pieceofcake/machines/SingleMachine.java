@@ -2,12 +2,11 @@ package org.pieceofcake.machines;
 
 import java.util.concurrent.Semaphore;
 
-import org.pieceofcake.interfaces.Machine;
 import org.pieceofcake.tasks.Task;
 
 import jade.util.Logger;
 
-public abstract class SingleMachine<T extends Task> implements Machine<T> {
+public abstract class SingleMachine<T extends Task> extends AbstractMachine<T> {
 
 	private static final long serialVersionUID = -5488123242981992996L;
 	

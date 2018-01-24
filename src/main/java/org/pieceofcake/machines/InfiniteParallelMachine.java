@@ -1,9 +1,8 @@
 package org.pieceofcake.machines;
 
-import org.pieceofcake.interfaces.Machine;
 import org.pieceofcake.tasks.Task;
 
-public abstract class InfiniteParallelMachine<T extends Task> implements Machine<T> {
+public abstract class InfiniteParallelMachine<T extends Task> extends AbstractMachine<T> {
 
 	private static final long serialVersionUID = -6011452324107005012L;
 
