@@ -108,6 +108,8 @@ public class RestingScheduleTest {
 		nextScheduledJob = schedule.getNextScheduledJob();
 		assertNull(nextScheduledJob);
 		schedule.removeFirst();
+		
+		assertNull(schedule.addToJob(null, tasks.get(0)));
 	}
 
 
