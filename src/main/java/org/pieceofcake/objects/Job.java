@@ -1,13 +1,16 @@
 package org.pieceofcake.objects;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.pieceofcake.tasks.Task;
 
-public class Job<T extends Task> {
+public class Job<T extends Task> implements Serializable {
 
+	private static final long serialVersionUID = 800493791636465389L;
+	
 	private Date start;
 	private Date end;
 	private List<T> associatedTasks;
