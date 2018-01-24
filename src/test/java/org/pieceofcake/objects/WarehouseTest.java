@@ -19,6 +19,8 @@ public class WarehouseTest {
 		resource.setProductId("Bread");
 		resource.setAmount(1);
 		
+		assertFalse(warehouse.hasResource(resource));
+		
 		warehouse.addResource(resource);
 		
 		assertTrue(warehouse.hasResource(resource));
@@ -36,6 +38,11 @@ public class WarehouseTest {
 		}
 		
 		assertTrue(thrown);
+		
+		warehouse.addResource(resource);
+		warehouse.clear();
+		assertFalse(warehouse.hasResource(resource));
+		
 	}
 
 }
