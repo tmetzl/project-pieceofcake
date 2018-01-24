@@ -15,7 +15,7 @@ public abstract class ProductionSchedule<T extends Task> implements Schedule<T> 
 
 	private static final long serialVersionUID = -8950490337888527237L;
 	
-	protected List<Job<T>> schedule;
+	private List<Job<T>> schedule;
 
 	public ProductionSchedule() {
 		this.schedule = new LinkedList<>();
@@ -28,6 +28,10 @@ public abstract class ProductionSchedule<T extends Task> implements Schedule<T> 
 	public abstract T addBetweenJobs(Job<T> prevJob, Job<T> nextJob, T task);
 
 	public abstract Job<T> getJob(String productId);
+	
+	public List<Job<T>> getSchedule() {
+		return this.schedule;
+	}
 
 	public Job<T> createJobBetween(Job<T> prevJob, Job<T> currentJob, T task) {
 		T addableTask = addBetweenJobs(prevJob, currentJob, task);

@@ -38,7 +38,7 @@ public class KneadingSchedule extends ProductionSchedule<KneadingTask> {
 
 	@Override
 	public Job<KneadingTask> getJob(String productId) {
-		for (Job<KneadingTask> job : schedule) {
+		for (Job<KneadingTask> job : getSchedule()) {
 			List<KneadingTask> associatedTasks = job.getAssociatedTasks();
 			for (KneadingTask task : associatedTasks) {
 				if (task.getProductId().equals(productId)) {
