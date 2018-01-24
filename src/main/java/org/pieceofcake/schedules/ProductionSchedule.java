@@ -13,6 +13,8 @@ import org.pieceofcake.utils.JobStartDateComparator;
 
 public abstract class ProductionSchedule<T extends Task> implements Schedule<T> {
 
+	private static final long serialVersionUID = -8950490337888527237L;
+	
 	protected List<Job<T>> schedule;
 
 	public ProductionSchedule() {

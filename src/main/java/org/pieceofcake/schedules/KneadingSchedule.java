@@ -8,6 +8,8 @@ import org.pieceofcake.tasks.KneadingTask;
 
 public class KneadingSchedule extends ProductionSchedule<KneadingTask> {
 
+	private static final long serialVersionUID = 2248657955736429337L;
+
 	@Override
 	public long getProductionTime(Job<KneadingTask> prevJob, Job<KneadingTask> nextJob, KneadingTask task) {
 		return task.getKneadingTime();

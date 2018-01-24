@@ -6,6 +6,8 @@ import org.pieceofcake.tasks.ItemPrepTask;
 
 public class ItemPrepSchedule extends ProductionSchedule<ItemPrepTask> {
 
+	private static final long serialVersionUID = 3906667994836915492L;
+
 	@Override
 	public long getProductionTime(Job<ItemPrepTask> prevJob, Job<ItemPrepTask> nextJob, ItemPrepTask task) {
 		return task.getNumOfItems() * task.getItemPrepTime();
