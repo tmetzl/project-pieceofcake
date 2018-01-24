@@ -55,6 +55,7 @@ public class KneadingMachine implements Machine<KneadingTask> {
 			semaphore.acquire();
 		} catch (InterruptedException e) {
 			Logger.getJADELogger(this.getClass().getName()).log(Logger.WARNING, e.getMessage(), e);
+			Thread.currentThread().interrupt();
 		}
 	}
 

@@ -71,6 +71,7 @@ public class ItemPrepMachine implements Machine<ItemPrepTask> {
 			semaphore.acquire();
 		} catch (InterruptedException e) {
 			Logger.getJADELogger(this.getClass().getName()).log(Logger.WARNING, e.getMessage(), e);
+			Thread.currentThread().interrupt();
 		}
 	}
 
