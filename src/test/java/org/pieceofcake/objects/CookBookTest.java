@@ -105,6 +105,7 @@ public class CookBookTest {
 		assertEquals(163.3, cookBook.getProductionPrice(orders.get(0)), 1e-10);
 		assertEquals(47.5, cookBook.getSalesPrice(orders.get(1)), 1e-10);
 		assertNull(cookBook.getSalesPrice(orders.get(2)));
+		assertNull(cookBook.getProductionPrice(orders.get(2)));
 		
 		assertNull(cookBook.getProduct("nothing"));
 		assertEquals("Pie", cookBook.getProduct("Pie").getId());
