@@ -19,6 +19,11 @@ public class WarehouseTest {
 		resource.setProductId("Bread");
 		resource.setAmount(1);
 		
+		Resource resource2 = new Resource();
+		resource2.setResourceType(Resources.RESTED_DOUGH);
+		resource2.setProductId("Pie");
+		resource2.setAmount(5);
+		
 		assertFalse(warehouse.hasResource(resource));
 		
 		warehouse.addResource(resource);
@@ -33,6 +38,16 @@ public class WarehouseTest {
 		
 		try {
 			warehouse.takeResource(resource);
+		} catch (NoSuchElementException e) {
+			thrown = true;
+		}
+		
+		assertTrue(thrown);
+		
+		thrown = false;
+		
+		try {
+			warehouse.takeResource(resource2);
 		} catch (NoSuchElementException e) {
 			thrown = true;
 		}
