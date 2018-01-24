@@ -1,5 +1,6 @@
 package org.pieceofcake.schedules;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.pieceofcake.objects.Date;
@@ -21,7 +22,7 @@ public class KneadingSchedule extends ProductionSchedule<KneadingTask> {
 	}
 
 	@Override
-	public KneadingTask addBetweenJobs(Job<KneadingTask> prevJob, Job<KneadingTask> nextJob, KneadingTask task) {
+	public List<KneadingTask> addBetweenJobs(Job<KneadingTask> prevJob, Job<KneadingTask> nextJob, KneadingTask task) {
 		Date startDate = task.getReleaseDate();
 		if (prevJob != null && startDate.compareTo(prevJob.getEnd()) < 0) {
 			startDate = prevJob.getEnd();
@@ -31,7 +32,9 @@ public class KneadingSchedule extends ProductionSchedule<KneadingTask> {
 			availableTime = nextJob.getStart().toSeconds() - startDate.toSeconds();
 		}
 		if (availableTime >= task.getKneadingTime()) {
-			return task.copy();
+			List<KneadingTask> tasks = new LinkedList<>();
+			tasks.add(task.copy());
+			return tasks;
 		}
 		return null;
 	}

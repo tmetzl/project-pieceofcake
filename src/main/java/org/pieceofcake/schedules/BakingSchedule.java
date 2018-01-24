@@ -1,5 +1,8 @@
 package org.pieceofcake.schedules;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.Job;
 import org.pieceofcake.tasks.BakingTask;
@@ -48,6 +51,12 @@ public class BakingSchedule extends ProductionSchedule<BakingTask> {
 
 	@Override
 	public BakingTask addToJob(Job<BakingTask> job, BakingTask task) {
+		if (job == null || job.getAssociatedTasks().isEmpty()) {
+			return null;
+		}
+		if (!task.getProductId().equals(job.getAssociatedTasks().get(0).getProductId())) {
+			return null;
+		}
 		int amount = 0;
 		for (BakingTask jobTask : job.getAssociatedTasks()) {
 			amount += jobTask.getNumOfItems();
@@ -65,7 +74,7 @@ public class BakingSchedule extends ProductionSchedule<BakingTask> {
 	}
 
 	@Override
-	public BakingTask addBetweenJobs(Job<BakingTask> prevJob, Job<BakingTask> nextJob, BakingTask task) {
+	public List<BakingTask> addBetweenJobs(Job<BakingTask> prevJob, Job<BakingTask> nextJob, BakingTask task) {
 		Date startDate = task.getReleaseDate();
 		if (prevJob != null && startDate.compareTo(prevJob.getEnd()) < 0) {
 			startDate = prevJob.getEnd();
@@ -75,13 +84,20 @@ public class BakingSchedule extends ProductionSchedule<BakingTask> {
 			availableTime = nextJob.getStart().toSeconds() - startDate.toSeconds();
 		}
 		long productionTime = getProductionTime(prevJob, nextJob, task);
-		if (availableTime >= productionTime) {
-			int subAmount = Math.min(task.getItemPerTray(), task.getNumOfItems());
+		List<BakingTask> subtasks = new LinkedList<>();
+		long availableTimeAfterHeatingAndCooling = availableTime - productionTime + task.getBakingTime();
+		long trays = (long) Math.ceil(1d*task.getNumOfItems() / task.getItemPerTray()); 
+		long availableTrays = availableTimeAfterHeatingAndCooling / task.getBakingTime();
+		long traysToFill = Math.min(trays, availableTrays);
+		int remainingItems = task.getNumOfItems();
+		for (int i=0;i<traysToFill;i++) {
+			int subAmount = Math.min(remainingItems, task.getItemPerTray());
 			BakingTask subTask = task.copy();
 			subTask.setNumOfItems(subAmount);
-			return subTask;
+			subtasks.add(subTask);
+			remainingItems -= subAmount;
 		}
-		return null;
+		return subtasks;
 	}
 
 	@Override

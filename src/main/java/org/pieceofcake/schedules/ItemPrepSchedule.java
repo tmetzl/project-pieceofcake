@@ -1,5 +1,8 @@
 package org.pieceofcake.schedules;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.Job;
 import org.pieceofcake.tasks.ItemPrepTask;
@@ -19,7 +22,7 @@ public class ItemPrepSchedule extends ProductionSchedule<ItemPrepTask> {
 	}
 
 	@Override
-	public ItemPrepTask addBetweenJobs(Job<ItemPrepTask> prevJob, Job<ItemPrepTask> nextJob, ItemPrepTask task) {
+	public List<ItemPrepTask> addBetweenJobs(Job<ItemPrepTask> prevJob, Job<ItemPrepTask> nextJob, ItemPrepTask task) {
 		Date startDate = task.getReleaseDate();
 		if (prevJob != null && startDate.compareTo(prevJob.getEnd()) < 0) {
 			startDate = prevJob.getEnd();
@@ -32,7 +35,9 @@ public class ItemPrepSchedule extends ProductionSchedule<ItemPrepTask> {
 		if (items > 0) {
 			ItemPrepTask subtask = task.copy();
 			subtask.setNumOfItems(items);
-			return subtask;
+			List<ItemPrepTask> tasks = new LinkedList<>();
+			tasks.add(subtask);
+			return tasks;
 		}
 		return null;
 	}

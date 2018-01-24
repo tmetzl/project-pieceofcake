@@ -1,5 +1,8 @@
 package org.pieceofcake.schedules;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.pieceofcake.objects.Job;
 import org.pieceofcake.tasks.CoolingTask;
 
@@ -18,8 +21,10 @@ public class CoolingSchedule extends ProductionSchedule<CoolingTask> {
 	}
 
 	@Override
-	public CoolingTask addBetweenJobs(Job<CoolingTask> prevJob, Job<CoolingTask> nextJob, CoolingTask task) {
-		return task.copy();
+	public List<CoolingTask> addBetweenJobs(Job<CoolingTask> prevJob, Job<CoolingTask> nextJob, CoolingTask task) {
+		List<CoolingTask> tasks = new LinkedList<>();
+		tasks.add(task.copy());
+		return tasks;
 	}
 
 	@Override
