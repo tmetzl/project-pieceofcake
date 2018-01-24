@@ -238,39 +238,11 @@ public class Scenario {
 			String guiId = jsonBakery.getString("guid");
 			Location location = getLocation(jsonBakery);
 
-			JSONArray kneadingMachines = jsonBakery.getJSONArray("kneading_machines");
+			loadKneadingMachines(jsonBakery.getJSONArray("kneading_machines"), guiId, location);
+			
+			loadPrepTables(jsonBakery.getJSONArray("dough_prep_tables"), guiId, location);
 
-			for (int j = 0; j < kneadingMachines.length(); j++) {
-				JSONObject kneadingMachine = kneadingMachines.getJSONObject(j);
-				String kneadingAgentName = kneadingMachine.getString("guid");
-				Machine<KneadingTask> machine = new KneadingMachine(guiId);
-				tierOneAgents.put(kneadingAgentName, new ProductionAgent<>(location, machine));
-			}
-
-			JSONArray prepTables = jsonBakery.getJSONArray("dough_prep_tables");
-
-			for (int j = 0; j < prepTables.length(); j++) {
-				JSONObject prepTable = prepTables.getJSONObject(j);
-				String prepTableName = prepTable.getString("guid");
-				Machine<ItemPrepTask> machine = new ItemPrepMachine(guiId);
-				tierOneAgents.put(prepTableName, new ProductionAgent<>(location, machine));
-			}
-
-			JSONArray ovens = jsonBakery.getJSONArray("ovens");
-
-			for (int j = 0; j < ovens.length(); j++) {
-				JSONObject oven = ovens.getJSONObject(j);
-				long coolingRate = oven.getLong("cooling_rate");
-				long heatingRate = oven.getLong("heating_rate");
-				String ovenName = oven.getString("guid");
-				if (coolingRate == 0 || heatingRate == 0) {
-					break;
-				}
-				for (int k = 0; k < 4; k++) {
-					Machine<BakingTask> singleOvenSlot = new BakingMachine(guiId, 40, heatingRate, coolingRate);
-					tierOneAgents.put(ovenName + "-" + k, new ProductionAgent<>(location, singleOvenSlot));
-				}
-			}
+			loadOvens(jsonBakery.getJSONArray("ovens"),guiId,location);
 
 			CookBook cookBook = new CookBook();
 			JSONArray products = jsonBakery.getJSONArray("products");
@@ -287,6 +259,40 @@ public class Scenario {
 			tierTwoAgents.put(name + "-warehouse", new WarehouseAgent(location, guiId));
 		}
 
+	}
+	
+	private void loadKneadingMachines(JSONArray kneadingMachines, String guiId, Location location) {
+		for (int j = 0; j < kneadingMachines.length(); j++) {
+			JSONObject kneadingMachine = kneadingMachines.getJSONObject(j);
+			String kneadingAgentName = kneadingMachine.getString("guid");
+			Machine<KneadingTask> machine = new KneadingMachine(guiId);
+			tierOneAgents.put(kneadingAgentName, new ProductionAgent<>(location, machine));
+		}
+	}
+	
+	private void loadPrepTables(JSONArray prepTables, String guiId, Location location) {
+		for (int j = 0; j < prepTables.length(); j++) {
+			JSONObject prepTable = prepTables.getJSONObject(j);
+			String prepTableName = prepTable.getString("guid");
+			Machine<ItemPrepTask> machine = new ItemPrepMachine(guiId);
+			tierOneAgents.put(prepTableName, new ProductionAgent<>(location, machine));
+		}
+	}
+	
+	private void loadOvens(JSONArray ovens, String guiId, Location location) {
+		for (int j = 0; j < ovens.length(); j++) {
+			JSONObject oven = ovens.getJSONObject(j);
+			long coolingRate = oven.getLong("cooling_rate");
+			long heatingRate = oven.getLong("heating_rate");
+			String ovenName = oven.getString("guid");
+			if (coolingRate == 0 || heatingRate == 0) {
+				break;
+			}
+			for (int k = 0; k < 4; k++) {
+				Machine<BakingTask> singleOvenSlot = new BakingMachine(guiId, 40, heatingRate, coolingRate);
+				tierOneAgents.put(ovenName + "-" + k, new ProductionAgent<>(location, singleOvenSlot));
+			}
+		}
 	}
 
 	private Location getLocation(JSONObject jsonObject) {
