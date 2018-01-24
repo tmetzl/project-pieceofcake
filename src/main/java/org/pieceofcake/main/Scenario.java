@@ -20,14 +20,18 @@ import org.pieceofcake.agents.StartUpAgent;
 import org.pieceofcake.agents.TimerAgent;
 import org.pieceofcake.agents.WarehouseAgent;
 import org.pieceofcake.interfaces.Machine;
+import org.pieceofcake.machines.BakingMachine;
+import org.pieceofcake.machines.CoolingMachine;
 import org.pieceofcake.machines.ItemPrepMachine;
 import org.pieceofcake.machines.KneadingMachine;
+import org.pieceofcake.machines.RestingMachine;
 import org.pieceofcake.objects.CookBook;
 import org.pieceofcake.objects.Location;
 import org.pieceofcake.objects.Order;
 import org.pieceofcake.objects.Product;
 import org.pieceofcake.streetnetwork.DiGraph;
 import org.pieceofcake.streetnetwork.Node;
+import org.pieceofcake.tasks.BakingTask;
 import org.pieceofcake.tasks.ItemPrepTask;
 import org.pieceofcake.tasks.KneadingTask;
 
@@ -122,7 +126,6 @@ public class Scenario {
 					container.acceptNewAgent(name, agent).start();
 				}
 
-				
 			} catch (StaleProxyException s) {
 				logger.log(Logger.WARNING, s.getMessage(), s);
 			}
@@ -234,23 +237,39 @@ public class Scenario {
 			String name = jsonBakery.getString("name");
 			String guiId = jsonBakery.getString("guid");
 			Location location = getLocation(jsonBakery);
-			
+
 			JSONArray kneadingMachines = jsonBakery.getJSONArray("kneading_machines");
-			
-			for (int j=0;j<kneadingMachines.length();j++) {
+
+			for (int j = 0; j < kneadingMachines.length(); j++) {
 				JSONObject kneadingMachine = kneadingMachines.getJSONObject(j);
 				String kneadingAgentName = kneadingMachine.getString("guid");
 				Machine<KneadingTask> machine = new KneadingMachine(guiId);
 				tierOneAgents.put(kneadingAgentName, new ProductionAgent<>(location, machine));
 			}
-			
+
 			JSONArray prepTables = jsonBakery.getJSONArray("dough_prep_tables");
-			
-			for (int j=0;j<prepTables.length();j++) {
+
+			for (int j = 0; j < prepTables.length(); j++) {
 				JSONObject prepTable = prepTables.getJSONObject(j);
 				String prepTableName = prepTable.getString("guid");
 				Machine<ItemPrepTask> machine = new ItemPrepMachine(guiId);
 				tierOneAgents.put(prepTableName, new ProductionAgent<>(location, machine));
+			}
+
+			JSONArray ovens = jsonBakery.getJSONArray("ovens");
+
+			for (int j = 0; j < ovens.length(); j++) {
+				JSONObject oven = ovens.getJSONObject(j);
+				long coolingRate = oven.getLong("cooling_rate");
+				long heatingRate = oven.getLong("heating_rate");
+				String ovenName = oven.getString("guid");
+				if (coolingRate == 0 || heatingRate == 0) {
+					break;
+				}
+				for (int k = 0; k < 4; k++) {
+					Machine<BakingTask> singleOvenSlot = new BakingMachine(guiId, 40, heatingRate, coolingRate);
+					tierOneAgents.put(ovenName + "-" + k, new ProductionAgent<>(location, singleOvenSlot));
+				}
 			}
 
 			CookBook cookBook = new CookBook();
@@ -261,8 +280,11 @@ public class Scenario {
 				cookBook.addProduct(product);
 			}
 
+			tierOneAgents.put(name + "-resting-machine", new ProductionAgent<>(location, new RestingMachine(guiId)));
+			tierOneAgents.put(name + "-cooling-machine", new ProductionAgent<>(location, new CoolingMachine(guiId)));
+
 			tierTwoAgents.put(name, new OrderAgent(location, guiId, cookBook));
-			tierTwoAgents.put(name+"-warehouse", new WarehouseAgent(location, guiId));
+			tierTwoAgents.put(name + "-warehouse", new WarehouseAgent(location, guiId));
 		}
 
 	}
