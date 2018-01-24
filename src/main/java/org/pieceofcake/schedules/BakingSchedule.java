@@ -51,9 +51,6 @@ public class BakingSchedule extends ProductionSchedule<BakingTask> {
 
 	@Override
 	public BakingTask addToJob(Job<BakingTask> job, BakingTask task) {
-		if (job == null || job.getAssociatedTasks().isEmpty()) {
-			return null;
-		}
 		if (!task.getProductId().equals(job.getAssociatedTasks().get(0).getProductId())) {
 			return null;
 		}

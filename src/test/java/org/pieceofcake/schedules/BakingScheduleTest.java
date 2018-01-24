@@ -50,10 +50,21 @@ public class BakingScheduleTest {
 		task2.setBakingTime(600);
 		task2.setItemPerTray(30);
 		task2.setNumOfItems(20);
+		
+		BakingTask task3 = new BakingTask();
+		task3.setOrderId("order-001");
+		task3.setProductId("Pie");
+		task3.setReleaseDate(new Date(1, 1, 0, 0));
+		task3.setDueDate(new Date(1, 5, 30, 0));
+		task3.setBakingTemperature(250);
+		task3.setBakingTime(1800);
+		task3.setItemPerTray(15);
+		task3.setNumOfItems(3);
 
 		tasks.add(task0);
 		tasks.add(task1);
 		tasks.add(task2);
+		tasks.add(task3);
 	}
 	
 	@Test
@@ -79,6 +90,9 @@ public class BakingScheduleTest {
 		schedule.insert(tasks.get(1));
 		Date completionTimeTask0 = schedule.getEarliestCompletionTime(tasks.get(0));
 		assertEquals(new Date(1, 3, 13, 10), completionTimeTask0);
+		
+		Date completionTimeTask3 = schedule.getEarliestCompletionTime(tasks.get(3));
+		assertEquals(new Date(1, 2, 32, 20), completionTimeTask3);		
 	}
 	
 	@Test
@@ -86,7 +100,6 @@ public class BakingScheduleTest {
 		schedule.insert(tasks.get(0));
 		schedule.insert(tasks.get(1));
 		schedule.insert(tasks.get(2));
-		System.out.println(schedule.getSchedule());
 		// Order of tasks is now 2-1-0-0-1
 
 		String task0Id = tasks.get(0).getOrderId() + tasks.get(0).getProductId();
