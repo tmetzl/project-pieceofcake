@@ -24,6 +24,7 @@ public class ItemPrepSchedule extends ProductionSchedule<ItemPrepTask> {
 	@Override
 	public List<ItemPrepTask> addBetweenJobs(Job<ItemPrepTask> prevJob, Job<ItemPrepTask> nextJob, ItemPrepTask task) {
 		Date startDate = task.getReleaseDate();
+		List<ItemPrepTask> tasks = new LinkedList<>();
 		if (prevJob != null && startDate.compareTo(prevJob.getEnd()) < 0) {
 			startDate = prevJob.getEnd();
 		}
@@ -35,11 +36,9 @@ public class ItemPrepSchedule extends ProductionSchedule<ItemPrepTask> {
 		if (items > 0) {
 			ItemPrepTask subtask = task.copy();
 			subtask.setNumOfItems(items);
-			List<ItemPrepTask> tasks = new LinkedList<>();
 			tasks.add(subtask);
-			return tasks;
 		}
-		return null;
+		return tasks;
 	}
 
 	@Override

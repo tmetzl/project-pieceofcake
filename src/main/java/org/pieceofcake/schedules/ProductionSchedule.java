@@ -34,23 +34,22 @@ public abstract class ProductionSchedule<T extends Task> implements Schedule<T> 
 	}
 
 	public List<Job<T>> createJobBetween(Job<T> prevJob, Job<T> currentJob, T task) {
+		List<Job<T>> jobs = new LinkedList<>();
 		List<T> addableTasks = addBetweenJobs(prevJob, currentJob, task);
-		if (addableTasks != null) {
-			List<Job<T>> jobs = new LinkedList<>();
-			for (T addableTask : addableTasks) {
-				int items = addableTask.getNumOfItems();
-				task.setNumOfItems(task.getNumOfItems() - items);
-				Date startDate = addableTask.getReleaseDate();
-				if (prevJob != null && startDate.compareTo(prevJob.getEnd()) < 0) {
-					startDate = prevJob.getEnd();
-				}
-				Date endDate = new Date(startDate.toSeconds() + getProductionTime(prevJob, currentJob, addableTask));
-				prevJob = new Job<>(startDate, endDate, addableTask);
-				jobs.add(prevJob);
+
+		for (T addableTask : addableTasks) {
+			int items = addableTask.getNumOfItems();
+			task.setNumOfItems(task.getNumOfItems() - items);
+			Date startDate = addableTask.getReleaseDate();
+			if (prevJob != null && startDate.compareTo(prevJob.getEnd()) < 0) {
+				startDate = prevJob.getEnd();
 			}
-			return jobs;
+			Date endDate = new Date(startDate.toSeconds() + getProductionTime(prevJob, currentJob, addableTask));
+			prevJob = new Job<>(startDate, endDate, addableTask);
+			jobs.add(prevJob);
 		}
-		return null;
+
+		return jobs;
 	}
 
 	public List<Job<T>> createJobs(T task, boolean insert) {
@@ -67,10 +66,8 @@ public abstract class ProductionSchedule<T extends Task> implements Schedule<T> 
 			Job<T> currentJob = schedule.get(i);
 			// Check if and how much we can add between the previous and current
 			// job
-			List<Job<T>> jobs = createJobBetween(prevJob, currentJob, remainingTask);
-			if (jobs != null) {
-				newJobs.addAll(jobs);
-			}
+			newJobs.addAll(createJobBetween(prevJob, currentJob, remainingTask));
+
 			if (remainingTask.getNumOfItems() <= 0) {
 				return newJobs;
 			}

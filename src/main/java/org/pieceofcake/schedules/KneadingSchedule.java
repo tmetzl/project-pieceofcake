@@ -24,6 +24,7 @@ public class KneadingSchedule extends ProductionSchedule<KneadingTask> {
 	@Override
 	public List<KneadingTask> addBetweenJobs(Job<KneadingTask> prevJob, Job<KneadingTask> nextJob, KneadingTask task) {
 		Date startDate = task.getReleaseDate();
+		List<KneadingTask> tasks = new LinkedList<>();
 		if (prevJob != null && startDate.compareTo(prevJob.getEnd()) < 0) {
 			startDate = prevJob.getEnd();
 		}
@@ -32,11 +33,9 @@ public class KneadingSchedule extends ProductionSchedule<KneadingTask> {
 			availableTime = nextJob.getStart().toSeconds() - startDate.toSeconds();
 		}
 		if (availableTime >= task.getKneadingTime()) {
-			List<KneadingTask> tasks = new LinkedList<>();
 			tasks.add(task.copy());
-			return tasks;
 		}
-		return null;
+		return tasks;
 	}
 
 	@Override
