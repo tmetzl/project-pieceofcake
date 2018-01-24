@@ -254,9 +254,6 @@ public class Scenario {
 				tierOneAgents.put(prepTableName, new ProductionAgent<>(location, machine));
 			}
 
-			//BakeryClockAgent myBakeryClock = new BakeryClockAgent(bakery);
-
-
 			JSONArray products = jsonBakery.getJSONArray("products");
 			for (int j = 0; j < products.length(); j++) {
 				JSONObject jsonProduct = products.getJSONObject(j);
@@ -264,8 +261,6 @@ public class Scenario {
 				bakery.addProduct(product);
 			}
 
-			//tierTwoAgents.put(name + "-kneadingScheduler", new KneadingSchedulerAgent(kneadingAgentNames, bakery));
-			//tierTwoAgents.put(name + "-clock", myBakeryClock);
 			tierTwoAgents.put(name, new OrderAgent(bakery));
 			tierTwoAgents.put(name+"-warehouse", new WarehouseAgent(location, guiId));
 		}
