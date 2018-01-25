@@ -17,13 +17,6 @@ public class ItemPrepTask extends Task {
 		return false;
 	}
 
-	public int compareTo(ItemPrepTask otherTask) {
-		if (equals(otherTask)) {
-			return 0;
-		}
-		return 1;
-	}
-
 	@Override
 	public int hashCode() {
 		return (this.getOrderId() + this.getProductId()).hashCode();
