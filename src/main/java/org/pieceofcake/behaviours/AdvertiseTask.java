@@ -104,6 +104,7 @@ public class AdvertiseTask<T extends Task> extends SequentialBehaviour {
 
 		public ProcessProposals() {
 			bids = new LinkedList<>();
+			bestOffers = new LinkedList<>();
 		}
 
 		@Override
