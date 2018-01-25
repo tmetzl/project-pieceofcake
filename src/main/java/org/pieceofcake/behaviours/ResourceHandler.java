@@ -1,10 +1,10 @@
 package org.pieceofcake.behaviours;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONObject;
 import org.pieceofcake.config.Protocols;
@@ -17,17 +17,18 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.util.Logger;
 
 public class ResourceHandler extends CyclicBehaviour {
 
 	private static final long serialVersionUID = -6118994291781057665L;
-	
+
 	private Warehouse warehouse;
 	private Map<String, Queue<ResourceRequest>> resourceRequests;
-	
+
 	public ResourceHandler(Warehouse warehouse) {
 		this.warehouse = warehouse;
-		this.resourceRequests = new HashMap<>();
+		this.resourceRequests = new ConcurrentHashMap<>();
 	}
 
 	@Override
@@ -42,13 +43,14 @@ public class ResourceHandler extends CyclicBehaviour {
 				addToRequestQueue(request);
 			} else if (msg.getPerformative() == ACLMessage.INFORM) {
 				warehouse.addResource(resource);
+				notifyRequesters(resource);
 			}
 		} else {
 			block();
 		}
-		
+
 	}
-	
+
 	public void addToRequestQueue(ResourceRequest request) {
 		String resourceKey = request.getResource().getResourceType() + request.getResource().getProductId();
 		Queue<ResourceRequest> requestQueue = resourceRequests.get(resourceKey);
@@ -59,26 +61,28 @@ public class ResourceHandler extends CyclicBehaviour {
 		resourceRequests.put(resourceKey, requestQueue);
 		notifyRequesters(request.getResource());
 	}
-	
+
 	public void notifyRequesters(Resource resource) {
 		String resourceKey = resource.getResourceType() + resource.getProductId();
 		Queue<ResourceRequest> resourceQueue = resourceRequests.computeIfAbsent(resourceKey, k -> new LinkedList<>());
 		ResourceRequest request = resourceQueue.peek();
+
 		while (request != null && warehouse.hasResource(request.getResource())) {
-			if (!resource.getResourceType().equals(Resources.FRESH_DOUGH) && !resource.getResourceType().equals(Resources.RESTED_DOUGH)) {
+			if (!resource.getResourceType().equals(Resources.FRESH_DOUGH)
+					&& !resource.getResourceType().equals(Resources.RESTED_DOUGH)) {
 				warehouse.takeResource(request.getResource());
 			}
 			myAgent.addBehaviour(new InformRequester(resourceQueue.poll()));
 			request = resourceQueue.peek();
 		}
 	}
-	
+
 	private class InformRequester extends OneShotBehaviour {
 
 		private static final long serialVersionUID = 8044766592392978206L;
-		
+
 		private ResourceRequest request;
-		
+
 		public InformRequester(ResourceRequest request) {
 			this.request = request;
 		}
@@ -90,37 +94,42 @@ public class ResourceHandler extends CyclicBehaviour {
 			msg.setConversationId(request.getRequestId());
 			msg.addReceiver(request.getRequester());
 			msg.setContent(request.getResource().toJSONObject().toString());
-			myAgent.send(msg);			
+
+			String output = "Informing: " + request.getRequester().getLocalName() + " "
+					+ request.getResource().getResourceType() + " " + request.getResource().getProductId() + " "
+					+ request.getResource().getAmount() + " id = " + request.getRequestId();
+			Logger.getJADELogger(this.getClass().getName()).log(Logger.INFO, output);
+			myAgent.send(msg);
 		}
-		
-	}	
-	
+
+	}
+
 	private class ResourceRequest implements Serializable {
-		
+
 		private static final long serialVersionUID = 166047585913740613L;
-		
+
 		private AID requester;
 		private String requestId;
 		private Resource resource;
-		
+
 		public ResourceRequest(AID requester, String requestId, Resource resource) {
 			this.requester = requester;
 			this.requestId = requestId;
 			this.resource = resource;
 		}
-		
+
 		public AID getRequester() {
 			return requester;
 		}
-		
+
 		public String getRequestId() {
 			return requestId;
 		}
+
 		public Resource getResource() {
 			return resource;
 		}
-		
-		
+
 	}
 
 }
