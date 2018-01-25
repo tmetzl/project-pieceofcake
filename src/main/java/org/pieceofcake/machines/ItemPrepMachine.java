@@ -23,10 +23,9 @@ public class ItemPrepMachine extends SingleMachine<ItemPrepTask> {
 	private static final long serialVersionUID = -4022008370196820691L;
 
 	private Map<Integer, Schedule<ItemPrepTask>> schedules;
-	private String bakeryName;
 
 	public ItemPrepMachine(String bakeryName) {
-		this.bakeryName = bakeryName;
+		super(bakeryName, Services.PREP, Protocols.PREP);
 		this.schedules = new HashMap<>();
 	}
 
@@ -46,24 +45,10 @@ public class ItemPrepMachine extends SingleMachine<ItemPrepTask> {
 	public Behaviour getJobProcessor(Job<ItemPrepTask> job) {
 		long seconds = job.getEnd().toSeconds() - job.getStart().toSeconds();		
 		SequentialBehaviour seq = new SequentialBehaviour();
-		seq.addSubBehaviour(new WaitForResources(getResource(Resources.RESTED_DOUGH, job), bakeryName));	
+		seq.addSubBehaviour(new WaitForResources(getResource(Resources.RESTED_DOUGH, job), getBakeryName()));	
 		seq.addSubBehaviour(new WaitForDuration(seconds));
-		seq.addSubBehaviour(new UpdateResources(getResource(Resources.PREPPED_ITEM, job), bakeryName));
+		seq.addSubBehaviour(new UpdateResources(getResource(Resources.PREPPED_ITEM, job), getBakeryName()));
 		return seq;
 	}
-
-	@Override
-	public String getServiceType() {
-		return Services.PREP;
-	}
-
-	@Override
-	public String getBakeryName() {
-		return bakeryName;
-	}
-
-	@Override
-	public String getProtocol() {
-		return Protocols.PREP;
-	}
+	
 }

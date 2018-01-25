@@ -23,13 +23,12 @@ public class BakingMachine extends SingleMachine<BakingTask> {
 	private static final long serialVersionUID = 745593275455406705L;
 	
 	private Map<Integer, Schedule<BakingTask>> schedules;
-	private String bakeryName;
 	private long initialTemp;
 	private long heatingRate;
 	private long coolingRate;
 
 	public BakingMachine(String bakeryName, long initialTemp, long heatingRate, long coolingRate) {
-		this.bakeryName = bakeryName;
+		super(bakeryName, Services.BAKE, Protocols.BAKE);
 		this.initialTemp = initialTemp;
 		this.heatingRate = heatingRate;
 		this.coolingRate = coolingRate;
@@ -53,24 +52,10 @@ public class BakingMachine extends SingleMachine<BakingTask> {
 		long seconds = job.getEnd().toSeconds() - job.getStart().toSeconds();
 		
 		SequentialBehaviour seq = new SequentialBehaviour();
-		seq.addSubBehaviour(new WaitForResources(getResource(Resources.PREPPED_ITEM, job), bakeryName));		
+		seq.addSubBehaviour(new WaitForResources(getResource(Resources.PREPPED_ITEM, job), getBakeryName()));		
 		seq.addSubBehaviour(new WaitForDuration(seconds));
-		seq.addSubBehaviour(new UpdateResources(getResource(Resources.BAKED_ITEM, job), bakeryName));
+		seq.addSubBehaviour(new UpdateResources(getResource(Resources.BAKED_ITEM, job), getBakeryName()));
 		return seq;
 	}
-
-	@Override
-	public String getServiceType() {
-		return Services.BAKE;
-	}
-
-	@Override
-	public String getBakeryName() {
-		return bakeryName;
-	}
-
-	@Override
-	public String getProtocol() {
-		return Protocols.BAKE;
-	}
+	
 }

@@ -22,10 +22,9 @@ public class KneadingMachine extends SingleMachine<KneadingTask> {
 	private static final long serialVersionUID = 8345855668197258730L;
 
 	private Map<Integer, Schedule<KneadingTask>> schedules;
-	private String bakeryName;
-
+	
 	public KneadingMachine(String bakeryName) {
-		this.bakeryName = bakeryName;
+		super(bakeryName, Services.KNEAD, Protocols.KNEAD);
 		this.schedules = new HashMap<>();
 	}
 
@@ -47,23 +46,8 @@ public class KneadingMachine extends SingleMachine<KneadingTask> {
 		
 		SequentialBehaviour seq = new SequentialBehaviour();
 		seq.addSubBehaviour(new WaitForDuration(seconds));
-		seq.addSubBehaviour(new UpdateResources(getResource(Resources.FRESH_DOUGH, job), bakeryName));
+		seq.addSubBehaviour(new UpdateResources(getResource(Resources.FRESH_DOUGH, job), getBakeryName()));
 		return seq;
-	}
-
-	@Override
-	public String getServiceType() {
-		return Services.KNEAD;
-	}
-
-	@Override
-	public String getBakeryName() {
-		return bakeryName;
-	}
-
-	@Override
-	public String getProtocol() {
-		return Protocols.KNEAD;
 	}
 
 }

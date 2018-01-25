@@ -23,10 +23,9 @@ public class RestingMachine extends InfiniteParallelMachine<RestingTask> {
 	private static final long serialVersionUID = -8717639294004713229L;
 
 	private Map<Integer, Schedule<RestingTask>> schedules;	
-	private String bakeryName;
 	
 	public RestingMachine(String bakeryName) {
-		this.bakeryName = bakeryName;
+		super(bakeryName, Services.REST, Protocols.REST);
 		this.schedules = new HashMap<>();
 	}
 
@@ -46,25 +45,10 @@ public class RestingMachine extends InfiniteParallelMachine<RestingTask> {
 	public Behaviour getJobProcessor(Job<RestingTask> job) {	
 		long seconds = job.getEnd().toSeconds() - job.getStart().toSeconds();
 		SequentialBehaviour seq = new SequentialBehaviour();
-		seq.addSubBehaviour(new WaitForResources(getResource(Resources.FRESH_DOUGH, job), bakeryName));		
+		seq.addSubBehaviour(new WaitForResources(getResource(Resources.FRESH_DOUGH, job), getBakeryName()));		
 		seq.addSubBehaviour(new WaitForDuration(seconds));
-		seq.addSubBehaviour(new UpdateResources(getResource(Resources.RESTED_DOUGH, job), bakeryName));
+		seq.addSubBehaviour(new UpdateResources(getResource(Resources.RESTED_DOUGH, job), getBakeryName()));
 		return seq;
-	}
-
-	@Override
-	public String getServiceType() {
-		return Services.REST;
-	}
-
-	@Override
-	public String getBakeryName() {
-		return bakeryName;
-	}
-
-	@Override
-	public String getProtocol() {
-		return Protocols.REST;
 	}
 
 }

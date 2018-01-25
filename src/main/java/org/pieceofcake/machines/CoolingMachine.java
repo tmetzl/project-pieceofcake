@@ -23,10 +23,9 @@ public class CoolingMachine extends InfiniteParallelMachine<CoolingTask> {
 	private static final long serialVersionUID = 8600727578291474365L;
 	
 	private Map<Integer, Schedule<CoolingTask>> schedules;	
-	private String bakeryName;
 	
 	public CoolingMachine(String bakeryName) {
-		this.bakeryName = bakeryName;
+		super(bakeryName, Services.COOL, Protocols.COOL);
 		this.schedules = new HashMap<>();
 	}
 
@@ -46,25 +45,10 @@ public class CoolingMachine extends InfiniteParallelMachine<CoolingTask> {
 	public Behaviour getJobProcessor(Job<CoolingTask> job) {
 		long seconds = job.getEnd().toSeconds() - job.getStart().toSeconds();
 		SequentialBehaviour seq = new SequentialBehaviour();
-		seq.addSubBehaviour(new WaitForResources(getResource(Resources.BAKED_ITEM, job), bakeryName));		
+		seq.addSubBehaviour(new WaitForResources(getResource(Resources.BAKED_ITEM, job), getBakeryName()));		
 		seq.addSubBehaviour(new WaitForDuration(seconds));
-		seq.addSubBehaviour(new UpdateResources(getResource(Resources.COOLED_ITEM, job), bakeryName));
+		seq.addSubBehaviour(new UpdateResources(getResource(Resources.COOLED_ITEM, job), getBakeryName()));
 		return seq;
-	}
-
-	@Override
-	public String getServiceType() {
-		return Services.COOL;
-	}
-
-	@Override
-	public String getBakeryName() {
-		return bakeryName;
-	}
-
-	@Override
-	public String getProtocol() {
-		return Protocols.COOL;
 	}
 
 }

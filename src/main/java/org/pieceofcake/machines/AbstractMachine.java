@@ -9,6 +9,16 @@ public abstract class AbstractMachine<T extends Task> implements Machine<T> {
 
 	private static final long serialVersionUID = 7962973446970654581L;
 	
+	private String bakeryName;
+	private String serviceType;
+	private String protocol;
+	
+	public AbstractMachine(String bakeryName, String serviceType, String protocol) {
+		this.bakeryName = bakeryName;
+		this.serviceType = serviceType;
+		this.protocol = protocol;
+	}
+
 	public Resource getResource(String resourceType, Job<T> job) {
 		Resource resource = new Resource();
 		resource.setResourceType(resourceType);
@@ -19,6 +29,21 @@ public abstract class AbstractMachine<T extends Task> implements Machine<T> {
 		}
 		resource.setAmount(amount);
 		return resource;
+	}
+	
+	@Override
+	public String getBakeryName() {
+		return bakeryName;
+	}
+	
+	@Override
+	public String getServiceType() {
+		return serviceType;
+	}
+
+	@Override
+	public String getProtocol() {
+		return protocol;
 	}
 
 }

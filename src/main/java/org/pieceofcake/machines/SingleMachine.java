@@ -12,7 +12,8 @@ public abstract class SingleMachine<T extends Task> extends AbstractMachine<T> {
 	
 	private Semaphore semaphore;
 	
-	public SingleMachine() {
+	public SingleMachine(String bakeryName, String serviceType, String protocol) {
+		super(bakeryName, serviceType, protocol);
 		this.semaphore = new Semaphore(1, true);
 	}
 
