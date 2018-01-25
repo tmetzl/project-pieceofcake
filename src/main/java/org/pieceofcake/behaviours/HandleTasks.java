@@ -24,10 +24,14 @@ public class HandleTasks<T extends Task> extends SequentialBehaviour {
 	public HandleTasks(OrderContract contract, TaskDescriptor<T> taskDescriptor) {
 		this.taskDescriptor = taskDescriptor;
 		this.contract = contract;
-		this.tasks = taskDescriptor.prepareTasks();
 		this.dueDate = taskDescriptor.getDueDate();
 		this.addSubBehaviour(new AdvertiseAndCheckTask());
 
+	}
+	
+	@Override
+	public void onStart() {
+		this.tasks = taskDescriptor.prepareTasks();
 	}
 
 	private class AdvertiseAndCheckTask extends SequentialBehaviour {
@@ -36,7 +40,8 @@ public class HandleTasks<T extends Task> extends SequentialBehaviour {
 
 		private Map<AID, T> bestTaskOffers;
 
-		public AdvertiseAndCheckTask() {
+		@Override
+		public void onStart() {
 			T task = tasks.remove(0);
 			this.bestTaskOffers = new HashMap<>();
 			this.addSubBehaviour(new AdvertiseTask<>(task, taskDescriptor.getServiceType(),
