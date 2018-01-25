@@ -4,21 +4,15 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import jade.core.behaviours.ParallelBehaviour;
+
 public class InfiniteParallelMachineTest {
 	
 	@Test
-	public void testAccess() {
+	public void testHandler() {
 		RestingMachine machine = new RestingMachine("test-bakery");
 		
-		machine.aquireMachine();
-		
-		assertTrue(machine.tryAquireMachine());
-		
-		machine.releaseMachine();
-		
-		assertTrue(machine.tryAquireMachine());
-		
-		machine.releaseMachine();
+		assertTrue(machine.getJobHandler() instanceof ParallelBehaviour);
 	}
 
 }

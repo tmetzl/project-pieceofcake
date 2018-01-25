@@ -1,25 +1,18 @@
 package org.pieceofcake.machines;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import jade.core.behaviours.SequentialBehaviour;
+
 public class SingleMachineTest {
 	
 	@Test
-	public void testAccess() {
+	public void testHandler() {
 		KneadingMachine machine = new KneadingMachine("test-bakery");
 		
-		machine.aquireMachine();
-		
-		assertFalse(machine.tryAquireMachine());
-		
-		machine.releaseMachine();
-		
-		assertTrue(machine.tryAquireMachine());
-		
-		machine.releaseMachine();
+		assertTrue(machine.getJobHandler() instanceof SequentialBehaviour);
 	}
 
 }
