@@ -11,6 +11,7 @@ import org.pieceofcake.objects.Resource;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.ParallelBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -29,12 +30,16 @@ public class WaitForResources extends SequentialBehaviour {
 		this.bakeryAgents = new LinkedList<>();
 		this.requestId = generateRequestId();
 		this.addSubBehaviour(new FindAgents(Services.RESOURCE, bakeryName, bakeryAgents));
-		this.addSubBehaviour(new Request());
-		this.addSubBehaviour(new ReceiveResources());
+		ParallelBehaviour par = new ParallelBehaviour();
+		par.addSubBehaviour(new Request());
+		par.addSubBehaviour(new ReceiveResources());
+
+		this.addSubBehaviour(par);
 	}
 
-	public static String generateRequestId() {
-		return Long.toString(id++);
+	public static synchronized String generateRequestId() {
+		id += 1;
+		return Long.toString(id);
 	}
 
 	private class Request extends OneShotBehaviour {
