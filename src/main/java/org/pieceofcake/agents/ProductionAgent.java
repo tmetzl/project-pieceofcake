@@ -36,13 +36,13 @@ public class ProductionAgent<T extends Task> extends SynchronizedAgent implement
 
 	private AlarmService alarmService;
 	private Machine<T> machine;
-	private JobExecutor jobHandler;
+	private JobExecutor jobExecutor;
 
 	public ProductionAgent(Location location, Machine<T> machine) {
 		this.location = location;
 		this.machine = machine;
 		this.alarmService = new AlarmService(getScenarioClock(), this);
-		this.jobHandler = machine.getJobHandler();
+		this.jobExecutor = machine.getJobHandler();
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class ProductionAgent<T extends Task> extends SynchronizedAgent implement
 		seq.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
 		seq.addSubBehaviour(new ReceiveStartingTime(getScenarioClock()));
 		seq.addSubBehaviour(new TaskRequestHandler());
-		addBehaviour(jobHandler.getBehaviour());
+		addBehaviour(jobExecutor.getBehaviour());
 		addBehaviour(seq);
 	}
 
@@ -84,9 +84,9 @@ public class ProductionAgent<T extends Task> extends SynchronizedAgent implement
 		Job<T> job = schedule.getNextScheduledJob();
 		if (job != null && job.getStart().compareTo(getScenarioClock().getDate()) <= 0) {
 			schedule.removeFirst();
-			jobHandler.addSubBehaviour(machine.getJobProcessor(job));
-			if (!jobHandler.isRunning()) {
-				addBehaviour(jobHandler.getBehaviour());;
+			jobExecutor.addSubBehaviour(machine.getJobProcessor(job));
+			if (!jobExecutor.isRunning()) {
+				addBehaviour(jobExecutor.getBehaviour());
 			}
 		}
 
