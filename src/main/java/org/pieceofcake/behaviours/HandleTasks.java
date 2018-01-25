@@ -10,7 +10,9 @@ import org.pieceofcake.objects.OrderContract;
 import org.pieceofcake.tasks.Task;
 
 import jade.core.AID;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
+import jade.lang.acl.ACLMessage;
 
 public class HandleTasks<T extends Task> extends SequentialBehaviour {
 
@@ -28,7 +30,7 @@ public class HandleTasks<T extends Task> extends SequentialBehaviour {
 		this.addSubBehaviour(new AdvertiseAndCheckTask());
 
 	}
-	
+
 	@Override
 	public void onStart() {
 		this.tasks = taskDescriptor.prepareTasks();
@@ -64,6 +66,7 @@ public class HandleTasks<T extends Task> extends SequentialBehaviour {
 			} else {
 				for (Map.Entry<AID, T> entry : bestTaskOffers.entrySet()) {
 					taskDescriptor.addTaskToOrder(entry.getKey(), entry.getValue(), contract);
+					HandleTasks.this.addSubBehaviour(new AcceptTaskOffer(entry.getKey(), entry.getValue()));
 				}
 
 				if (!tasks.isEmpty()) {
@@ -72,6 +75,29 @@ public class HandleTasks<T extends Task> extends SequentialBehaviour {
 			}
 			return 0;
 
+		}
+
+	}
+
+	private class AcceptTaskOffer extends OneShotBehaviour {
+
+		private static final long serialVersionUID = 4016025396190354291L;
+
+		private AID aid;
+		private T task;
+
+		public AcceptTaskOffer(AID aid, T task) {
+			this.aid = aid;
+			this.task = task;
+		}
+
+		@Override
+		public void action() {
+			ACLMessage msg = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
+			msg.addReceiver(aid);
+			msg.setProtocol(taskDescriptor.getProtocol());
+			msg.setContent(task.toJSONObject().toString());
+			myAgent.send(msg);
 		}
 
 	}
