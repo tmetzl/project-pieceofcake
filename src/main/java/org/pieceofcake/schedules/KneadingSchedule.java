@@ -1,5 +1,6 @@
 package org.pieceofcake.schedules;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.pieceofcake.objects.Date;
@@ -7,6 +8,8 @@ import org.pieceofcake.objects.Job;
 import org.pieceofcake.tasks.KneadingTask;
 
 public class KneadingSchedule extends ProductionSchedule<KneadingTask> {
+
+	private static final long serialVersionUID = 2248657955736429337L;
 
 	@Override
 	public long getProductionTime(Job<KneadingTask> prevJob, Job<KneadingTask> nextJob, KneadingTask task) {
@@ -19,8 +22,9 @@ public class KneadingSchedule extends ProductionSchedule<KneadingTask> {
 	}
 
 	@Override
-	public KneadingTask addBetweenJobs(Job<KneadingTask> prevJob, Job<KneadingTask> nextJob, KneadingTask task) {
+	public List<KneadingTask> addBetweenJobs(Job<KneadingTask> prevJob, Job<KneadingTask> nextJob, KneadingTask task) {
 		Date startDate = task.getReleaseDate();
+		List<KneadingTask> tasks = new LinkedList<>();
 		if (prevJob != null && startDate.compareTo(prevJob.getEnd()) < 0) {
 			startDate = prevJob.getEnd();
 		}
@@ -29,14 +33,14 @@ public class KneadingSchedule extends ProductionSchedule<KneadingTask> {
 			availableTime = nextJob.getStart().toSeconds() - startDate.toSeconds();
 		}
 		if (availableTime >= task.getKneadingTime()) {
-			return task.copy();
+			tasks.add(task.copy());
 		}
-		return null;
+		return tasks;
 	}
 
 	@Override
 	public Job<KneadingTask> getJob(String productId) {
-		for (Job<KneadingTask> job : schedule) {
+		for (Job<KneadingTask> job : getSchedule()) {
 			List<KneadingTask> associatedTasks = job.getAssociatedTasks();
 			for (KneadingTask task : associatedTasks) {
 				if (task.getProductId().equals(productId)) {

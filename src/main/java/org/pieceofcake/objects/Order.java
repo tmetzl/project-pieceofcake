@@ -68,7 +68,7 @@ public class Order implements Serializable {
 	public void setProductAmounts(int[] productAmounts) {
 		this.productAmounts = productAmounts;
 	}
-	
+
 	public Location getLocation() {
 		return location;
 	}
@@ -104,7 +104,9 @@ public class Order implements Serializable {
 		jsonObject.put("delivery_date", getDueDate().toJSONObject());
 		JSONObject products = new JSONObject();
 		for (int i = 0; i < productIds.length; i++) {
-			products.put(productIds[i], productAmounts[i]);
+			if (productAmounts[i] != 0) {
+				products.put(productIds[i], productAmounts[i]);
+			}
 		}
 		jsonObject.put("products", products);
 		jsonObject.put("location", getLocation().toJSONObject());
