@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import org.pieceofcake.behaviours.ReceiveStartingTime;
 import org.pieceofcake.behaviours.SynchronizeClock;
 import org.pieceofcake.config.Protocols;
+import org.pieceofcake.interfaces.JobExecutor;
 import org.pieceofcake.interfaces.Machine;
 import org.pieceofcake.interfaces.Schedule;
 import org.pieceofcake.interfaces.Wakeable;
@@ -35,11 +36,13 @@ public class ProductionAgent<T extends Task> extends SynchronizedAgent implement
 
 	private AlarmService alarmService;
 	private Machine<T> machine;
+	private JobExecutor jobHandler;
 
 	public ProductionAgent(Location location, Machine<T> machine) {
 		this.location = location;
 		this.machine = machine;
 		this.alarmService = new AlarmService(getScenarioClock(), this);
+		this.jobHandler = machine.getJobHandler();
 	}
 
 	@Override
@@ -66,7 +69,7 @@ public class ProductionAgent<T extends Task> extends SynchronizedAgent implement
 		seq.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
 		seq.addSubBehaviour(new ReceiveStartingTime(getScenarioClock()));
 		seq.addSubBehaviour(new TaskRequestHandler());
-
+		addBehaviour(jobHandler.getBehaviour());
 		addBehaviour(seq);
 	}
 
@@ -81,7 +84,10 @@ public class ProductionAgent<T extends Task> extends SynchronizedAgent implement
 		Job<T> job = schedule.getNextScheduledJob();
 		if (job != null && job.getStart().compareTo(getScenarioClock().getDate()) <= 0) {
 			schedule.removeFirst();
-			addBehaviour(new ProcessJob(job));
+			jobHandler.addSubBehaviour(machine.getJobProcessor(job));
+			if (!jobHandler.isRunning()) {
+				addBehaviour(jobHandler.getBehaviour());;
+			}
 		}
 
 		job = schedule.getNextScheduledJob();
@@ -151,27 +157,6 @@ public class ProductionAgent<T extends Task> extends SynchronizedAgent implement
 			}
 		}
 
-	}
-
-	private class ProcessJob extends SequentialBehaviour {
-
-		private static final long serialVersionUID = -2163830050853901316L;
-
-		public ProcessJob(Job<T> job) {
-			this.addSubBehaviour(machine.getJobProcessor(job));
-		}
-
-		@Override
-		public void onStart() {
-			machine.aquireMachine();
-		}
-
-		@Override
-		public int onEnd() {
-			machine.releaseMachine();
-			wake();
-			return 0;
-		}
 	}
 
 }
