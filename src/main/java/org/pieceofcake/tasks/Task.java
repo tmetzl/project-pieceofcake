@@ -6,15 +6,21 @@ import org.json.JSONObject;
 import org.pieceofcake.objects.Date;
 
 public abstract class Task implements Serializable {
-	
+
 	private static final long serialVersionUID = 2386458692759876186L;
-	
+
 	private Date dueDate;
 	private Date releaseDate;
 	private String orderId;
 	private String productId;
 	private int numOfItems;
-	
+
+	public boolean checkMutualFields(Task task) {
+		return task.getDueDate().equals(this.getDueDate()) && task.getReleaseDate().equals(this.getReleaseDate())
+				&& task.getOrderId().equals(this.getOrderId()) && task.getProductId().equals(this.getProductId())
+				&& task.getNumOfItems() == this.getNumOfItems();
+	}
+
 	public String getProductId() {
 		return productId;
 	}
@@ -46,7 +52,7 @@ public abstract class Task implements Serializable {
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
 	}
-	
+
 	public int getNumOfItems() {
 		return numOfItems;
 	}
@@ -76,7 +82,7 @@ public abstract class Task implements Serializable {
 		setNumOfItems(jsonObject.getInt("num_of_items"));
 		setOrderId(jsonObject.getString("order_id"));
 	}
-	
+
 	public abstract Task copy();
 
 }
