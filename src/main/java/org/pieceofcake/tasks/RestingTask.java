@@ -5,8 +5,29 @@ import org.json.JSONObject;
 public class RestingTask extends Task {
 
 	private static final long serialVersionUID = 5746383628733720536L;
-	
+
 	private long restingTime;
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof RestingTask) {
+			RestingTask task = (RestingTask) o;
+			return this.restingTime == task.getRestingTime() && this.checkMutualFields(task);
+		}
+		return false;
+	}
+
+	public int compareTo(RestingTask otherTask) {
+		if (equals(otherTask)) {
+			return 0;
+		}
+		return 1;
+	}
+
+	@Override
+	public int hashCode() {
+		return (this.getOrderId() + this.getProductId()).hashCode();
+	}
 
 	public long getRestingTime() {
 		return restingTime;

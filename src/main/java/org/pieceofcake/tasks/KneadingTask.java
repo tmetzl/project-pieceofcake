@@ -5,8 +5,29 @@ import org.json.JSONObject;
 public class KneadingTask extends Task {
 
 	private static final long serialVersionUID = 1037416424420325389L;
-	
+
 	private long kneadingTime;
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof KneadingTask) {
+			KneadingTask task = (KneadingTask) o;
+			return this.kneadingTime == task.getKneadingTime() && this.checkMutualFields(task);
+		}
+		return false;
+	}
+
+	public int compareTo(KneadingTask otherTask) {
+		if (equals(otherTask)) {
+			return 0;
+		}
+		return 1;
+	}
+
+	@Override
+	public int hashCode() {
+		return (this.getOrderId() + this.getProductId()).hashCode();
+	}
 
 	public long getKneadingTime() {
 		return kneadingTime;

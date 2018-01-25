@@ -5,10 +5,32 @@ import org.json.JSONObject;
 public class BakingTask extends Task {
 
 	private static final long serialVersionUID = -5071207234146128199L;
-	
+
 	private long bakingTime;
 	private long bakingTemperature;
 	private int itemPerTray;
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof BakingTask) {
+			BakingTask task = (BakingTask) o;
+			return this.bakingTime == task.getBakingTime() && this.bakingTemperature == task.getBakingTemperature()
+					&& this.itemPerTray == task.getItemPerTray() && this.checkMutualFields(task);
+		}
+		return false;
+	}
+
+	public int compareTo(BakingTask otherTask) {
+		if (equals(otherTask)) {
+			return 0;
+		}
+		return 1;
+	}
+
+	@Override
+	public int hashCode() {
+		return (this.getOrderId() + this.getProductId()).hashCode();
+	}
 
 	public long getBakingTime() {
 		return bakingTime;

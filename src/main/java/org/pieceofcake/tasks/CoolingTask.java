@@ -5,10 +5,32 @@ import org.json.JSONObject;
 public class CoolingTask extends Task {
 
 	private static final long serialVersionUID = 8050976247731177039L;
-	
+
 	private long bakingTemperature;
 	private double coolingTimeFactor;
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof CoolingTask) {
+			CoolingTask task = (CoolingTask) o;
+			return this.bakingTemperature == task.getBakingTemperature()
+					&& this.coolingTimeFactor == task.getCoolingTimeFactor() && this.checkMutualFields(task);
+		}
+		return false;
+	}
+
+	public int compareTo(CoolingTask otherTask) {
+		if (equals(otherTask)) {
+			return 0;
+		}
+		return 1;
+	}
+
+	@Override
+	public int hashCode() {
+		return (this.getOrderId() + this.getProductId()).hashCode();
+	}
+
 	public long getBakingTemperature() {
 		return bakingTemperature;
 	}
@@ -24,7 +46,7 @@ public class CoolingTask extends Task {
 	public void setCoolingTimeFactor(double coolingTimeFactor) {
 		this.coolingTimeFactor = coolingTimeFactor;
 	}
-	
+
 	@Override
 	public JSONObject toJSONObject() {
 		JSONObject jsonObject = super.toJSONObject();
