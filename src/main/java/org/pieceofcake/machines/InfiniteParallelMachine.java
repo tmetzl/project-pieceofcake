@@ -16,6 +16,11 @@ public abstract class InfiniteParallelMachine<T extends Task> extends AbstractMa
 	}
 	
 	@Override
+	public boolean tryAquireMachine() {
+		return true;
+	}
+	
+	@Override
 	public void releaseMachine() {
 		
 	}

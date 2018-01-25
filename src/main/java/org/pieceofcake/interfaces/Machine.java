@@ -17,6 +17,8 @@ public interface Machine<T extends Task> extends Serializable {
 	
 	public void aquireMachine();
 	
+	public boolean tryAquireMachine();
+	
 	public void releaseMachine();
 	
 	public String getServiceType();

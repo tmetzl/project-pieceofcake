@@ -26,6 +26,11 @@ public abstract class SingleMachine<T extends Task> extends AbstractMachine<T> {
 			Thread.currentThread().interrupt();
 		}
 	}
+	
+	@Override
+	public boolean tryAquireMachine() {
+		return semaphore.tryAcquire();
+	}
 
 	@Override
 	public void releaseMachine() {
