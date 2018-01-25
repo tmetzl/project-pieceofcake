@@ -15,11 +15,7 @@ public interface Machine<T extends Task> extends Serializable {
 
 	public Behaviour getJobProcessor(Job<T> job);
 	
-	public void aquireMachine();
-	
-	public boolean tryAquireMachine();
-	
-	public void releaseMachine();
+	public JobExecutor getJobHandler();
 	
 	public String getServiceType();
 	
