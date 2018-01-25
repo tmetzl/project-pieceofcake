@@ -2,12 +2,14 @@ package org.pieceofcake.agents;
 
 import org.json.JSONObject;
 import org.pieceofcake.behaviours.ReceiveStartingTime;
+import org.pieceofcake.behaviours.ScheduleOrder;
 import org.pieceofcake.behaviours.SynchronizeClock;
 import org.pieceofcake.config.Protocols;
 import org.pieceofcake.config.Services;
 import org.pieceofcake.objects.CookBook;
 import org.pieceofcake.objects.Location;
 import org.pieceofcake.objects.Order;
+import org.pieceofcake.objects.OrderContract;
 
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
@@ -92,6 +94,8 @@ public class OrderAgent extends SynchronizedAgent {
 					Double price = cookBook.getSalesPrice(order);
 					ACLMessage reply = msg.createReply();
 					if (price != null) {
+						OrderContract contract = new OrderContract(order, msg.getSender());
+						addBehaviour(new ScheduleOrder(contract, cookBook, bakeryName));
 						reply.setPerformative(ACLMessage.PROPOSE);
 						reply.setContent(String.valueOf(price));
 					} else {
