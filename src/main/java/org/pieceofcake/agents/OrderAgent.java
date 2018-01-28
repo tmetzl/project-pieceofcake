@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.json.JSONObject;
 import org.pieceofcake.behaviours.CancelOrderContract;
+import org.pieceofcake.behaviours.NotifyOrderComplete;
 import org.pieceofcake.behaviours.ReceiveStartingTime;
 import org.pieceofcake.behaviours.ScheduleOrder;
 import org.pieceofcake.behaviours.SynchronizeClock;
@@ -261,6 +262,9 @@ public class OrderAgent extends SynchronizedAgent {
 					contract = getOrderContract(deliveryTask.getOrderId());
 					if (contract != null) {
 						contract.deliveryTaskFinished(msg.getSender(), deliveryTask);
+						if (contract.isCompleted()) {
+							addBehaviour(new NotifyOrderComplete(contract));
+						}
 					}
 					break;
 				default:

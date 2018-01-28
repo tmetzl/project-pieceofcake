@@ -5,12 +5,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.pieceofcake.behaviours.DelayUntilDate;
 import org.pieceofcake.behaviours.FindAgents;
 import org.pieceofcake.behaviours.ReceiveStartingTime;
 import org.pieceofcake.behaviours.SynchronizeClock;
 import org.pieceofcake.config.Protocols;
 import org.pieceofcake.config.Services;
+import org.pieceofcake.objects.CustomerContract;
 import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.Location;
 import org.pieceofcake.objects.Order;
@@ -18,6 +20,7 @@ import org.pieceofcake.utils.OrderDateComparator;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -33,6 +36,7 @@ public class CustomerAgent extends SynchronizedAgent {
 	private List<Order> orders;
 	private List<Order> placedOrders;
 	private List<Order> failedOrders;
+	private List<CustomerContract> contracts;
 
 	public CustomerAgent(String guiId, int type, Location location, List<Order> orders) {
 		this.guiId = guiId;
@@ -43,6 +47,7 @@ public class CustomerAgent extends SynchronizedAgent {
 		this.orders = orders;
 		this.placedOrders = new LinkedList<>();
 		this.failedOrders = new LinkedList<>();
+		this.contracts = new LinkedList<>();
 	}
 
 	@Override
@@ -59,6 +64,7 @@ public class CustomerAgent extends SynchronizedAgent {
 		seq.addSubBehaviour(new PlaceOrder(orders.get(0)));
 
 		addBehaviour(seq);
+		addBehaviour(new WaitForOrderComplete());
 
 	}
 
@@ -213,6 +219,7 @@ public class CustomerAgent extends SynchronizedAgent {
 					msg.setContent(content);
 					myAgent.send(msg);
 					placedOrders.add(order);
+					contracts.add(new CustomerContract(order, bestSeller));
 
 				} else {
 					logger.log(Logger.INFO, myAgent.getLocalName() + ": No offers received or products not available.");
@@ -221,6 +228,30 @@ public class CustomerAgent extends SynchronizedAgent {
 			}
 
 		}
+
+	}
+
+	private class WaitForOrderComplete extends CyclicBehaviour {
+
+		private static final long serialVersionUID = -5351685996831509437L;
+
+		@Override
+		public void action() {
+			MessageTemplate template = MessageTemplate.and(MessageTemplate.MatchProtocol(Protocols.ORDER_COMPLETE),
+					MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+			ACLMessage msg = myAgent.receive(template);
+			if (msg != null) {
+				Order order = new Order(new JSONObject(msg.getContent()));
+				for (CustomerContract contract : contracts) {
+					if (order.getGuiId().equals(contract.getOrder().getGuiId())) {
+						contract.setCompleted();
+						logger.log(Logger.INFO, contract.getOrder().getGuiId() + " is complete");
+					}
+				}
+			}
+
+		}
+
 	}
 
 	public String getGuiId() {
