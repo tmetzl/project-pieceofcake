@@ -94,11 +94,6 @@ public class ResourceHandler extends CyclicBehaviour {
 			msg.setConversationId(request.getRequestId());
 			msg.addReceiver(request.getRequester());
 			msg.setContent(request.getResource().toJSONObject().toString());
-
-			String output = "Informing: " + request.getRequester().getLocalName() + " "
-					+ request.getResource().getResourceType() + " " + request.getResource().getProductId() + " "
-					+ request.getResource().getAmount() + " id = " + request.getRequestId();
-			Logger.getJADELogger(this.getClass().getName()).log(Logger.INFO, output);
 			myAgent.send(msg);
 		}
 
