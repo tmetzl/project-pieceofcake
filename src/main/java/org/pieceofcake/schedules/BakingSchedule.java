@@ -51,7 +51,9 @@ public class BakingSchedule extends ProductionSchedule<BakingTask> {
 
 	@Override
 	public BakingTask addToJob(Job<BakingTask> job, BakingTask task) {
-		if (!task.getProductId().equals(job.getAssociatedTasks().get(0).getProductId())) {
+
+		if (!task.getProductId().equals(job.getAssociatedTasks().get(0).getProductId())
+				|| job.getStart().compareTo(task.getReleaseDate()) < 0) {
 			return null;
 		}
 		int amount = 0;
@@ -76,18 +78,18 @@ public class BakingSchedule extends ProductionSchedule<BakingTask> {
 		if (prevJob != null && startDate.compareTo(prevJob.getEnd()) < 0) {
 			startDate = prevJob.getEnd();
 		}
-		long availableTime = 12*60*60l;
+		long availableTime = 12 * 60 * 60l;
 		if (nextJob != null) {
 			availableTime = nextJob.getStart().toSeconds() - startDate.toSeconds();
 		}
 		long productionTime = getProductionTime(prevJob, nextJob, task);
 		List<BakingTask> subtasks = new LinkedList<>();
 		long availableTimeAfterHeatingAndCooling = availableTime - productionTime + task.getBakingTime();
-		long trays = (long) Math.ceil(1d*task.getNumOfItems() / task.getItemPerTray()); 
+		long trays = (long) Math.ceil(1d * task.getNumOfItems() / task.getItemPerTray());
 		long availableTrays = availableTimeAfterHeatingAndCooling / task.getBakingTime();
 		long traysToFill = Math.min(trays, availableTrays);
 		int remainingItems = task.getNumOfItems();
-		for (int i=0;i<traysToFill;i++) {
+		for (int i = 0; i < traysToFill; i++) {
 			int subAmount = Math.min(remainingItems, task.getItemPerTray());
 			BakingTask subTask = task.copy();
 			subTask.setNumOfItems(subAmount);

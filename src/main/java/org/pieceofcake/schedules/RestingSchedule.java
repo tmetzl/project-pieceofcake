@@ -6,9 +6,10 @@ import java.util.List;
 import org.pieceofcake.objects.Job;
 import org.pieceofcake.tasks.RestingTask;
 
-public class RestingSchedule extends ProductionSchedule<RestingTask> {
+public class RestingSchedule extends OneTimeSchedule<RestingTask> {
 
 	private static final long serialVersionUID = -2421485093925747166L;
+
 
 	@Override
 	public long getProductionTime(Job<RestingTask> prevJob, Job<RestingTask> nextJob, RestingTask task) {
@@ -25,11 +26,6 @@ public class RestingSchedule extends ProductionSchedule<RestingTask> {
 		List<RestingTask> tasks = new LinkedList<>();
 		tasks.add(task.copy());
 		return tasks;
-	}
-
-	@Override
-	public Job<RestingTask> getJob(String productId) {
-		return null;
 	}
 
 }

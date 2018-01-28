@@ -191,7 +191,12 @@ public class ScheduleOrder extends SequentialBehaviour {
 				task.setNumOfItems(productAmounts.get(task.getProductId()));
 				task.setDueDate(contract.getOrder().getDueDate());
 				task.setItemPrepTime(cookBook.getProduct(task.getProductId()).getItemPrepTime());
-				task.setReleaseDate(restingTask.getDueDate());
+
+				if (restingTask.getDueDate().compareTo(contract.getOrder().getOrderDate()) >= 0) {
+					task.setReleaseDate(restingTask.getDueDate());
+				} else {
+					task.setReleaseDate(contract.getOrder().getOrderDate());
+				}
 				itemPrepTasks.add(task);
 			}
 			return itemPrepTasks;

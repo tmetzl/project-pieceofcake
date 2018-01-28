@@ -22,6 +22,7 @@ import org.pieceofcake.agents.WarehouseAgent;
 import org.pieceofcake.interfaces.Machine;
 import org.pieceofcake.machines.BakingMachine;
 import org.pieceofcake.machines.CoolingMachine;
+import org.pieceofcake.machines.DeliveryMachine;
 import org.pieceofcake.machines.ItemPrepMachine;
 import org.pieceofcake.machines.KneadingMachine;
 import org.pieceofcake.machines.RestingMachine;
@@ -31,6 +32,7 @@ import org.pieceofcake.objects.Order;
 import org.pieceofcake.objects.Product;
 import org.pieceofcake.streetnetwork.DiGraph;
 import org.pieceofcake.streetnetwork.Node;
+import org.pieceofcake.streetnetwork.StreetNetwork;
 import org.pieceofcake.tasks.BakingTask;
 import org.pieceofcake.tasks.ItemPrepTask;
 import org.pieceofcake.tasks.KneadingTask;
@@ -239,10 +241,12 @@ public class Scenario {
 			Location location = getLocation(jsonBakery);
 
 			loadKneadingMachines(jsonBakery.getJSONArray("kneading_machines"), guiId, location);
-			
+
 			loadPrepTables(jsonBakery.getJSONArray("dough_prep_tables"), guiId, location);
 
-			loadOvens(jsonBakery.getJSONArray("ovens"),guiId,location);
+			loadOvens(jsonBakery.getJSONArray("ovens"), guiId, location);
+
+			loadTrucks(jsonBakery.getJSONArray("trucks"), guiId);
 
 			CookBook cookBook = new CookBook();
 			JSONArray products = jsonBakery.getJSONArray("products");
@@ -260,7 +264,7 @@ public class Scenario {
 		}
 
 	}
-	
+
 	private void loadKneadingMachines(JSONArray kneadingMachines, String guiId, Location location) {
 		for (int j = 0; j < kneadingMachines.length(); j++) {
 			JSONObject kneadingMachine = kneadingMachines.getJSONObject(j);
@@ -269,7 +273,7 @@ public class Scenario {
 			tierOneAgents.put(kneadingAgentName, new ProductionAgent<>(location, machine));
 		}
 	}
-	
+
 	private void loadPrepTables(JSONArray prepTables, String guiId, Location location) {
 		for (int j = 0; j < prepTables.length(); j++) {
 			JSONObject prepTable = prepTables.getJSONObject(j);
@@ -278,7 +282,7 @@ public class Scenario {
 			tierOneAgents.put(prepTableName, new ProductionAgent<>(location, machine));
 		}
 	}
-	
+
 	private void loadOvens(JSONArray ovens, String guiId, Location location) {
 		for (int j = 0; j < ovens.length(); j++) {
 			JSONObject oven = ovens.getJSONObject(j);
@@ -293,6 +297,19 @@ public class Scenario {
 				tierOneAgents.put(ovenName + "-" + k, new ProductionAgent<>(location, singleOvenSlot));
 			}
 		}
+	}
+
+	private void loadTrucks(JSONArray trucks, String guiId) {
+		StreetNetwork network = new StreetNetwork(streetNetwork);
+		for (int i = 0; i < trucks.length(); i++) {
+			JSONObject truck = trucks.getJSONObject(i);
+			int loadCapacity = truck.getInt("load_capacity");
+			String name = truck.getString("guid");
+			Location location = getLocation(truck);
+			DeliveryMachine machine = new DeliveryMachine(location, guiId, 0.01, loadCapacity, network);
+			tierOneAgents.put(name, new ProductionAgent<>(location, machine));
+		}
+
 	}
 
 	private Location getLocation(JSONObject jsonObject) {

@@ -24,7 +24,7 @@ public class DiGraph implements Serializable {
 		}
 	}
 
-	public Node getNode(String guid) {
+	public Node getNodeFromId(String guid) {
 		Set<Node> nodes = adjacencyMap.keySet();
 		for (Node node : nodes) {
 			if (node.getGuid().equals(guid))
@@ -34,8 +34,8 @@ public class DiGraph implements Serializable {
 	}
 
 	public void addEdge(String fromGuid, String toGuid, double dist, String edgeGuid) {
-		Node nodeA = getNode(fromGuid);
-		Node nodeB = getNode(toGuid);
+		Node nodeA = getNodeFromId(fromGuid);
+		Node nodeB = getNodeFromId(toGuid);
 		List<Edge> nodesAdjacentToA = adjacencyMap.get(nodeA);
 		Edge edge = new Edge(edgeGuid, nodeA, nodeB, dist);
 		nodesAdjacentToA.add(edge);
@@ -56,8 +56,16 @@ public class DiGraph implements Serializable {
 		return adjacencyMap.keySet();
 	}
 
-	public List<Edge> getEdges(String guid) {
-		return adjacencyMap.get(getNode(guid));
+	public List<Edge> getEdgesFromNodeId(String guid) {
+		return adjacencyMap.get(getNodeFromId(guid));
+	}
+	
+	public List<Edge> getEdges() {
+		List<Edge> edges = new LinkedList<>();
+		for (List<Edge> value : adjacencyMap.values()) {
+			edges.addAll(value);
+		}
+		return edges;
 	}
 
 }

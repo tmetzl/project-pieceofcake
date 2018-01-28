@@ -120,7 +120,7 @@ public class MapTabController {
 	private void drawEdges() {
 		Set<Node> nodes = streetNetwork.getNodes();
 		for (Node node : nodes) {
-			List<Edge> edges = streetNetwork.getEdges(node.getGuid());
+			List<Edge> edges = streetNetwork.getEdgesFromNodeId(node.getGuid());
 			for (Edge edge : edges) {
 				double[] coordinatesFrom = convertToCanvasCoordinates(edge.getFrom().getLocation().getX(),
 						edge.getFrom().getLocation().getY());
