@@ -112,7 +112,7 @@ public class DeliverySchedule extends ProductionSchedule<DeliveryTask> implement
 		int remainingItems = task.getNumOfItems();
 
 		for (int i = 0; i < tours; i++) {
-			int subamount = Math.min(task.getItemPerBox(), remainingItems);
+			int subamount = Math.min(task.getItemPerBox() * boxesPerTruck, remainingItems);
 			DeliveryTask subtask = task.copy();
 			subtask.setNumOfItems(subamount);
 			subtasks.add(subtask);
