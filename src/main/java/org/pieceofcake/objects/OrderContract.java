@@ -73,7 +73,7 @@ public class OrderContract implements Serializable {
 	public <T extends Task> void taskFinished(AID agentId, T task, Map<AID, List<ContractTask<T>>> taskMap) {
 		List<ContractTask<T>> contractTasks = taskMap.computeIfAbsent(agentId, k -> new LinkedList<>());
 		for (ContractTask<T> contractTask : contractTasks) {
-			if (task.equals(contractTask.getTask())) {
+			if (task.equals(contractTask.getTask()) && !contractTask.isCompleted()) {
 				contractTask.setCompleted();
 				break;
 			}
