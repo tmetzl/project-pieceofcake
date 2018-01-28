@@ -245,7 +245,10 @@ public class CustomerAgent extends SynchronizedAgent {
 				for (CustomerContract contract : contracts) {
 					if (order.getGuiId().equals(contract.getOrder().getGuiId())) {
 						contract.setCompleted();
-						logger.log(Logger.INFO, contract.getOrder().getGuiId() + " is complete");
+						String output = String.format("%s completed at %s, was due at %s",
+								contract.getOrder().getGuiId(), getScenarioClock().getDate(),
+								contract.getOrder().getDueDate());
+						logger.log(Logger.INFO, output);
 					}
 				}
 			}
