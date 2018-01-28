@@ -23,6 +23,7 @@ public class OrderContract implements Serializable {
 	private Map<AID, List<ContractTask<DeliveryTask>>> deliveryTaskMap;
 	private boolean hasFailed;
 	private AID customerAgentId;
+	private boolean complete;
 
 	public OrderContract(Order order, AID customerAgentId) {
 		this.order = order;
@@ -34,6 +35,7 @@ public class OrderContract implements Serializable {
 		this.deliveryTaskMap = new HashMap<>();
 		this.hasFailed = false;
 		this.customerAgentId = customerAgentId;
+		this.complete = false;
 	}
 
 	public Order getOrder() {
@@ -191,6 +193,22 @@ public class OrderContract implements Serializable {
 
 	public void deliveryTaskFinished(AID agentId, DeliveryTask task) {
 		taskFinished(agentId, task, deliveryTaskMap);
+		for (List<ContractTask<DeliveryTask>> tasks : deliveryTaskMap.values()) {
+			for (ContractTask<DeliveryTask> contractTask : tasks) {
+				if (!contractTask.isCompleted()) {
+					return;
+				}
+			}
+		}
+		setCompleted();
+	}
+
+	public boolean isCompleted() {
+		return complete;
+	}
+
+	public void setCompleted() {
+		this.complete = true;
 	}
 
 }
