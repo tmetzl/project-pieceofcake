@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONObject;
+import org.pieceofcake.behaviours.NotifyTaskCompleted;
 import org.pieceofcake.behaviours.UpdateResources;
 import org.pieceofcake.behaviours.WaitForDuration;
 import org.pieceofcake.config.Protocols;
@@ -22,7 +23,7 @@ public class KneadingMachine extends SingleMachine<KneadingTask> {
 	private static final long serialVersionUID = 8345855668197258730L;
 
 	private Map<Integer, Schedule<KneadingTask>> schedules;
-	
+
 	public KneadingMachine(String bakeryName) {
 		super(bakeryName, Services.KNEAD, Protocols.KNEAD);
 		this.schedules = new HashMap<>();
@@ -43,10 +44,13 @@ public class KneadingMachine extends SingleMachine<KneadingTask> {
 	@Override
 	public Behaviour getJobProcessor(Job<KneadingTask> job) {
 		long seconds = job.getEnd().toSeconds() - job.getStart().toSeconds();
-		
+
 		SequentialBehaviour seq = new SequentialBehaviour();
 		seq.addSubBehaviour(new WaitForDuration(seconds));
 		seq.addSubBehaviour(new UpdateResources(getResource(Resources.FRESH_DOUGH, job), getBakeryName()));
+		for (KneadingTask task : job.getAssociatedTasks()) {
+			seq.addSubBehaviour(new NotifyTaskCompleted<KneadingTask>(getProtocol(), getBakeryName(), task));
+		}
 		return seq;
 	}
 

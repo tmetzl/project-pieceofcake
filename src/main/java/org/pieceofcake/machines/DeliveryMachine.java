@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.json.JSONObject;
+import org.pieceofcake.behaviours.NotifyTaskCompleted;
 import org.pieceofcake.behaviours.WaitForDuration;
 import org.pieceofcake.behaviours.WaitForResources;
 import org.pieceofcake.config.Protocols;
@@ -84,7 +85,7 @@ public class DeliveryMachine extends SingleMachine<DeliveryTask> {
 			prevLocation = task.getLocation();
 			long duration = (long) (distance/speed);
 			seq.addSubBehaviour(new WaitForDuration(duration));
-			// Add update stuff here
+			seq.addSubBehaviour(new NotifyTaskCompleted<DeliveryTask>(getProtocol(), getBakeryName(), task));
 		}
 		long duration = (long) (network.getDistance(prevLocation, location)/speed);
 		seq.addSubBehaviour(new WaitForDuration(duration));

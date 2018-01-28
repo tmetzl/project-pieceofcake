@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONObject;
+import org.pieceofcake.behaviours.NotifyTaskCompleted;
 import org.pieceofcake.behaviours.UpdateResources;
 import org.pieceofcake.behaviours.WaitForDuration;
 import org.pieceofcake.behaviours.WaitForResources;
@@ -51,6 +52,9 @@ public class ItemPrepMachine extends SingleMachine<ItemPrepTask> {
 		seq.addSubBehaviour(new WaitForResources(neededResource, getBakeryName()));	
 		seq.addSubBehaviour(new WaitForDuration(seconds));
 		seq.addSubBehaviour(new UpdateResources(getResource(Resources.PREPPED_ITEM, job), getBakeryName()));
+		for (ItemPrepTask task : job.getAssociatedTasks()) {
+			seq.addSubBehaviour(new NotifyTaskCompleted<ItemPrepTask>(getProtocol(), getBakeryName(), task));
+		}
 		return seq;
 	}
 	
