@@ -18,6 +18,7 @@ public class Protocols {
 	public static final String COOL = "cool-protocol";
 	public static final String DELIVERY = "delivery-protocol";
 	public static final String RESOURCE = "resource-protocol";
+	public static final String ORDER_COMPLETE = "order completed";
 
 }
 
