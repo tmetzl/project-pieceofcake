@@ -306,7 +306,7 @@ public class Scenario {
 			int loadCapacity = truck.getInt("load_capacity");
 			String name = truck.getString("guid");
 			Location location = getLocation(truck);
-			DeliveryMachine machine = new DeliveryMachine(location, guiId, 0.01, loadCapacity, network);
+			DeliveryMachine machine = new DeliveryMachine(location, guiId, 1.0, loadCapacity, network);
 			tierOneAgents.put(name, new ProductionAgent<>(location, machine));
 		}
 
