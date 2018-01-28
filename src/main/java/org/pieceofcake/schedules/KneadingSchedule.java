@@ -7,9 +7,10 @@ import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.Job;
 import org.pieceofcake.tasks.KneadingTask;
 
-public class KneadingSchedule extends ProductionSchedule<KneadingTask> {
+public class KneadingSchedule extends OneTimeSchedule<KneadingTask> {
 
 	private static final long serialVersionUID = 2248657955736429337L;
+
 
 	@Override
 	public long getProductionTime(Job<KneadingTask> prevJob, Job<KneadingTask> nextJob, KneadingTask task) {
@@ -36,19 +37,6 @@ public class KneadingSchedule extends ProductionSchedule<KneadingTask> {
 			tasks.add(task.copy());
 		}
 		return tasks;
-	}
-
-	@Override
-	public Job<KneadingTask> getJob(String productId) {
-		for (Job<KneadingTask> job : getSchedule()) {
-			List<KneadingTask> associatedTasks = job.getAssociatedTasks();
-			for (KneadingTask task : associatedTasks) {
-				if (task.getProductId().equals(productId)) {
-					return job;
-				}
-			}
-		}
-		return null;
 	}
 
 }
