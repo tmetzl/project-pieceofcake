@@ -1,11 +1,14 @@
 package org.pieceofcake.streetnetwork;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.pieceofcake.objects.Location;
 
-public class StreetNetwork {
+public class StreetNetwork implements Serializable {
+	
+	private static final long serialVersionUID = 8549868542763579920L;
 	
 	private Map<Location, Node> locationMap;
 	private Map<Node, Map<Node, Double>> distances;

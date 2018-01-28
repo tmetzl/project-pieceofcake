@@ -93,7 +93,7 @@ public class DeliverySchedule extends ProductionSchedule<DeliveryTask> implement
 		if (prevJob != null && startDate.compareTo(prevJob.getEnd()) < 0) {
 			startDate = prevJob.getEnd();
 		}
-		long availableTime = 24 * 60 * 60;
+		long availableTime = 24 * 60 * 60l;
 		if (nextJob != null) {
 			availableTime = nextJob.getStart().toSeconds() - startDate.toSeconds();
 		}
