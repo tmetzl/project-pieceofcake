@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class ScenarioClock implements Serializable {
 
 	private static final long serialVersionUID = 4923509163246771424L;
-	public static final long SECONDS_PER_SCENARIO_DAY = 12;
+	public static final long SECONDS_PER_SCENARIO_DAY = 60;
 
 	private long startingTime;
 	private long timeOffset;
