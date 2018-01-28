@@ -1,6 +1,7 @@
 package org.pieceofcake.agents;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -69,17 +70,19 @@ public class CustomerAgent extends SynchronizedAgent {
 		private double bestPrice = 0;
 		private AID bestSeller;
 		private List<AID> bakeries;
+		private List<AID> proposers;
 		private Order order;
 
 		public PlaceOrder(Order order) {
 			this.order = order;
 			this.bakeries = new LinkedList<>();
+			this.proposers = new LinkedList<>();
 			this.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
-			this.addSubBehaviour(
-					new DelayUntilDate(getScenarioClock(), order.getOrderDate()));
+			this.addSubBehaviour(new DelayUntilDate(getScenarioClock(), order.getOrderDate()));
 			this.addSubBehaviour(new FindAgents(Services.ORDER, Services.ORDER_NAME, bakeries));
 			this.addSubBehaviour(new RequestOffers());
 			this.addSubBehaviour(new ReceiveOffers());
+			this.addSubBehaviour(new RejectProposals());
 			this.addSubBehaviour(new OrderFromBestSeller());
 		}
 
@@ -134,6 +137,7 @@ public class CustomerAgent extends SynchronizedAgent {
 					String answerContent = offer.getContent();
 
 					if (offer.getPerformative() == ACLMessage.PROPOSE) {
+						proposers.add(offer.getSender());
 						double price = Double.parseDouble(answerContent);
 
 						if (bestSeller == null || price < bestPrice) {
@@ -154,6 +158,35 @@ public class CustomerAgent extends SynchronizedAgent {
 			@Override
 			public boolean done() {
 				return allOffersReceived;
+			}
+
+		}
+
+		private class RejectProposals extends OneShotBehaviour {
+
+			private static final long serialVersionUID = -1149541077346212172L;
+
+			@Override
+			public void action() {
+				Iterator<AID> iter = proposers.iterator();
+
+				while (iter.hasNext()) {
+					AID bakery = iter.next();
+					if (bakery.getName().equals(bestSeller.getName())) {
+						iter.remove();
+						break;
+					}
+				}
+				if (!proposers.isEmpty()) {
+					ACLMessage msg = new ACLMessage(ACLMessage.REJECT_PROPOSAL);
+					msg.setProtocol(Protocols.ORDER);
+					msg.setContent(order.toJSONObject().toString());
+					for (AID proposer : proposers) {
+						msg.addReceiver(proposer);
+					}
+					myAgent.send(msg);
+				}
+
 			}
 
 		}
