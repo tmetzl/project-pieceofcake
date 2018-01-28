@@ -12,6 +12,7 @@ public class Services {
 	public static final String TIME_NAME = "time-service-name";
 	public static final String ORDER = "bakery";
 	public static final String ORDER_NAME = "bakery-ordering";
+	public static final String TASK_INFO = "task-information";
 	
 	public static final String KNEAD = "kneading-service";
 	public static final String REST = "resting-service";
