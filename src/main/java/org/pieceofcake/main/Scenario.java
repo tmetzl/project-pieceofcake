@@ -12,20 +12,9 @@ import java.util.Scanner;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import org.pieceofcake.agents.CustomerAgent;
-import org.pieceofcake.agents.GPSAgent;
-import org.pieceofcake.agents.OrderAgent;
-import org.pieceofcake.agents.ProductionAgent;
-import org.pieceofcake.agents.StartUpAgent;
-import org.pieceofcake.agents.TimerAgent;
-import org.pieceofcake.agents.WarehouseAgent;
+import org.pieceofcake.agents.*;
 import org.pieceofcake.interfaces.Machine;
-import org.pieceofcake.machines.BakingMachine;
-import org.pieceofcake.machines.CoolingMachine;
-import org.pieceofcake.machines.DeliveryMachine;
-import org.pieceofcake.machines.ItemPrepMachine;
-import org.pieceofcake.machines.KneadingMachine;
-import org.pieceofcake.machines.RestingMachine;
+import org.pieceofcake.machines.*;
 import org.pieceofcake.objects.CookBook;
 import org.pieceofcake.objects.Location;
 import org.pieceofcake.objects.Order;
@@ -159,7 +148,7 @@ public class Scenario {
 			String edgeGuid = link.getString("guid");
 			streetNetwork.addEdge(from, to, dist, edgeGuid);
 		}
-		tierOneAgents.put("GPS Service", new GPSAgent(streetNetwork));
+		
 	}
 
 	private void loadOrders() {
