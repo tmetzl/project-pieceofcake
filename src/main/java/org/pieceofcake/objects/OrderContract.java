@@ -15,12 +15,12 @@ public class OrderContract implements Serializable {
 	private static final long serialVersionUID = 5764464650645828722L;
 
 	private Order order;
-	private Map<AID, List<KneadingTask>> kneadingTaskMap;
-	private Map<AID, List<RestingTask>> restingTaskMap;
-	private Map<AID, List<ItemPrepTask>> itemPrepTaskMap;
-	private Map<AID, List<BakingTask>> bakingTaskMap;
-	private Map<AID, List<CoolingTask>> coolingTaskMap;
-	private Map<AID, List<DeliveryTask>> deliveryTaskMap;
+	private Map<AID, List<ContractTask<KneadingTask>>> kneadingTaskMap;
+	private Map<AID, List<ContractTask<RestingTask>>> restingTaskMap;
+	private Map<AID, List<ContractTask<ItemPrepTask>>> itemPrepTaskMap;
+	private Map<AID, List<ContractTask<BakingTask>>> bakingTaskMap;
+	private Map<AID, List<ContractTask<CoolingTask>>> coolingTaskMap;
+	private Map<AID, List<ContractTask<DeliveryTask>>> deliveryTaskMap;
 	private boolean hasFailed;
 	private AID customerAgentId;
 
@@ -39,30 +39,43 @@ public class OrderContract implements Serializable {
 	public Order getOrder() {
 		return order;
 	}
-	
+
 	public boolean hasFailed() {
 		return hasFailed;
 	}
-	
+
 	public void setFailed(boolean hasFailed) {
 		this.hasFailed = hasFailed;
 	}
 
-	private <T extends Task> void addTask(AID agentId, T task, Map<AID, List<T>> taskMap) {
-		List<T> existingTasks = taskMap.get(agentId);
+	private <T extends Task> void addTask(AID agentId, T task, Map<AID, List<ContractTask<T>>> taskMap) {
+		List<ContractTask<T>> existingTasks = taskMap.get(agentId);
 		if (existingTasks == null) {
 			existingTasks = new LinkedList<>();
 		}
-		existingTasks.add(task);
+		existingTasks.add(new ContractTask<T>(task));
 		taskMap.put(agentId, existingTasks);
+
 	}
 
-	private <T extends Task> List<T> getTasks(Map<AID, List<T>> taskMap) {
+	private <T extends Task> List<T> getTasks(Map<AID, List<ContractTask<T>>> taskMap) {
 		List<T> tasks = new LinkedList<>();
-		for (List<T> existingTasks : taskMap.values()) {
-			tasks.addAll(existingTasks);
+		for (List<ContractTask<T>> existingTasks : taskMap.values()) {
+			for (ContractTask<T> contractTask : existingTasks) {
+				tasks.add(contractTask.getTask());
+			}
 		}
 		return tasks;
+	}
+
+	public <T extends Task> void taskFinished(AID agentId, T task, Map<AID, List<ContractTask<T>>> taskMap) {
+		List<ContractTask<T>> contractTasks = taskMap.computeIfAbsent(agentId, k -> new LinkedList<>());
+		for (ContractTask<T> contractTask : contractTasks) {
+			if (task.equals(contractTask.getTask())) {
+				contractTask.setCompleted();
+				break;
+			}
+		}
 	}
 
 	public List<AID> getAgents() {
@@ -76,8 +89,28 @@ public class OrderContract implements Serializable {
 		return agents;
 	}
 
-	public Map<AID, List<KneadingTask>> getKneadingTaskMap() {
+	public Map<AID, List<ContractTask<KneadingTask>>> getKneadingTaskMap() {
 		return kneadingTaskMap;
+	}
+
+	public Map<AID, List<ContractTask<RestingTask>>> getRestingTaskMap() {
+		return restingTaskMap;
+	}
+
+	public Map<AID, List<ContractTask<ItemPrepTask>>> getItemPrepTaskMap() {
+		return itemPrepTaskMap;
+	}
+
+	public Map<AID, List<ContractTask<BakingTask>>> getBakingTaskMap() {
+		return bakingTaskMap;
+	}
+
+	public Map<AID, List<ContractTask<CoolingTask>>> getCoolingTaskMap() {
+		return coolingTaskMap;
+	}
+
+	public Map<AID, List<ContractTask<DeliveryTask>>> getDeliveryTaskMap() {
+		return deliveryTaskMap;
 	}
 
 	public List<KneadingTask> getKneadingTasks() {
@@ -88,20 +121,12 @@ public class OrderContract implements Serializable {
 		addTask(agentId, task, kneadingTaskMap);
 	}
 
-	public Map<AID, List<RestingTask>> getRestingTaskMap() {
-		return restingTaskMap;
-	}
-
 	public List<RestingTask> getRestingTasks() {
 		return getTasks(restingTaskMap);
 	}
 
 	public void addRestingTask(AID agentId, RestingTask task) {
 		addTask(agentId, task, restingTaskMap);
-	}
-
-	public Map<AID, List<ItemPrepTask>> getItemPrepTaskMap() {
-		return itemPrepTaskMap;
 	}
 
 	public List<ItemPrepTask> getItemPrepTasks() {
@@ -112,20 +137,12 @@ public class OrderContract implements Serializable {
 		addTask(agentId, task, itemPrepTaskMap);
 	}
 
-	public Map<AID, List<BakingTask>> getBakingTaskMap() {
-		return bakingTaskMap;
-	}
-
 	public List<BakingTask> getBakingTasks() {
 		return getTasks(bakingTaskMap);
 	}
 
 	public void addBakingTask(AID agentId, BakingTask task) {
 		addTask(agentId, task, bakingTaskMap);
-	}
-
-	public Map<AID, List<CoolingTask>> getCoolingTaskMap() {
-		return coolingTaskMap;
 	}
 
 	public List<CoolingTask> getCoolingTasks() {
@@ -136,10 +153,6 @@ public class OrderContract implements Serializable {
 		addTask(agentId, task, coolingTaskMap);
 	}
 
-	public Map<AID, List<DeliveryTask>> getDeliveryTaskMap() {
-		return deliveryTaskMap;
-	}
-
 	public List<DeliveryTask> getDeliveryTasks() {
 		return getTasks(deliveryTaskMap);
 	}
@@ -147,13 +160,37 @@ public class OrderContract implements Serializable {
 	public void addDeliveryTask(AID agentId, DeliveryTask task) {
 		addTask(agentId, task, deliveryTaskMap);
 	}
-	
+
 	public AID getCustomerAgentId() {
 		return customerAgentId;
 	}
 
 	public void setCustomerAgentId(AID customerAgentId) {
 		this.customerAgentId = customerAgentId;
+	}
+
+	public void kneadingTaskFinished(AID agentId, KneadingTask task) {
+		taskFinished(agentId, task, kneadingTaskMap);
+	}
+
+	public void restingTaskFinished(AID agentId, RestingTask task) {
+		taskFinished(agentId, task, restingTaskMap);
+	}
+
+	public void itemPrepTaskFinished(AID agentId, ItemPrepTask task) {
+		taskFinished(agentId, task, itemPrepTaskMap);
+	}
+
+	public void bakingTaskFinished(AID agentId, BakingTask task) {
+		taskFinished(agentId, task, bakingTaskMap);
+	}
+
+	public void coolingTaskFinished(AID agentId, CoolingTask task) {
+		taskFinished(agentId, task, coolingTaskMap);
+	}
+
+	public void deliveryTaskFinished(AID agentId, DeliveryTask task) {
+		taskFinished(agentId, task, deliveryTaskMap);
 	}
 
 }
