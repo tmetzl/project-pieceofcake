@@ -44,10 +44,12 @@ public class HandleTasks<T extends Task> extends SequentialBehaviour {
 
 		@Override
 		public void onStart() {
-			T task = tasks.remove(0);
-			this.bestTaskOffers = new HashMap<>();
-			this.addSubBehaviour(new AdvertiseTask<>(task, taskDescriptor.getServiceType(),
-					taskDescriptor.getBakeryName(), taskDescriptor.getProtocol(), bestTaskOffers));
+			if (!tasks.isEmpty() && !contract.hasFailed()) {
+				T task = tasks.remove(0);
+				this.bestTaskOffers = new HashMap<>();
+				this.addSubBehaviour(new AdvertiseTask<>(task, taskDescriptor.getServiceType(),
+						taskDescriptor.getBakeryName(), taskDescriptor.getProtocol(), bestTaskOffers));
+			}
 		}
 
 		@Override
@@ -55,22 +57,24 @@ public class HandleTasks<T extends Task> extends SequentialBehaviour {
 
 			boolean offerDatesOk = true;
 
-			for (Task task : bestTaskOffers.values()) {
-				if (task.getDueDate().compareTo(dueDate) > 0) {
-					offerDatesOk = false;
-					break;
+			if (bestTaskOffers != null) {
+				for (Task task : bestTaskOffers.values()) {
+					if (task.getDueDate().compareTo(dueDate) > 0) {
+						offerDatesOk = false;
+						break;
+					}
 				}
-			}
-			if (!offerDatesOk) {
-				contract.setFailed(true);
-			} else {
-				for (Map.Entry<AID, T> entry : bestTaskOffers.entrySet()) {
-					taskDescriptor.addTaskToOrder(entry.getKey(), entry.getValue(), contract);
-					HandleTasks.this.addSubBehaviour(new AcceptTaskOffer(entry.getKey(), entry.getValue()));
-				}
+				if (!offerDatesOk) {
+					contract.setFailed(true);
+				} else {
+					for (Map.Entry<AID, T> entry : bestTaskOffers.entrySet()) {
+						taskDescriptor.addTaskToOrder(entry.getKey(), entry.getValue(), contract);
+						HandleTasks.this.addSubBehaviour(new AcceptTaskOffer(entry.getKey(), entry.getValue()));
+					}
 
-				if (!tasks.isEmpty()) {
-					HandleTasks.this.addSubBehaviour(new AdvertiseAndCheckTask());
+					if (!tasks.isEmpty()) {
+						HandleTasks.this.addSubBehaviour(new AdvertiseAndCheckTask());
+					}
 				}
 			}
 			return 0;

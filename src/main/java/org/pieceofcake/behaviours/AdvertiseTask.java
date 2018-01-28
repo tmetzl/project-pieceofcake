@@ -72,7 +72,8 @@ public class AdvertiseTask<T extends Task> extends SequentialBehaviour {
 
 		@Override
 		public void action() {
-			MessageTemplate msgTemplate = MessageTemplate.MatchProtocol(protocol);
+			MessageTemplate msgTemplate = MessageTemplate.and(MessageTemplate.MatchProtocol(protocol),
+					MessageTemplate.MatchPerformative(ACLMessage.PROPOSE));
 			ACLMessage offer = myAgent.receive(msgTemplate);
 			if (offer != null) {
 
@@ -129,7 +130,7 @@ public class AdvertiseTask<T extends Task> extends SequentialBehaviour {
 					T partialTask = bestTaskOffers.get(bid.getAgentId());
 					if (partialTask == null) {
 						partialTask = (T) task.copy();
-						partialTask.setNumOfItems(1);					
+						partialTask.setNumOfItems(1);
 					} else {
 						partialTask.setNumOfItems(partialTask.getNumOfItems() + 1);
 					}

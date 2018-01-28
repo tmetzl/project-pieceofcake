@@ -15,6 +15,10 @@ public class Proposal implements Serializable {
 	private String orderId;
 	private String productId;
 	private List<Date> completionTimes;
+	
+	public Proposal() {
+		completionTimes = new LinkedList<>();
+	}
 
 	public String getOrderId() {
 		return orderId;
