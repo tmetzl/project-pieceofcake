@@ -42,12 +42,12 @@ public class DiGraphTest {
 	@Test
 	public void getNodeTest() {
 		for (Node node : nodes) {
-			assertEquals(node, graph.getNode(node.getGuid()));
+			assertEquals(node, graph.getNodeFromId(node.getGuid()));
 		}
 
 		boolean thrown = false;
 		try {
-			graph.getNode("node_that_doesn't-exist");
+			graph.getNodeFromId("node_that_doesn't-exist");
 		} catch (NoSuchElementException e) {
 			thrown = true;
 		}
@@ -67,7 +67,7 @@ public class DiGraphTest {
 
 	@Test
 	public void getEdgeTest() {
-		List<Edge> edgesOfNodeOne = graph.getEdges("node-0");
+		List<Edge> edgesOfNodeOne = graph.getEdgesFromNodeId("node-0");
 
 		assertEquals(9, edgesOfNodeOne.size());
 
@@ -78,13 +78,13 @@ public class DiGraphTest {
 		}
 
 		for (int i = 1; i < 10; i++) {
-			List<Edge> edges = graph.getEdges("node-" + i);
+			List<Edge> edges = graph.getEdgesFromNodeId("node-" + i);
 			assertTrue(edges.isEmpty());
 		}
 
 		boolean thrown = false;
 		try {
-			graph.getEdges("node_that_doesn't-exist");
+			graph.getEdgesFromNodeId("node_that_doesn't-exist");
 		} catch (NoSuchElementException e) {
 			thrown = true;
 		}
