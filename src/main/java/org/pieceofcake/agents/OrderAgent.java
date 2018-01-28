@@ -109,45 +109,55 @@ public class OrderAgent extends SynchronizedAgent {
 				Order order = new Order(new JSONObject(jsonOrder));
 
 				if (msg.getPerformative() == ACLMessage.CFP) {
-					// Customer wants an offer
-
-					// Get the price of the order
-					Double price = cookBook.getSalesPrice(order);
-					ACLMessage reply = msg.createReply();
-					if (price != null) {
-
-						addBehaviour(new ScheduleOrderContract(order, msg.getSender()));
-						reply.setPerformative(ACLMessage.PROPOSE);
-						reply.setContent(String.valueOf(price));
-					} else {
-						reply.setPerformative(ACLMessage.REFUSE);
-						reply.setContent("not-available");
-						myAgent.send(reply);
-					}
-
+					handleCallForProposal(order, msg);
 				} else if (msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
-					// Customer accepted an offer
-					Iterator<OrderContract> iter = pendingOrderContracts.iterator();
-					while (iter.hasNext()) {
-						OrderContract orderContract = iter.next();
-						if (order.getGuiId().equals(orderContract.getOrder().getGuiId())) {
-							iter.remove();
-							orderContracts.add(orderContract);
-						}
-					}
-
+					handleAcceptProposal(order);
 				} else if (msg.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
-					Iterator<OrderContract> iter = pendingOrderContracts.iterator();
-					while (iter.hasNext()) {
-						OrderContract orderContract = iter.next();
-						if (order.getGuiId().equals(orderContract.getOrder().getGuiId())) {
-							iter.remove();
-							addBehaviour(new CancelOrderContract(orderContract));
-						}
-					}
+					handleRejectProposal(order);
 				}
 			} else {
 				block();
+			}
+		}
+
+		private void handleCallForProposal(Order order, ACLMessage msg) {
+			// Customer wants an offer
+
+			// Get the price of the order
+			Double price = cookBook.getSalesPrice(order);
+			ACLMessage reply = msg.createReply();
+			if (price != null) {
+
+				addBehaviour(new ScheduleOrderContract(order, msg.getSender()));
+				reply.setPerformative(ACLMessage.PROPOSE);
+				reply.setContent(String.valueOf(price));
+			} else {
+				reply.setPerformative(ACLMessage.REFUSE);
+				reply.setContent("not-available");
+				myAgent.send(reply);
+			}
+		}
+
+		private void handleAcceptProposal(Order order) {
+			// Customer accepted an offer
+			Iterator<OrderContract> iter = pendingOrderContracts.iterator();
+			while (iter.hasNext()) {
+				OrderContract orderContract = iter.next();
+				if (order.getGuiId().equals(orderContract.getOrder().getGuiId())) {
+					iter.remove();
+					orderContracts.add(orderContract);
+				}
+			}
+		}
+
+		private void handleRejectProposal(Order order) {
+			Iterator<OrderContract> iter = pendingOrderContracts.iterator();
+			while (iter.hasNext()) {
+				OrderContract orderContract = iter.next();
+				if (order.getGuiId().equals(orderContract.getOrder().getGuiId())) {
+					iter.remove();
+					addBehaviour(new CancelOrderContract(orderContract));
+				}
 			}
 		}
 
