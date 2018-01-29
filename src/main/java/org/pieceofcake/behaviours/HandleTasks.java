@@ -57,26 +57,29 @@ public class HandleTasks<T extends Task> extends SequentialBehaviour {
 
 			boolean offerDatesOk = true;
 
-			if (bestTaskOffers != null && !bestTaskOffers.isEmpty()) {
-				for (Task task : bestTaskOffers.values()) {
-					if (task.getDueDate().compareTo(dueDate) > 0) {
-						offerDatesOk = false;
-						break;
-					}
-				}
-				if (!offerDatesOk) {
-					contract.setFailed(true);
-				} else {
-					for (Map.Entry<AID, T> entry : bestTaskOffers.entrySet()) {
-						taskDescriptor.addTaskToOrder(entry.getKey(), entry.getValue(), contract);
-						HandleTasks.this.addSubBehaviour(new AcceptTaskOffer(entry.getKey(), entry.getValue()));
-					}
+			if (bestTaskOffers == null || bestTaskOffers.isEmpty()) {
+				return 0;
+			}
 
-					if (!tasks.isEmpty()) {
-						HandleTasks.this.addSubBehaviour(new AdvertiseAndCheckTask());
-					}
+			for (Task task : bestTaskOffers.values()) {
+				if (task.getDueDate().compareTo(dueDate) > 0) {
+					offerDatesOk = false;
+					break;
 				}
 			}
+			if (!offerDatesOk) {
+				contract.setFailed(true);
+			} else {
+				for (Map.Entry<AID, T> entry : bestTaskOffers.entrySet()) {
+					taskDescriptor.addTaskToOrder(entry.getKey(), entry.getValue(), contract);
+					HandleTasks.this.addSubBehaviour(new AcceptTaskOffer(entry.getKey(), entry.getValue()));
+				}
+
+				if (!tasks.isEmpty()) {
+					HandleTasks.this.addSubBehaviour(new AdvertiseAndCheckTask());
+				}
+			}
+
 			return 0;
 
 		}
