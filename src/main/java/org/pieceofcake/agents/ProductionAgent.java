@@ -118,11 +118,11 @@ public class ProductionAgent<T extends Task> extends SynchronizedAgent implement
 			Schedule<T> schedule = machine.getScheduleOfDay(day);
 			List<Date> dates = new LinkedList<>();
 			int numOfItems = task.getNumOfItems();
-			for (int i = 1; i <= numOfItems; i++) {
-				task.setNumOfItems(i);
+//			for (int i = 1; i <= numOfItems; i++) {
+//				task.setNumOfItems(i);
 				Date completionTime = schedule.getEarliestCompletionTime(task);
 				dates.add(completionTime);
-			}
+//			}
 			proposal.setCompletionTimes(dates);
 			return proposal;
 		}
