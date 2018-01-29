@@ -13,7 +13,6 @@ import org.pieceofcake.behaviours.SynchronizeClock;
 import org.pieceofcake.config.Protocols;
 import org.pieceofcake.config.Services;
 import org.pieceofcake.objects.CustomerContract;
-import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.Location;
 import org.pieceofcake.objects.Order;
 import org.pieceofcake.utils.OrderDateComparator;
@@ -107,11 +106,6 @@ public class CustomerAgent extends SynchronizedAgent {
 
 			@Override
 			public void action() {
-				Date currentDate = getScenarioClock().getDate();
-				String output = String.format("%nDay %d %02d:%02d:%02d%n%s", currentDate.getDay(),
-						currentDate.getHour(), currentDate.getMinute(), currentDate.getSecond(), order);
-				logger.log(Logger.INFO, output);
-
 				ACLMessage msg = new ACLMessage(ACLMessage.CFP);
 				// Add all known bakeries as receivers
 				for (AID bakery : bakeries) {
@@ -204,8 +198,8 @@ public class CustomerAgent extends SynchronizedAgent {
 			@Override
 			public void action() {
 				if (bestSeller != null) {
-					String output = String.format("%s: The best offer of EUR %.2f comes from %s.",
-							getAID().getLocalName(), bestPrice, bestSeller.getLocalName());
+					String output = String.format("%s: The best offer for order %s of EUR %.2f comes from %s.",
+							getAID().getLocalName(), order.getGuiId(), bestPrice, bestSeller.getLocalName());
 					logger.log(Logger.INFO, output);
 
 					ACLMessage msg = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
@@ -222,7 +216,9 @@ public class CustomerAgent extends SynchronizedAgent {
 					contracts.add(new CustomerContract(order, bestSeller));
 
 				} else {
-					logger.log(Logger.INFO, myAgent.getLocalName() + ": No offers received or products not available.");
+					String output = String.format("%s: Order %s, no offers received or products not available",
+							myAgent.getLocalName(), order.getGuiId());
+					logger.log(Logger.INFO, output);
 					failedOrders.add(order);
 				}
 			}
