@@ -13,13 +13,15 @@ import org.pieceofcake.behaviours.SynchronizeClock;
 import org.pieceofcake.config.Protocols;
 import org.pieceofcake.config.Services;
 import org.pieceofcake.objects.CookBook;
+import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.Location;
 import org.pieceofcake.objects.Order;
 import org.pieceofcake.objects.OrderContract;
 import org.pieceofcake.tasks.*;
 
-import jade.core.AID;
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -36,14 +38,12 @@ public class OrderAgent extends SynchronizedAgent {
 	private CookBook cookBook;
 	private String bakeryName;
 	private List<OrderContract> orderContracts;
-	private List<OrderContract> pendingOrderContracts;
 
 	public OrderAgent(Location location, String bakeryName, CookBook cookBook) {
 		this.cookBook = cookBook;
 		this.bakeryName = bakeryName;
 		this.location = location;
 		this.orderContracts = new LinkedList<>();
-		this.pendingOrderContracts = new LinkedList<>();
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class OrderAgent extends SynchronizedAgent {
 		seq.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
 		seq.addSubBehaviour(new ReceiveStartingTime(getScenarioClock()));
 		addBehaviour(seq);
-		addBehaviour(new OrderService());
+		addBehaviour(new OrderService2());
 		addBehaviour(new WaitForStatusUpdate());
 	}
 
@@ -96,104 +96,178 @@ public class OrderAgent extends SynchronizedAgent {
 		logger.log(Logger.INFO, getAID().getLocalName() + ": Terminating.");
 	}
 
-	private class OrderService extends CyclicBehaviour {
+	private class OrderService2 extends SequentialBehaviour {
 
-		private static final long serialVersionUID = 5699193033939119835L;
-
-		public void action() {
-			MessageTemplate msgTemplate = MessageTemplate.MatchProtocol(Protocols.ORDER);
-			ACLMessage msg = myAgent.receive(msgTemplate);
-			if (msg != null) {
-
-				String jsonOrder = msg.getContent();
-				Order order = new Order(new JSONObject(jsonOrder));
-
-				if (msg.getPerformative() == ACLMessage.CFP) {
-					handleCallForProposal(order, msg);
-				} else if (msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
-					handleAcceptProposal(order);
-				} else if (msg.getPerformative() == ACLMessage.REJECT_PROPOSAL) {
-					handleRejectProposal(order);
-				}
-			} else {
-				block();
-			}
-		}
-
-		private void handleCallForProposal(Order order, ACLMessage msg) {
-			// Customer wants an offer
-
-			// Get the price of the order
-			Double price = cookBook.getSalesPrice(order);
-			ACLMessage reply = msg.createReply();
-			if (price != null) {
-
-				addBehaviour(new ScheduleOrderContract(order, msg.getSender()));
-				reply.setPerformative(ACLMessage.PROPOSE);
-				reply.setContent(String.valueOf(price));
-			} else {
-				reply.setPerformative(ACLMessage.REFUSE);
-				reply.setContent("not-available");
-				myAgent.send(reply);
-			}
-		}
-
-		private void handleAcceptProposal(Order order) {
-			// Customer accepted an offer
-			Iterator<OrderContract> iter = pendingOrderContracts.iterator();
-			while (iter.hasNext()) {
-				OrderContract orderContract = iter.next();
-				if (order.getGuiId().equals(orderContract.getOrder().getGuiId())) {
-					iter.remove();
-					orderContracts.add(orderContract);
-				}
-			}
-		}
-
-		private void handleRejectProposal(Order order) {
-			Iterator<OrderContract> iter = pendingOrderContracts.iterator();
-			while (iter.hasNext()) {
-				OrderContract orderContract = iter.next();
-				if (order.getGuiId().equals(orderContract.getOrder().getGuiId())) {
-					iter.remove();
-					addBehaviour(new CancelOrderContract(orderContract));
-				}
-			}
-		}
-
-	}
-
-	private class ScheduleOrderContract extends SequentialBehaviour {
-
-		private static final long serialVersionUID = 6003134829282756659L;
+		private static final long serialVersionUID = -7336513100493959374L;
 
 		private OrderContract contract;
 
-		public ScheduleOrderContract(Order order, AID customerId) {
-			this.contract = new OrderContract(order, customerId);
-			this.addSubBehaviour(new ScheduleOrder(contract, cookBook, bakeryName));
-
+		public OrderService2() {
+			this.addSubBehaviour(new WaitForOrder());
 		}
 
 		@Override
 		public int onEnd() {
-			if (contract.hasFailed()) {
+			myAgent.addBehaviour(new OrderService2());
+			return 0;
+		}
+
+		private class WaitForOrder extends Behaviour {
+
+			private static final long serialVersionUID = -860949815687599667L;
+
+			private boolean orderReceived;
+
+			public WaitForOrder() {
+				this.orderReceived = false;
+			}
+
+			@Override
+			public void action() {
+				MessageTemplate msgTemplate = MessageTemplate.and(MessageTemplate.MatchProtocol(Protocols.ORDER),
+						MessageTemplate.MatchPerformative(ACLMessage.CFP));
+				ACLMessage msg = myAgent.receive(msgTemplate);
+				if (msg != null) {
+					String jsonOrder = msg.getContent();
+					Order order = new Order(new JSONObject(jsonOrder));
+					Date orderDate = new Date(getScenarioClock().getDate().toSeconds() + 3600l);
+					Date dueDate = new Date(order.getDueDate().toSeconds() - 3600);
+					order.setOrderDate(orderDate);
+					order.setDueDate(dueDate);
+					contract = new OrderContract(order, msg.getSender());
+					orderReceived = true;
+					OrderService2.this.addSubBehaviour(new CheckInStock());
+				} else {
+					block();
+				}
+			}
+
+			@Override
+			public boolean done() {
+				return orderReceived;
+			}
+
+		}
+
+		private class CheckInStock extends OneShotBehaviour {
+
+			private static final long serialVersionUID = 8949706952997896400L;
+
+			@Override
+			public void action() {
+				Order order = contract.getOrder();
+				Double price = cookBook.getSalesPrice(order);
+				if (price != null) {
+					orderContracts.add(contract);
+					OrderService2.this.addSubBehaviour(new ScheduleOrder(contract, cookBook, bakeryName));
+					OrderService2.this.addSubBehaviour(new CheckSchedule());
+				} else {
+					OrderService2.this.addSubBehaviour(new RefuseOrder());
+				}
+			}
+
+		}
+
+		private class CheckSchedule extends OneShotBehaviour {
+
+			private static final long serialVersionUID = -8179200632013016315L;
+
+			@Override
+			public void action() {
+				if (contract.hasFailed()) {
+					Iterator<OrderContract> iter = orderContracts.iterator();
+					while (iter.hasNext()) {
+						OrderContract orderContract = iter.next();
+						if (contract.getOrder().getGuiId().equals(orderContract.getOrder().getGuiId())) {
+							iter.remove();
+							addBehaviour(new CancelOrderContract(orderContract));
+						}
+					}
+					OrderService2.this.addSubBehaviour(new RefuseOrder());
+				} else {
+					OrderService2.this.addSubBehaviour(new SendProposol());
+				}
+			}
+
+		}
+
+		private class RefuseOrder extends OneShotBehaviour {
+
+			private static final long serialVersionUID = 2465736864860484614L;
+
+			@Override
+			public void action() {
 				ACLMessage msg = new ACLMessage(ACLMessage.REFUSE);
 				msg.addReceiver(contract.getCustomerAgentId());
 				msg.setProtocol(Protocols.ORDER);
-				msg.setContent("not-completable");
+				msg.setContent("not-available");
 				myAgent.send(msg);
-			} else {
-				pendingOrderContracts.add(contract);
+			}
+
+		}
+
+		private class SendProposol extends OneShotBehaviour {
+
+			private static final long serialVersionUID = 7960339631635199169L;
+
+			@Override
+			public void action() {
 				ACLMessage msg = new ACLMessage(ACLMessage.PROPOSE);
 				msg.addReceiver(contract.getCustomerAgentId());
 				msg.setProtocol(Protocols.ORDER);
 				Double price = cookBook.getSalesPrice(contract.getOrder());
 				msg.setContent(String.valueOf(price));
 				myAgent.send(msg);
+				addBehaviour(new WaitForAnswer(contract));
 			}
-			return 0;
 
+		}
+
+		
+
+	}
+	
+	private class WaitForAnswer extends Behaviour {
+
+		private static final long serialVersionUID = -8475806512645064348L;
+
+		private boolean answerReceived;
+		private OrderContract contract;
+		
+		public WaitForAnswer(OrderContract contract) {
+			this.contract = contract;
+			this.answerReceived = false;
+		}
+
+		@Override
+		public void action() {
+			MessageTemplate msgTemplate = MessageTemplate.and(MessageTemplate.MatchProtocol(Protocols.ORDER),
+					MessageTemplate.or(MessageTemplate.MatchPerformative(ACLMessage.REJECT_PROPOSAL),
+							MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL)));
+			ACLMessage msg = myAgent.receive(msgTemplate);
+			if (msg != null) {
+				if (msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
+					orderContracts.add(contract);
+				} else {
+					Iterator<OrderContract> iter = orderContracts.iterator();
+					while (iter.hasNext()) {
+						OrderContract orderContract = iter.next();
+						if (contract.getOrder().getGuiId().equals(orderContract.getOrder().getGuiId())) {
+							iter.remove();
+							addBehaviour(new CancelOrderContract(orderContract));
+						}
+					}
+				}
+				answerReceived = true;
+			} else {
+				block();
+			}
+
+		}
+
+		@Override
+		public boolean done() {
+			return answerReceived;
 		}
 	}
 
