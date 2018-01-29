@@ -13,7 +13,6 @@ import org.pieceofcake.behaviours.SynchronizeClock;
 import org.pieceofcake.config.Protocols;
 import org.pieceofcake.config.Services;
 import org.pieceofcake.objects.CustomerContract;
-import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.Location;
 import org.pieceofcake.objects.Order;
 import org.pieceofcake.utils.OrderDateComparator;
