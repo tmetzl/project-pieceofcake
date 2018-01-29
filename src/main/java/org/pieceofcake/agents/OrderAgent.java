@@ -223,59 +223,24 @@ public class OrderAgent extends SynchronizedAgent {
 		public void action() {
 			ACLMessage msg = myAgent.receive(template);
 			if (msg != null) {
-				OrderContract contract;
 				switch (msg.getProtocol()) {
-
 				case Protocols.KNEAD:
-					KneadingTask kneadingTask = new KneadingTask();
-					kneadingTask.fromJSONObject(new JSONObject(msg.getContent()));
-					contract = getOrderContract(kneadingTask.getOrderId());
-					if (contract != null) {
-						contract.kneadingTaskFinished(msg.getSender(), kneadingTask);
-					}
+					handleKneadingStatusMessage(msg);
 					break;
 				case Protocols.REST:
-					RestingTask restingTask = new RestingTask();
-					restingTask.fromJSONObject(new JSONObject(msg.getContent()));
-					contract = getOrderContract(restingTask.getOrderId());
-					if (contract != null) {
-						contract.restingTaskFinished(msg.getSender(), restingTask);
-					}
+					handleRestingStatusMessage(msg);
 					break;
 				case Protocols.PREP:
-					ItemPrepTask itemPrepTask = new ItemPrepTask();
-					itemPrepTask.fromJSONObject(new JSONObject(msg.getContent()));
-					contract = getOrderContract(itemPrepTask.getOrderId());
-					if (contract != null) {
-						contract.itemPrepTaskFinished(msg.getSender(), itemPrepTask);
-					}
+					handleItemPrepStatusMessage(msg);
 					break;
 				case Protocols.BAKE:
-					BakingTask bakingTask = new BakingTask();
-					bakingTask.fromJSONObject(new JSONObject(msg.getContent()));
-					contract = getOrderContract(bakingTask.getOrderId());
-					if (contract != null) {
-						contract.bakingTaskFinished(msg.getSender(), bakingTask);
-					}
+					handleBakingStatusMessage(msg);
 					break;
 				case Protocols.COOL:
-					CoolingTask coolingTask = new CoolingTask();
-					coolingTask.fromJSONObject(new JSONObject(msg.getContent()));
-					contract = getOrderContract(coolingTask.getOrderId());
-					if (contract != null) {
-						contract.coolingTaskFinished(msg.getSender(), coolingTask);
-					}
+					handleCoolingStatusMessage(msg);
 					break;
 				case Protocols.DELIVERY:
-					DeliveryTask deliveryTask = new DeliveryTask();
-					deliveryTask.fromJSONObject(new JSONObject(msg.getContent()));
-					contract = getOrderContract(deliveryTask.getOrderId());
-					if (contract != null) {
-						contract.deliveryTaskFinished(msg.getSender(), deliveryTask);
-						if (contract.isCompleted()) {
-							addBehaviour(new NotifyOrderComplete(contract));
-						}
-					}
+					handleDeliveryStatusMessage(msg);
 					break;
 				default:
 					break;
@@ -295,5 +260,63 @@ public class OrderAgent extends SynchronizedAgent {
 			return null;
 		}
 
+		private void handleKneadingStatusMessage(ACLMessage msg) {
+			KneadingTask kneadingTask = new KneadingTask();
+			kneadingTask.fromJSONObject(new JSONObject(msg.getContent()));
+			OrderContract contract = getOrderContract(kneadingTask.getOrderId());
+			if (contract != null) {
+				contract.kneadingTaskFinished(msg.getSender(), kneadingTask);
+			}
+		}
+
+		private void handleRestingStatusMessage(ACLMessage msg) {
+			RestingTask restingTask = new RestingTask();
+			restingTask.fromJSONObject(new JSONObject(msg.getContent()));
+			OrderContract contract = getOrderContract(restingTask.getOrderId());
+			if (contract != null) {
+				contract.restingTaskFinished(msg.getSender(), restingTask);
+			}
+		}
+
+		private void handleItemPrepStatusMessage(ACLMessage msg) {
+			ItemPrepTask itemPrepTask = new ItemPrepTask();
+			itemPrepTask.fromJSONObject(new JSONObject(msg.getContent()));
+			OrderContract contract = getOrderContract(itemPrepTask.getOrderId());
+			if (contract != null) {
+				contract.itemPrepTaskFinished(msg.getSender(), itemPrepTask);
+			}
+		}
+
+		private void handleBakingStatusMessage(ACLMessage msg) {
+			BakingTask bakingTask = new BakingTask();
+			bakingTask.fromJSONObject(new JSONObject(msg.getContent()));
+			OrderContract contract = getOrderContract(bakingTask.getOrderId());
+			if (contract != null) {
+				contract.bakingTaskFinished(msg.getSender(), bakingTask);
+			}
+		}
+
+		private void handleCoolingStatusMessage(ACLMessage msg) {
+			CoolingTask coolingTask = new CoolingTask();
+			coolingTask.fromJSONObject(new JSONObject(msg.getContent()));
+			OrderContract contract = getOrderContract(coolingTask.getOrderId());
+			if (contract != null) {
+				contract.coolingTaskFinished(msg.getSender(), coolingTask);
+			}
+		}
+
+		private void handleDeliveryStatusMessage(ACLMessage msg) {
+			DeliveryTask deliveryTask = new DeliveryTask();
+			deliveryTask.fromJSONObject(new JSONObject(msg.getContent()));
+			OrderContract contract = getOrderContract(deliveryTask.getOrderId());
+			if (contract != null) {
+				contract.deliveryTaskFinished(msg.getSender(), deliveryTask);
+				if (contract.isCompleted()) {
+					addBehaviour(new NotifyOrderComplete(contract));
+				}
+			}
+		}
+
 	}
+
 }
