@@ -4,9 +4,26 @@ import org.json.JSONObject;
 
 public class BakingTask extends Task {
 
+	private static final long serialVersionUID = -5071207234146128199L;
+
 	private long bakingTime;
 	private long bakingTemperature;
-	private double coolingTimeFactor;
+	private int itemPerTray;
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof BakingTask) {
+			BakingTask task = (BakingTask) o;
+			return this.bakingTime == task.getBakingTime() && this.bakingTemperature == task.getBakingTemperature()
+					&& this.itemPerTray == task.getItemPerTray() && this.checkMutualFields(task);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return (this.getOrderId() + this.getProductId()).hashCode();
+	}
 
 	public long getBakingTime() {
 		return bakingTime;
@@ -24,12 +41,12 @@ public class BakingTask extends Task {
 		this.bakingTemperature = bakingTemperature;
 	}
 
-	public double getCoolingTimeFactor() {
-		return coolingTimeFactor;
+	public int getItemPerTray() {
+		return itemPerTray;
 	}
 
-	public void setCoolingTimeFactor(double coolingTimeFactor) {
-		this.coolingTimeFactor = coolingTimeFactor;
+	public void setItemPerTray(int itemPerTray) {
+		this.itemPerTray = itemPerTray;
 	}
 
 	@Override
@@ -37,7 +54,7 @@ public class BakingTask extends Task {
 		JSONObject jsonObject = super.toJSONObject();
 		jsonObject.put("baking_time", bakingTime);
 		jsonObject.put("baking_temp", bakingTemperature);
-		jsonObject.put("cooling_time_factor", coolingTimeFactor);
+		jsonObject.put("item_per_tray", itemPerTray);
 		return jsonObject;
 	}
 
@@ -46,8 +63,7 @@ public class BakingTask extends Task {
 		super.fromJSONObject(jsonObject);
 		setBakingTime(jsonObject.getLong("baking_time"));
 		setBakingTemperature(jsonObject.getLong("baking_temp"));
-		setCoolingTimeFactor(jsonObject.getDouble("cooling_time_factor"));
-
+		setItemPerTray(jsonObject.getInt("item_per_tray"));
 	}
 
 	@Override

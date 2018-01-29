@@ -11,20 +11,20 @@ import java.util.Scanner;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.pieceofcake.agents.BakeryClockAgent;
-import org.pieceofcake.agents.CustomerAgent;
-import org.pieceofcake.agents.GPSAgent;
-import org.pieceofcake.agents.KneadingAgent;
-import org.pieceofcake.agents.KneadingSchedulerAgent;
-import org.pieceofcake.agents.OrderAgent;
-import org.pieceofcake.agents.StartUpAgent;
-import org.pieceofcake.agents.TimerAgent;
-import org.pieceofcake.objects.Bakery;
+
+import org.pieceofcake.agents.*;
+import org.pieceofcake.interfaces.Machine;
+import org.pieceofcake.machines.*;
+import org.pieceofcake.objects.CookBook;
 import org.pieceofcake.objects.Location;
 import org.pieceofcake.objects.Order;
 import org.pieceofcake.objects.Product;
 import org.pieceofcake.streetnetwork.DiGraph;
 import org.pieceofcake.streetnetwork.Node;
+import org.pieceofcake.streetnetwork.StreetNetwork;
+import org.pieceofcake.tasks.BakingTask;
+import org.pieceofcake.tasks.ItemPrepTask;
+import org.pieceofcake.tasks.KneadingTask;
 
 import jade.core.Agent;
 import jade.core.Profile;
@@ -117,7 +117,6 @@ public class Scenario {
 					container.acceptNewAgent(name, agent).start();
 				}
 
-				
 			} catch (StaleProxyException s) {
 				logger.log(Logger.WARNING, s.getMessage(), s);
 			}
@@ -149,15 +148,25 @@ public class Scenario {
 			String edgeGuid = link.getString("guid");
 			streetNetwork.addEdge(from, to, dist, edgeGuid);
 		}
-		tierOneAgents.put("GPS Service", new GPSAgent(streetNetwork));
+		
 	}
 
 	private void loadOrders() {
+		Map<String, Location> customerLocations = new HashMap<>();
+		JSONArray jsonCustomers = jsonScenario.getJSONArray("customers");
+
+		for (int i = 0; i < jsonCustomers.length(); i++) {
+			// Extract one customer and its Id
+			JSONObject customer = jsonCustomers.getJSONObject(i);
+			customerLocations.put(customer.getString("guid"), getLocation(customer));
+		}
 		JSONArray orders = jsonScenario.getJSONArray("orders");
 		customerOrderMap = new HashMap<>();
 		for (int i = 0; i < orders.length(); i++) {
 			// Convert each order to a JSONObject
 			JSONObject order = orders.getJSONObject(i);
+			// Add location to order
+			order.put("location", customerLocations.get(order.get("customer_id")).toJSONObject());
 			// Adding minute and second to comply with date format
 			JSONObject orderDate = order.getJSONObject("order_date");
 			orderDate.put("minute", 0);
@@ -218,32 +227,76 @@ public class Scenario {
 			JSONObject jsonBakery = bakeries.getJSONObject(i);
 			String name = jsonBakery.getString("name");
 			String guiId = jsonBakery.getString("guid");
-
-			JSONArray kneadingMachines = jsonBakery.getJSONArray("kneading_machines");
-			int numberOfKneadingMachines = kneadingMachines.length();
 			Location location = getLocation(jsonBakery);
-			Bakery bakery = new Bakery(guiId, name, location);
-			BakeryClockAgent myBakeryClock = new BakeryClockAgent(bakery);
 
-			String[] kneadingAgentNames = new String[numberOfKneadingMachines];
-			for (int j = 0; j < numberOfKneadingMachines; j++) {
-				JSONObject kneadingMachine = kneadingMachines.getJSONObject(j);
-				kneadingAgentNames[j] = kneadingMachine.getString("guid");
-			}
+			loadKneadingMachines(jsonBakery.getJSONArray("kneading_machines"), guiId, location);
 
+			loadPrepTables(jsonBakery.getJSONArray("dough_prep_tables"), guiId, location);
+
+			loadOvens(jsonBakery.getJSONArray("ovens"), guiId, location);
+
+			loadTrucks(jsonBakery.getJSONArray("trucks"), guiId);
+
+			CookBook cookBook = new CookBook();
 			JSONArray products = jsonBakery.getJSONArray("products");
 			for (int j = 0; j < products.length(); j++) {
 				JSONObject jsonProduct = products.getJSONObject(j);
 				Product product = new Product(jsonProduct.toString());
-				bakery.addProduct(product);
+				cookBook.addProduct(product);
 			}
 
-			for (String kneadingAgentName : kneadingAgentNames) {
-				tierOneAgents.put(kneadingAgentName, new KneadingAgent());
+			tierOneAgents.put(name + "-resting-machine", new ProductionAgent<>(location, new RestingMachine(guiId)));
+			tierOneAgents.put(name + "-cooling-machine", new ProductionAgent<>(location, new CoolingMachine(guiId)));
+
+			tierTwoAgents.put(name, new OrderAgent(location, guiId, cookBook));
+			tierTwoAgents.put(name + "-warehouse", new WarehouseAgent(location, guiId));
+		}
+
+	}
+
+	private void loadKneadingMachines(JSONArray kneadingMachines, String guiId, Location location) {
+		for (int j = 0; j < kneadingMachines.length(); j++) {
+			JSONObject kneadingMachine = kneadingMachines.getJSONObject(j);
+			String kneadingAgentName = kneadingMachine.getString("guid");
+			Machine<KneadingTask> machine = new KneadingMachine(guiId);
+			tierOneAgents.put(kneadingAgentName, new ProductionAgent<>(location, machine));
+		}
+	}
+
+	private void loadPrepTables(JSONArray prepTables, String guiId, Location location) {
+		for (int j = 0; j < prepTables.length(); j++) {
+			JSONObject prepTable = prepTables.getJSONObject(j);
+			String prepTableName = prepTable.getString("guid");
+			Machine<ItemPrepTask> machine = new ItemPrepMachine(guiId);
+			tierOneAgents.put(prepTableName, new ProductionAgent<>(location, machine));
+		}
+	}
+
+	private void loadOvens(JSONArray ovens, String guiId, Location location) {
+		for (int j = 0; j < ovens.length(); j++) {
+			JSONObject oven = ovens.getJSONObject(j);
+			long coolingRate = oven.getLong("cooling_rate");
+			long heatingRate = oven.getLong("heating_rate");
+			String ovenName = oven.getString("guid");
+			if (coolingRate == 0 || heatingRate == 0) {
+				break;
 			}
-			tierTwoAgents.put(name + "-kneadingScheduler", new KneadingSchedulerAgent(kneadingAgentNames, bakery));
-			tierTwoAgents.put(name + "-clock", myBakeryClock);
-			tierTwoAgents.put(name, new OrderAgent(bakery));
+			for (int k = 0; k < 4; k++) {
+				Machine<BakingTask> singleOvenSlot = new BakingMachine(guiId, 40, heatingRate, coolingRate);
+				tierOneAgents.put(ovenName + "-" + k, new ProductionAgent<>(location, singleOvenSlot));
+			}
+		}
+	}
+
+	private void loadTrucks(JSONArray trucks, String guiId) {
+		StreetNetwork network = new StreetNetwork(streetNetwork);
+		for (int i = 0; i < trucks.length(); i++) {
+			JSONObject truck = trucks.getJSONObject(i);
+			int loadCapacity = truck.getInt("load_capacity");
+			String name = truck.getString("guid");
+			Location location = getLocation(truck);
+			DeliveryMachine machine = new DeliveryMachine(location, guiId, 1.0, loadCapacity, network);
+			tierOneAgents.put(name, new ProductionAgent<>(location, machine));
 		}
 
 	}

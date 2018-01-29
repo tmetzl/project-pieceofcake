@@ -1,16 +1,16 @@
 package org.pieceofcake.behaviours;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.pieceofcake.config.Protocols;
+import org.pieceofcake.config.Services;
 import org.pieceofcake.objects.ScenarioClock;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
-import jade.domain.DFService;
-import jade.domain.FIPAException;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
@@ -21,49 +21,16 @@ public class ReceiveStartingTime extends SequentialBehaviour {
 	
 	private Logger logger;
 	private long sendTime;
-	private AID startUpAgent;
+	private List<AID> startUpAgents;
 	private ScenarioClock clock;
 
 	public ReceiveStartingTime(ScenarioClock clock) {
 		this.logger = Logger.getJADELogger(this.getClass().getName());
 		this.clock = clock;
-		this.addSubBehaviour(new FindStartUpAgent());
+		this.startUpAgents = new LinkedList<>();
+		this.addSubBehaviour(new FindAgents(Services.STARTUP, Services.STARTUP_NAME, startUpAgents));
 		this.addSubBehaviour(new SendStartUpTimeRequest());
 		this.addSubBehaviour(new ReceiveStartUpTime());
-	}
-
-	private class FindStartUpAgent extends Behaviour {
-
-		private static final long serialVersionUID = -3826773622991660902L;
-		
-		private boolean foundStartUpAgent;
-
-		public FindStartUpAgent() {
-			foundStartUpAgent = false;
-		}
-
-		@Override
-		public void action() {
-			DFAgentDescription template = new DFAgentDescription();
-			ServiceDescription sd = new ServiceDescription();
-			sd.setType("startup");
-			template.addServices(sd);
-			try {
-				DFAgentDescription[] result = DFService.search(myAgent, template);
-				if (result.length > 0) {
-					startUpAgent = result[0].getName();
-					foundStartUpAgent = true;
-				}
-			} catch (FIPAException fe) {
-				logger.log(Logger.WARNING, fe.getMessage(), fe);
-			}
-		}
-
-		@Override
-		public boolean done() {
-			return foundStartUpAgent;
-		}
-
 	}
 
 	private class SendStartUpTimeRequest extends OneShotBehaviour {
@@ -73,7 +40,7 @@ public class ReceiveStartingTime extends SequentialBehaviour {
 		@Override
 		public void action() {
 			ACLMessage startUpRequest = new ACLMessage(ACLMessage.REQUEST);
-			startUpRequest.addReceiver(startUpAgent);
+			startUpRequest.addReceiver(startUpAgents.get(0));
 			startUpRequest.setLanguage("English");
 			startUpRequest.setOntology("Bakery-order-ontology");
 			startUpRequest.setProtocol(Protocols.STARTUP);
@@ -92,7 +59,7 @@ public class ReceiveStartingTime extends SequentialBehaviour {
 
 		@Override
 		public void action() {
-			MessageTemplate matchSender = MessageTemplate.MatchSender(startUpAgent);
+			MessageTemplate matchSender = MessageTemplate.MatchSender(startUpAgents.get(0));
 			MessageTemplate matchProtocol = MessageTemplate.MatchProtocol(Protocols.STARTUP);
 			MessageTemplate msgTemplate = MessageTemplate.and(matchSender, matchProtocol);
 			ACLMessage msg = myAgent.receive(msgTemplate);

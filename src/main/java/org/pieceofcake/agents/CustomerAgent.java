@@ -1,13 +1,18 @@
 package org.pieceofcake.agents;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.pieceofcake.behaviours.DelayUntilDate;
+import org.pieceofcake.behaviours.FindAgents;
 import org.pieceofcake.behaviours.ReceiveStartingTime;
 import org.pieceofcake.behaviours.SynchronizeClock;
 import org.pieceofcake.config.Protocols;
+import org.pieceofcake.config.Services;
+import org.pieceofcake.objects.CustomerContract;
 import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.Location;
 import org.pieceofcake.objects.Order;
@@ -15,12 +20,9 @@ import org.pieceofcake.utils.OrderDateComparator;
 
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
-import jade.domain.DFService;
-import jade.domain.FIPAException;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
@@ -34,6 +36,7 @@ public class CustomerAgent extends SynchronizedAgent {
 	private List<Order> orders;
 	private List<Order> placedOrders;
 	private List<Order> failedOrders;
+	private List<CustomerContract> contracts;
 
 	public CustomerAgent(String guiId, int type, Location location, List<Order> orders) {
 		this.guiId = guiId;
@@ -44,6 +47,7 @@ public class CustomerAgent extends SynchronizedAgent {
 		this.orders = orders;
 		this.placedOrders = new LinkedList<>();
 		this.failedOrders = new LinkedList<>();
+		this.contracts = new LinkedList<>();
 	}
 
 	@Override
@@ -60,6 +64,7 @@ public class CustomerAgent extends SynchronizedAgent {
 		seq.addSubBehaviour(new PlaceOrder(orders.get(0)));
 
 		addBehaviour(seq);
+		addBehaviour(new WaitForOrderComplete());
 
 	}
 
@@ -70,17 +75,20 @@ public class CustomerAgent extends SynchronizedAgent {
 		private int numOfReplies = 0;
 		private double bestPrice = 0;
 		private AID bestSeller;
-		private AID[] bakeries;
+		private List<AID> bakeries;
+		private List<AID> proposers;
 		private Order order;
 
 		public PlaceOrder(Order order) {
 			this.order = order;
+			this.bakeries = new LinkedList<>();
+			this.proposers = new LinkedList<>();
 			this.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
-			this.addSubBehaviour(
-					new DelayUntilDate(getScenarioClock(), order.getOrderDate()));
-			this.addSubBehaviour(new UpdateBakeries());
+			this.addSubBehaviour(new DelayUntilDate(getScenarioClock(), order.getOrderDate()));
+			this.addSubBehaviour(new FindAgents(Services.ORDER, Services.ORDER_NAME, bakeries));
 			this.addSubBehaviour(new RequestOffers());
 			this.addSubBehaviour(new ReceiveOffers());
+			this.addSubBehaviour(new RejectProposals());
 			this.addSubBehaviour(new OrderFromBestSeller());
 		}
 
@@ -91,29 +99,6 @@ public class CustomerAgent extends SynchronizedAgent {
 				myAgent.addBehaviour(new PlaceOrder(orders.get(0)));
 			}
 			return 0;
-		}
-
-		private class UpdateBakeries extends OneShotBehaviour {
-
-			private static final long serialVersionUID = 8365966822569563888L;
-
-			@Override
-			public void action() {
-				DFAgentDescription template = new DFAgentDescription();
-				ServiceDescription sd = new ServiceDescription();
-				sd.setType("bakery");
-				template.addServices(sd);
-				try {
-					DFAgentDescription[] result = DFService.search(myAgent, template);
-					bakeries = new AID[result.length];
-					for (int i = 0; i < result.length; i++) {
-						bakeries[i] = result[i].getName();
-					}
-				} catch (FIPAException fe) {
-					logger.log(Logger.WARNING, fe.getMessage(), fe);
-				}
-			}
-
 		}
 
 		private class RequestOffers extends OneShotBehaviour {
@@ -129,8 +114,8 @@ public class CustomerAgent extends SynchronizedAgent {
 
 				ACLMessage msg = new ACLMessage(ACLMessage.CFP);
 				// Add all known bakeries as receivers
-				for (int i = 0; i < bakeries.length; i++) {
-					msg.addReceiver(bakeries[i]);
+				for (AID bakery : bakeries) {
+					msg.addReceiver(bakery);
 				}
 				msg.setLanguage("English");
 				msg.setOntology("Bakery-order-ontology");
@@ -158,6 +143,7 @@ public class CustomerAgent extends SynchronizedAgent {
 					String answerContent = offer.getContent();
 
 					if (offer.getPerformative() == ACLMessage.PROPOSE) {
+						proposers.add(offer.getSender());
 						double price = Double.parseDouble(answerContent);
 
 						if (bestSeller == null || price < bestPrice) {
@@ -166,7 +152,7 @@ public class CustomerAgent extends SynchronizedAgent {
 						}
 					}
 					numOfReplies++;
-					if (numOfReplies >= bakeries.length) {
+					if (numOfReplies >= bakeries.size()) {
 						// All replies received, terminate behavior
 						allOffersReceived = true;
 					}
@@ -178,6 +164,35 @@ public class CustomerAgent extends SynchronizedAgent {
 			@Override
 			public boolean done() {
 				return allOffersReceived;
+			}
+
+		}
+
+		private class RejectProposals extends OneShotBehaviour {
+
+			private static final long serialVersionUID = -1149541077346212172L;
+
+			@Override
+			public void action() {
+				Iterator<AID> iter = proposers.iterator();
+
+				while (iter.hasNext()) {
+					AID bakery = iter.next();
+					if (bakery.getName().equals(bestSeller.getName())) {
+						iter.remove();
+						break;
+					}
+				}
+				if (!proposers.isEmpty()) {
+					ACLMessage msg = new ACLMessage(ACLMessage.REJECT_PROPOSAL);
+					msg.setProtocol(Protocols.ORDER);
+					msg.setContent(order.toJSONObject().toString());
+					for (AID proposer : proposers) {
+						msg.addReceiver(proposer);
+					}
+					myAgent.send(msg);
+				}
+
 			}
 
 		}
@@ -204,6 +219,7 @@ public class CustomerAgent extends SynchronizedAgent {
 					msg.setContent(content);
 					myAgent.send(msg);
 					placedOrders.add(order);
+					contracts.add(new CustomerContract(order, bestSeller));
 
 				} else {
 					logger.log(Logger.INFO, myAgent.getLocalName() + ": No offers received or products not available.");
@@ -212,6 +228,33 @@ public class CustomerAgent extends SynchronizedAgent {
 			}
 
 		}
+
+	}
+
+	private class WaitForOrderComplete extends CyclicBehaviour {
+
+		private static final long serialVersionUID = -5351685996831509437L;
+
+		@Override
+		public void action() {
+			MessageTemplate template = MessageTemplate.and(MessageTemplate.MatchProtocol(Protocols.ORDER_COMPLETE),
+					MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+			ACLMessage msg = myAgent.receive(template);
+			if (msg != null) {
+				Order order = new Order(new JSONObject(msg.getContent()));
+				for (CustomerContract contract : contracts) {
+					if (order.getGuiId().equals(contract.getOrder().getGuiId())) {
+						contract.setCompleted();
+						String output = String.format("%s completed at %s, was due at %s",
+								contract.getOrder().getGuiId(), getScenarioClock().getDate(),
+								contract.getOrder().getDueDate());
+						logger.log(Logger.INFO, output);
+					}
+				}
+			}
+
+		}
+
 	}
 
 	public String getGuiId() {

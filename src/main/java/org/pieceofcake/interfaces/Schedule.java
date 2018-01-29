@@ -1,10 +1,12 @@
 package org.pieceofcake.interfaces;
 
+import java.io.Serializable;
+
 import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.Job;
 import org.pieceofcake.tasks.Task;
 
-public interface Schedule<T extends Task>{
+public interface Schedule<T extends Task> extends Serializable {
 	
 	public Date getEarliestCompletionTime(T task);
 	

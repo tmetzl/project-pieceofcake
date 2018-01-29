@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.pieceofcake.objects.Date;
+import org.pieceofcake.objects.Location;
 import org.pieceofcake.objects.Order;
 
 public class OrderComparatorTest {
@@ -29,6 +30,7 @@ public class OrderComparatorTest {
 		products.put("Brezel", 6);
 		products.put("Bread", 16);
 		jsonOrder1.put("products", products);
+		jsonOrder1.put("location", new Location(1, 2).toJSONObject());
 		
 		JSONObject jsonOrder2 = new JSONObject();
 		Date orderDate2 = new Date(1, 4, 0, 0);
@@ -37,7 +39,8 @@ public class OrderComparatorTest {
 		jsonOrder2.put("delivery_date", dueDate2.toJSONObject());
 		jsonOrder2.put("guid", "order-002");
 		jsonOrder2.put("customer_id", "customer-003");
-		jsonOrder2.put("products", products);	
+		jsonOrder2.put("products", products);
+		jsonOrder2.put("location", new Location(3, 4).toJSONObject());
 		
 		JSONObject jsonOrder3 = new JSONObject();
 		Date orderDate3 = new Date(0, 17, 0, 0);
@@ -47,6 +50,7 @@ public class OrderComparatorTest {
 		jsonOrder3.put("guid", "order-001");
 		jsonOrder3.put("customer_id", "customer-002");
 		jsonOrder3.put("products", products);
+		jsonOrder3.put("location", new Location(5, 6).toJSONObject());
 		
 		orders = new LinkedList<>();
 		orders.add(new Order(jsonOrder1));

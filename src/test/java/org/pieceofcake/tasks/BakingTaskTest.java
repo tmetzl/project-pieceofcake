@@ -1,17 +1,24 @@
 package org.pieceofcake.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.pieceofcake.objects.Date;
 
 public class BakingTaskTest {
 
-	@Test
-	public void testGettersAndSetters() {
-		Date releaseDate = new Date(0, 3, 1, 0);
-		Date dueDate = new Date(1, 2, 3, 4);
+	private BakingTask bakingTask;
+	private BakingTask anotherBakingTask;
+	private BakingTask oneMoreBakingTask;
+	private Date releaseDate = new Date(0, 3, 1, 0);
+	private Date dueDate = new Date(1, 2, 3, 4);
+
+	@Before
+	public void prepareRestingTasks() {
+
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("product_id", "Bread");
 		jsonObject.put("baking_time", 10);
@@ -20,10 +27,23 @@ public class BakingTaskTest {
 		jsonObject.put("order_id", "order-001");
 		jsonObject.put("baking_temp", 100);
 		jsonObject.put("num_of_items", 5);
-		jsonObject.put("cooling_time_factor", 1.2);
+		jsonObject.put("item_per_tray", 10);
 
-		BakingTask bakingTask = new BakingTask();
+		bakingTask = new BakingTask();
 		bakingTask.fromJSONObject(jsonObject);
+
+		JSONObject jsonObjectFromBakingTask = bakingTask.toJSONObject();
+		anotherBakingTask = new BakingTask();
+		anotherBakingTask.fromJSONObject(jsonObjectFromBakingTask);
+
+		oneMoreBakingTask = new BakingTask();
+		oneMoreBakingTask = bakingTask.copy();
+		oneMoreBakingTask.setBakingTime(12);
+
+	}
+
+	@Test
+	public void testGettersAndSetters() {
 
 		assertEquals("Bread", bakingTask.getProductId());
 		assertEquals(10, bakingTask.getBakingTime());
@@ -32,11 +52,7 @@ public class BakingTaskTest {
 		assertEquals("order-001", bakingTask.getOrderId());
 		assertEquals(100, bakingTask.getBakingTemperature());
 		assertEquals(5, bakingTask.getNumOfItems());
-		assertEquals(1.2, bakingTask.getCoolingTimeFactor(), 0.01);
-
-		JSONObject jsonObjectFromBakingTask = bakingTask.toJSONObject();
-		BakingTask anotherBakingTask = new BakingTask();
-		anotherBakingTask.fromJSONObject(jsonObjectFromBakingTask);
+		assertEquals(10, bakingTask.getItemPerTray());
 
 		assertEquals("Bread", anotherBakingTask.getProductId());
 		assertEquals(10, anotherBakingTask.getBakingTime());
@@ -45,7 +61,19 @@ public class BakingTaskTest {
 		assertEquals("order-001", anotherBakingTask.getOrderId());
 		assertEquals(100, anotherBakingTask.getBakingTemperature());
 		assertEquals(5, anotherBakingTask.getNumOfItems());
-		assertEquals(1.2, anotherBakingTask.getCoolingTimeFactor(), 0.01);
+		assertEquals(10, anotherBakingTask.getItemPerTray());
+		
+	}
+
+	@Test
+	public void testEqualsAndHashCode() {
+
+		assertEquals(bakingTask, anotherBakingTask);
+		assertNotEquals(bakingTask, oneMoreBakingTask);
+		assertNotEquals(bakingTask, new Object());
+
+		assertEquals(bakingTask.hashCode(), anotherBakingTask.hashCode());
+
 	}
 
 }

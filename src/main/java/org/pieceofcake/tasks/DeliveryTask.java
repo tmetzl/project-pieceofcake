@@ -5,8 +5,25 @@ import org.pieceofcake.objects.Location;
 
 public class DeliveryTask extends Task {
 
+	private static final long serialVersionUID = 1951480863418113600L;
+
 	private int itemPerBox;
 	private Location location;
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof DeliveryTask) {
+			DeliveryTask task = (DeliveryTask) o;
+			return this.itemPerBox == task.getItemPerBox() && this.location.equals(task.getLocation())
+					&& this.checkMutualFields(task);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return (this.getOrderId() + this.getProductId()).hashCode();
+	}
 
 	public int getItemPerBox() {
 		return itemPerBox;
@@ -40,7 +57,7 @@ public class DeliveryTask extends Task {
 		locationFromJson.fromJSONObject(jsonObject.getJSONObject("location"));
 		setLocation(locationFromJson);
 	}
-	
+
 	@Override
 	public DeliveryTask copy() {
 		DeliveryTask task = new DeliveryTask();
