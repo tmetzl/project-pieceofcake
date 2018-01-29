@@ -11,7 +11,7 @@ import org.pieceofcake.objects.Location;
 import org.pieceofcake.streetnetwork.StreetNetwork;
 import org.pieceofcake.tasks.DeliveryTask;
 
-public class DeliverySchedule extends ProductionSchedule<DeliveryTask> implements Schedule<DeliveryTask> {
+public class DeliverySchedule extends ProductionSchedule<DeliveryTask> {
 
 	private static final long serialVersionUID = -2548986266669169133L;
 
