@@ -58,7 +58,7 @@ public class HandleTasks<T extends Task> extends SequentialBehaviour {
 			boolean offerDatesOk = true;
 
 			if (bestTaskOffers == null || bestTaskOffers.isEmpty()) {
-				return 0;
+				return 1;
 			}
 
 			for (Task task : bestTaskOffers.values()) {
