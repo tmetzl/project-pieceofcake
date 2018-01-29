@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.pieceofcake.interfaces.Schedule;
 import org.pieceofcake.objects.Date;
 import org.pieceofcake.objects.Job;
 import org.pieceofcake.objects.Location;
