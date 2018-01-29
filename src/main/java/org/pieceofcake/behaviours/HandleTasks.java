@@ -57,7 +57,7 @@ public class HandleTasks<T extends Task> extends SequentialBehaviour {
 
 			boolean offerDatesOk = true;
 
-			if (bestTaskOffers != null) {
+			if (bestTaskOffers != null && !bestTaskOffers.isEmpty()) {
 				for (Task task : bestTaskOffers.values()) {
 					if (task.getDueDate().compareTo(dueDate) > 0) {
 						offerDatesOk = false;

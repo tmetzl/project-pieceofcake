@@ -101,11 +101,9 @@ public class AdvertiseTask<T extends Task> extends SequentialBehaviour {
 		private static final long serialVersionUID = 4623082428714378802L;
 
 		private List<Bid> bids;
-		private List<Bid> bestOffers;
 
 		public ProcessProposals() {
 			bids = new LinkedList<>();
-			bestOffers = new LinkedList<>();
 		}
 
 		@Override
@@ -120,23 +118,9 @@ public class AdvertiseTask<T extends Task> extends SequentialBehaviour {
 			}
 			// Sort and get best offers
 			Collections.sort(bids, new BidCompletionTimeComparator());
-			if (bids.size() >= task.getNumOfItems()) {
-				for (int i = 0; i < task.getNumOfItems(); i++) {
-					bestOffers.add(bids.get(i));
-				}
-
-				for (Bid bid : bestOffers) {
-
-					T partialTask = bestTaskOffers.get(bid.getAgentId());
-					if (partialTask == null) {
-						partialTask = (T) task.copy();
-						partialTask.setNumOfItems(1);
-					} else {
-						partialTask.setNumOfItems(partialTask.getNumOfItems() + 1);
-					}
-					partialTask.setDueDate(bid.getCompletionTime());
-					bestTaskOffers.put(bid.getAgentId(), partialTask);
-				}
+			if (!bids.isEmpty()) {
+				task.setDueDate(bids.get(0).getCompletionTime());
+				bestTaskOffers.put(bids.get(0).getAgentId(), task);
 			}
 		}
 	}
