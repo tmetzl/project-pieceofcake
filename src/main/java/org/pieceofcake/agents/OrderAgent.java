@@ -81,7 +81,7 @@ public class OrderAgent extends SynchronizedAgent {
 		seq.addSubBehaviour(new SynchronizeClock(getScenarioClock()));
 		seq.addSubBehaviour(new ReceiveStartingTime(getScenarioClock()));
 		addBehaviour(seq);
-		addBehaviour(new OrderService2());
+		addBehaviour(new OrderService());
 		addBehaviour(new WaitForStatusUpdate());
 	}
 
@@ -96,19 +96,19 @@ public class OrderAgent extends SynchronizedAgent {
 		logger.log(Logger.INFO, getAID().getLocalName() + ": Terminating.");
 	}
 
-	private class OrderService2 extends SequentialBehaviour {
+	private class OrderService extends SequentialBehaviour {
 
 		private static final long serialVersionUID = -7336513100493959374L;
 
 		private OrderContract contract;
 
-		public OrderService2() {
+		public OrderService() {
 			this.addSubBehaviour(new WaitForOrder());
 		}
 
 		@Override
 		public int onEnd() {
-			myAgent.addBehaviour(new OrderService2());
+			myAgent.addBehaviour(new OrderService());
 			return 0;
 		}
 
@@ -132,11 +132,14 @@ public class OrderAgent extends SynchronizedAgent {
 					Order order = new Order(new JSONObject(jsonOrder));
 					Date orderDate = new Date(getScenarioClock().getDate().toSeconds() + 3600l);
 					Date dueDate = new Date(order.getDueDate().toSeconds() - 3600);
+					if (dueDate.compareTo(new Date(order.getDueDate().getDay(), 0, 0, 0)) < 0) {
+						dueDate = new Date(order.getDueDate().getDay(), 0, 0, 0);
+					}
 					order.setOrderDate(orderDate);
 					order.setDueDate(dueDate);
 					contract = new OrderContract(order, msg.getSender());
 					orderReceived = true;
-					OrderService2.this.addSubBehaviour(new CheckInStock());
+					OrderService.this.addSubBehaviour(new CheckInStock());
 				} else {
 					block();
 				}
@@ -159,10 +162,10 @@ public class OrderAgent extends SynchronizedAgent {
 				Double price = cookBook.getSalesPrice(order);
 				if (price != null) {
 					orderContracts.add(contract);
-					OrderService2.this.addSubBehaviour(new ScheduleOrder(contract, cookBook, bakeryName));
-					OrderService2.this.addSubBehaviour(new CheckSchedule());
+					OrderService.this.addSubBehaviour(new ScheduleOrder(contract, cookBook, bakeryName));
+					OrderService.this.addSubBehaviour(new CheckSchedule());
 				} else {
-					OrderService2.this.addSubBehaviour(new RefuseOrder());
+					OrderService.this.addSubBehaviour(new RefuseOrder());
 				}
 			}
 
@@ -183,9 +186,9 @@ public class OrderAgent extends SynchronizedAgent {
 							addBehaviour(new CancelOrderContract(orderContract));
 						}
 					}
-					OrderService2.this.addSubBehaviour(new RefuseOrder());
+					OrderService.this.addSubBehaviour(new RefuseOrder());
 				} else {
-					OrderService2.this.addSubBehaviour(new SendProposol());
+					OrderService.this.addSubBehaviour(new SendProposol());
 				}
 			}
 
